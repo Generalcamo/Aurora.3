@@ -2,7 +2,7 @@
 	..(user)
 	var/msg = ""
 	if(src.stat == DEAD)
-		msg += span("deadsay", "It is limp and unresponsive.\n")
+		msg += SPAN_CLASS("deadsay", "It is limp and unresponsive.\n")
 	else
 		if(src.getBruteLoss())
 			if(src.getBruteLoss() < 40)

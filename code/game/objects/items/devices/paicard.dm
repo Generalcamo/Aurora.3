@@ -440,7 +440,7 @@
 
 /obj/item/device/paicard/see_emote(mob/living/M, text)
 	if(pai && pai.client && !pai.canmove)
-		var/rendered = span("message", "[text]")
+		var/rendered = SPAN_CLASS("message", "[text]")
 		pai.show_message(rendered, 2)
 	..()
 
@@ -469,6 +469,6 @@
 
 /obj/item/device/paicard/show_message(msg, type, alt, alt_type)
 	if(pai && pai.client)
-		var/rendered = span("message", "[msg]")
+		var/rendered = SPAN_CLASS("message", "[msg]")
 		pai.show_message(rendered, type)
 	..()

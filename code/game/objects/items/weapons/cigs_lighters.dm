@@ -125,7 +125,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 		if(ismob(loc))
 			var/mob/living/M = loc
 			if(!nomessage)
-				to_chat(M, span("notice", "Your [name] goes out."))
+				to_chat(M, SPAN_CLASS("notice", "Your [name] goes out."))
 			if(M.wear_mask)
 				M.remove_from_mob(src) //un-equip it so the overlays can update
 				M.update_inv_wear_mask(0)

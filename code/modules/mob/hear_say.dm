@@ -1,6 +1,6 @@
 // At minimum every mob has a hear_say proc.
 
-/mob/proc/hear_say(var/message, var/verb = "says", var/datum/language/language = null, var/alt_name = "",var/italics = 0, var/mob/speaker = null, var/sound/speech_sound, var/sound_vol, var/font_size = null)
+/mob/proc/hear_say(message, verb = "says", datum/language/language = null, alt_name = "", italics = 0, mob/speaker = null, sound/speech_sound, sound_vol, font_size = null)
 	if(!istype(src, /mob/living/test) && cant_hear())
 		return
 
@@ -65,12 +65,12 @@
 	else
 		if(language)
 			if(font_size)
-				on_hear_say("[track][accent_icon ? accent_icon + " " : ""]<font size='[font_size]'><span class='game say'><span class='name'>[speaker_name]</span>[alt_name] [language.format_message(message, verb)]</span></font>")
+				on_hear_say("[track][accent_icon ? accent_icon + " " : ""]<span style = 'font-size = [font_size]'><span class='game say'><span class='name'>[speaker_name]</span>[alt_name] [language.format_message(message, verb)]</span></span>")
 			else
 				on_hear_say("[track][accent_icon ? accent_icon + " " : ""]<span class='game say'><span class='name'>[speaker_name]</span>[alt_name] [language.format_message(message, verb)]</span>")
 		else
 			if(font_size)
-				on_hear_say("[track][accent_icon ? accent_icon + " " : ""]<font size='[font_size]'><span class='game say'><span class='name'>[speaker_name]</span>[alt_name] [verb], <span class='message'><span class='body'>\"[message]\"</span></span></span></font>")
+				on_hear_say("[track][accent_icon ? accent_icon + " " : ""]<span style = 'font-size = [font_size]'><span class='game say'><span class='name'>[speaker_name]</span>[alt_name] [verb], <span class='message'><span class='body'>\"[message]\"</span></span></span></span>")
 			else
 				on_hear_say("[track][accent_icon ? accent_icon + " " : ""]<span class='game say'><span class='name'>[speaker_name]</span>[alt_name] [verb], <span class='message'><span class='body'>\"[message]\"</span></span></span>")
 		if (speech_sound && (get_dist(speaker, src) <= world.view && src.z == speaker.z))
