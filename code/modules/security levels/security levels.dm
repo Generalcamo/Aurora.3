@@ -36,10 +36,12 @@
 					security_announcement.Announce("[config.alert_desc_blue_downto]", "Attention! Security level lowered to blue.")
 				security_level = SEC_LEVEL_BLUE
 				SSnightlight.end_temp_disable()
+				post_display_status("alert", "alert_blue")
 			if(SEC_LEVEL_YELLOW)
 				security_announcement_sound.Announce("[config.alert_desc_yellow_to]", "Attention! Biohazard alert declared!")
 				security_level = SEC_LEVEL_YELLOW
 				SSnightlight.end_temp_disable()
+				post_display_status("alert", "alert_yellow")
 			if(SEC_LEVEL_RED)
 				if(security_level < SEC_LEVEL_RED)
 					security_announcement_sound.Announce("[config.alert_desc_red_upto]", "Attention! Security level elevated to red!", new_sound = 'sound/effects/high_alert.ogg')
@@ -47,11 +49,12 @@
 				else
 					security_announcement.Announce("[config.alert_desc_red_downto]", "Attention! Code red!")
 				security_level = SEC_LEVEL_RED
-				post_display_status("alert", "redalert")
+				post_display_status("alert", "alert_red")
 			if(SEC_LEVEL_DELTA)
 				security_announcement_sound.Announce("[config.alert_desc_delta]", "Attention! Delta security level reached!", new_sound = 'sound/effects/siren.ogg')
 				security_level = SEC_LEVEL_DELTA
 				SSnightlight.temp_disable()
+				post_display_status("alert", "alert_delta")
 
 		var/newlevel = get_security_level()
 		for(var/obj/machinery/power/apc/powercontrol in SSmachinery.processing)

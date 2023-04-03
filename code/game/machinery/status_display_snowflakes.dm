@@ -2,7 +2,7 @@
 	ignore_friendc = 1
 
 /obj/machinery/status_display/supply_display/update()
-	if(!..() && mode == STATUS_DISPLAY_CUSTOM)
+	if(!..() && mode == SD_CUSTOM)
 		message1 = "CARGO"
 		message2 = ""
 
@@ -29,7 +29,7 @@
 
 /obj/machinery/status_display/supply_display/receive_signal(datum/signal/signal)
 	if(signal.data["command"] == "supply")
-		mode = STATUS_DISPLAY_CUSTOM
+		mode = SD_CUSTOM
 	else
 		..(signal)
 
@@ -38,7 +38,7 @@
 	hears_arrivals = TRUE
 
 /obj/machinery/status_display/arrivals_display/update()
-	if(!..() && mode == STATUS_DISPLAY_CUSTOM)
+	if(!..() && mode == SD_CUSTOM)
 		message1 = "ARVLS"
 		message2 = ""
 
@@ -51,7 +51,7 @@
 				message2 = "Error"
 		else if (shuttle.is_launching())
 			if (shuttle.at_station())
-				message2 = "Retrn"
+				message2 = "Return"
 			else
 				message2 = "ETA"
 		else
@@ -65,6 +65,6 @@
 
 /obj/machinery/status_display/arrivals_display/receive_signal(datum/signal/signal)
 	if(signal.data["command"] == "arrivals")
-		mode = STATUS_DISPLAY_CUSTOM
+		mode = SD_CUSTOM
 	else
 		..(signal)
