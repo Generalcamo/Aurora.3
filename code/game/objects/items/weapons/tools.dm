@@ -299,11 +299,15 @@
 	R.add_reagent(/singleton/reagent/fuel, max_fuel)
 	update_icon()
 
+var/obj/particle_emitter/welding_sparks/EM
+var/obj/particle_emitter/welding_smoke/SM
 /obj/item/weldingtool/use_tool(atom/target, mob/living/user, delay, amount, volume, datum/callback/extra_checks)
-	var/image/welding_sparks = image('icons/effects/effects.dmi', welding_state, EFFECTS_ABOVE_LIGHTING_LAYER)
-	target.add_overlay(welding_sparks)
+	SM = new/obj/particle_emitter/welding_smoke(get_turf(target), delay)
+	EM = new/obj/particle_emitter/welding_sparks(get_turf(target), delay)
+	EM.set_dir(reverse_direction(user.dir))
 	. = ..()
-	target.cut_overlay(welding_sparks)
+	SM.particles.spawning = FALSE
+	EM.particles.spawning = FALSE
 
 /obj/item/weldingtool/proc/update_torch()
 	if(welding)

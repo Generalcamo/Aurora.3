@@ -1,0 +1,27 @@
+/* Particle emitter object. Handles spawning particles, and setting their properties.
+Multiple particles can be grouped in a single particle emitter, and filters can be applied for all particles
+in a group, making this generally more efficient than using the raw particle directly in most cases.
+*/
+
+/obj/particle_emitter
+	name = ""
+	anchored = TRUE
+	mouse_opacity = 0
+	appearance_flags = PIXEL_SCALE
+
+/obj/particle_emitter/Initialize(mapload, time, _color)
+	. = ..()
+	if(time > 0)
+		QDEL_IN(src, time)
+	color = _color
+
+/obj/particle_emitter/proc/enable(on)
+	if(on)
+		particles.spawning = initial(particles.spawning)
+  else
+		particles.spawning = 0
+
+/obj/particle_emitter/burst/Initialize(mapload, time)
+	. = ..()
+	//Burst emitters turn off after 1 tick
+	addtimer(CALLBACK(src, .proc/enable, FALSE), 1, TIMER_CLIENT_TIME)

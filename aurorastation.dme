@@ -1827,6 +1827,7 @@
 #include "code\modules\effects\maze_generation\loot_modules\_loot_module_base.dm"
 #include "code\modules\effects\maze_generation\loot_modules\trash_module.dm"
 #include "code\modules\effects\maze_generation\loot_modules\turf_painter.dm"
+#include "code\modules\effects\particles\welding.dm"
 #include "code\modules\effects\sparks\procs.dm"
 #include "code\modules\effects\sparks\spawner.dm"
 #include "code\modules\effects\sparks\visuals.dm"
