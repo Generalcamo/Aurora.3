@@ -73,6 +73,7 @@
 
 /obj/machinery/light/floor
 	name = "floor lighting fixture"
+	icon = icons/obj/lights.dmi // TODO: REPLACE ME!
 	icon_state = "floortube_example"
 	base_state = "floortube"
 	desc = "A lighting fixture. This one is set into the floor."
@@ -97,7 +98,7 @@
 
 /obj/machinery/light/small/floor
 	name = "small floor lighting fixture"
-	icon_state = "floor_example"
+	icon_state = "floor_empty"
 	base_state = "floor"
 	desc = "A small lighting fixture. This one is set into the floor."
 	layer = 2.5
@@ -133,7 +134,8 @@
 
 /obj/machinery/light/spot
 	name = "spotlight fixture"
-	icon_state = "tube_empty"
+	icon = icons/obj/lights.dmi // TODO: REPLACE ME!
+	icon_state = "slight_example"
 	desc = "An extremely powerful lighting fixture."
 	fitting = "large tube"
 	light_type = /obj/item/light/tube/large
