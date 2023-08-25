@@ -6,22 +6,107 @@
 #define num2hex(num, pad) num2text(num, pad, 16)
 #define text_ref(datum) (isdatum(datum) ? (datum:cached_ref ||= "\ref[datum]") : ("\ref[datum]"))
 
-#define span(class, text) ("<span class='[class]'>" + text + "</span>")
+/**
+ * Generic <span class> macro.
+ *
+ * Arguments:
+ * * class: What to put in <class=''>
+ * * text: Text to place in <span>
+ */
+#define SPAN_CLASS(class, text) ("<span class='[class]'>" + text + "</span>")
+
+/**
+ * Generic <span style> macro.
+ *
+ * Arguments:
+ * * style: What to put in <style=""">
+ * * text: Text to place in <span>
+ */
+#define SPAN_STYLE(style, text) ("<span style=\"[style]\">" + text + "</span>")
+
+/**
+ * Macro of <span class='notice'>
+ *
+ * Should be used for general information sent to the player that pose no danger or issues
+ */
 #define SPAN_NOTICE(X) ("<span class='notice'>" + X + "</span>")
+
+/**
+ * Macro of <span class='warning'>
+ *
+ * Should be used for information sent to the player that could pose a hazard, or for action failures
+ */
 #define SPAN_WARNING(X) ("<span class='warning'>" + X + "</span>")
+
+/**
+ * Macro of <span class='danger'>
+ *
+ * Should be used for information sent to the player that could pose an imminent or ongoing threat of injury or death
+ */
 #define SPAN_DANGER(X) ("<span class='danger'>" + X + "</span>")
+/**
+ * Macro of <span class='cult'>
+ *
+ * Should be used for information sent to the player involving the occult
+ */
 #define SPAN_CULT(X) ("<span class='cult'>" + X + "</span>")
+/**
+ * Macro of <span class='good'>
+ *
+ * Should be used for information sent to the player's character in-world, that represents good feedback. (from e.g a machine)
+ */
 #define SPAN_GOOD(X) ("<span class='good'>" + X + "</span>")
+/**
+ * Macro of <span class='bad'>
+ *
+ * Should be used for information sent to the player's character in-world, that represents bad feedback. (from e.g a machine)
+ */
 #define SPAN_BAD(X) ("<span class='bad'>" + X + "</span>")
+/**
+ * Macro of <span class='alium'>
+ *
+ * Should be used for information sent to the player's character in-world, that represents something non-human.
+ */
 #define SPAN_ALIEN(X) ("<span class='alium'>" + X + "</span>")
+/**
+ * Macro of <span class='alert'>
+ *
+ * Should be used for information sent to the player's character in-world, that represents an alert condition. (from e.g a machine)
+ */
 #define SPAN_ALERT(X) ("<span class='alert'>" + X + "</span>")
+/**
+ * Macro of <span class='info'>
+ *
+ * Should be used for general information sent to the player's character in-world.
+ */
 #define SPAN_INFO(X) ("<span class='info'>" + X + "</span>")
-#define SPAN_ITALIC(X) ("<span class='italic'>" + X + "</span>")
-#define SPAN_BOLD(X) ("<span class='bold'>" + X + "</span>")
+/**
+ * Macro of <span style="font-style:italic">
+ */
+#define SPAN_ITALIC(X) ("<span style="font-style:italic">" + X + "</span>")
+/**
+ * Macro of <span style="font-style:bold">
+ */
+#define SPAN_BOLD(X) ("<span style="font-style:bold">" + X + "</span>")
+/**
+ * Macro of <span class='subtle'>
+ *
+ * [insert usage here]
+ */
 #define SPAN_SUBTLE(X) ("<span class='subtle'>" + X + "</span>")
+/**
+ * Macro of <span class='soghun'>
+ *
+ * Should be used for dionaea actions
+ */
 #define SPAN_SOGHUN(X) ("<span class='soghun'>" + X + "</span>")
 #define SPAN_VOTE(X) ("<span class='vote'>" + X + "</span>")
 
+/**
+ * Macro of SPAN_DANGER with the addition of FONT_LARGE
+ *
+ * Should be used for information sent to the player that will post an imminent or ongoing threat of severe maiming or death
+ */
 #define SPAN_HIGHDANGER(X) (FONT_LARGE(SPAN_DANGER(X)))
 
 #define FONT_SIZE_SMALL 1
@@ -30,11 +115,11 @@
 #define FONT_SIZE_HUGE 4
 #define FONT_SIZE_GIANT 5
 
-#define FONT_SMALL(X) ("<font size=1>" + X + "</font>")
-#define FONT_NORMAL(X) ("<font size=2>" + X + "</font>")
-#define FONT_LARGE(X) ("<font size=3>" + X + "</font>")
-#define FONT_HUGE(X) ("<font size=4>" + X + "</font>")
-#define FONT_GIANT(X) ("<font size=5>" + X + "</font>")
+#define FONT_SMALL(X) ("<span style="font-size:1">" + X + "</span>")
+#define FONT_NORMAL(X) ("<span style="font-size:2">" + X + "</span>")
+#define FONT_LARGE(X) ("<span style="font-size:3">" + X + "</span>")
+#define FONT_HUGE(X) ("<span style="font-size:4">" + X + "</span>")
+#define FONT_GIANT(X) ("<span style="font-size:5">" + X + "</span>")
 
 #define MATRIX_DANGER(X) (FONT_LARGE(SPAN_DANGER(X)))
 #define MATRIX_NOTICE(X) (FONT_LARGE(SPAN_NOTICE(X)))

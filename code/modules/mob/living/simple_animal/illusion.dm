@@ -76,7 +76,7 @@
 		return ..()
 
 	playsound(src, 'sound/weapons/punchmiss1.ogg', 25, 1, -1)
-	visible_message(span("warning", "\The [user]'s [I] goes through \the [src]!"))
+	visible_message(SPAN_CLASS("warning", "\The [user]'s [I] goes through \the [src]!"))
 	return FALSE
 
 /mob/living/simple_animal/illusion/ex_act()

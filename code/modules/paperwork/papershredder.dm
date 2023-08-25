@@ -156,15 +156,15 @@
 		if(istype(P, /obj/item/flame/lighter/zippo))
 			class = "rose"
 
-		user.visible_message(span("[class]", "[user] holds \the [P] up to \the [src], trying to burn it!"), \
-		span("[class]", "You hold \the [P] up to \the [src], burning it slowly."))
+		user.visible_message(SPAN_CLASS("[class]", "[user] holds \the [P] up to \the [src], trying to burn it!"), \
+		SPAN_CLASS("[class]", "You hold \the [P] up to \the [src], burning it slowly."))
 		playsound(src.loc, 'sound/bureaucracy/paperburn.ogg', 50, 1)
 		flick("shredp_onfire", src) //no do_after here, so people can walk n' burn at the same time. -wezzy
 
 		spawn(20)
 			if(get_dist(src, user) < 2 && user.get_active_hand() == P)
-				user.visible_message(span("[class]", "[user] burns right through \the [src], turning it to ash. It flutters through the air before settling on the floor in a heap."), \
-				span("[class]", "You burn right through \the [src], turning it to ash. It flutters through the air before settling on the floor in a heap."))
+				user.visible_message(SPAN_CLASS("[class]", "[user] burns right through \the [src], turning it to ash. It flutters through the air before settling on the floor in a heap."), \
+				SPAN_CLASS("[class]", "You burn right through \the [src], turning it to ash. It flutters through the air before settling on the floor in a heap."))
 				new /obj/effect/decal/cleanable/ash(src.loc)
 				qdel(src)
 

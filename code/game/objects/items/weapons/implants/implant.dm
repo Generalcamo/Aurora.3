@@ -212,7 +212,7 @@ Implant Specifics:<BR>"}
 	if(!imp_in)
 		visible_message(SPAN_WARNING("Something begins beeping..."))
 	if(ishuman(imp_in))
-		var/message = "Something beeps inside of [imp_in][part ? "'s [part.name]" : ""]..." //for some reason SPAN_X and span() both hate having this in-line
+		var/message = "Something beeps inside of [imp_in][part ? "'s [part.name]" : ""]..." //for some reason SPAN_X and SPAN_CLASS() both hate having this in-line
 		imp_in.visible_message(SPAN_WARNING(message))
 	else if(ismob(imp_in))
 		imp_in.visible_message(SPAN_WARNING("Something beeps inside of [imp_in]..."))

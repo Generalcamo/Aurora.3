@@ -88,7 +88,7 @@
 	if(istype(target,/obj/item))
 		var/obj/item/I = target
 		if(I.anchored)
-			to_chat(user, span("notice", "\The [I] is anchored in place."))
+			to_chat(user, SPAN_CLASS("notice", "\The [I] is anchored in place."))
 			return
 		if(!I.origin_tech)
 			to_chat(user, SPAN_NOTICE("This doesn't seem to have a tech origin."))

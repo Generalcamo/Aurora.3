@@ -210,8 +210,8 @@
 
 	if(nymph)
 		N.nymph_out(src, nymph)
-		to_chat(nymph_owner, span("warning", "The nymph attached to you as \a [name] unlatches its tendrils from your body and drops to \the [get_turf(owner)]."))
-		to_chat(nymph, span("notice", "You tear your tendrils free of your host and drop to \the [get_turf(owner)]."))
+		to_chat(nymph_owner, SPAN_CLASS("warning", "The nymph attached to you as \a [name] unlatches its tendrils from your body and drops to \the [get_turf(owner)]."))
+		to_chat(nymph, SPAN_CLASS("notice", "You tear your tendrils free of your host and drop to \the [get_turf(owner)]."))
 
 	return TRUE
 
@@ -225,7 +225,7 @@
 	if(!isturf(loc))
 		return
 	if(!can_attach)
-		to_chat(src, span("warning", "You do not have the strength to attach to another host so soon."))
+		to_chat(src, SPAN_CLASS("warning", "You do not have the strength to attach to another host so soon."))
 
 	AddComponent(/datum/component/nymph_limb)
 	var/datum/component/nymph_limb/N = GetComponent(/datum/component/nymph_limb)
@@ -238,7 +238,7 @@
 			mob_list += H
 
 	if(!LAZYLEN(mob_list))
-		to_chat(src, span("warning", "There are no valid hosts to bond to."))
+		to_chat(src, SPAN_CLASS("warning", "There are no valid hosts to bond to."))
 		return FALSE
 
 	var/choice = input(src, "Choose a host to bond to:", "Attach to Host") in mob_list
@@ -254,7 +254,7 @@
 
 	var/limb_choice
 	if(!valid_locations.len)
-		to_chat(src, span("warning", "\The [target.name] has no suitable spots for you to attach to their body!"))
+		to_chat(src, SPAN_CLASS("warning", "\The [target.name] has no suitable spots for you to attach to their body!"))
 		return
 	else
 		limb_choice = input(src,"Choose a location to attach onto \the [target.name]","Nymph Attachment Point") as null|anything in valid_locations

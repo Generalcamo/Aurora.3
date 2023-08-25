@@ -234,7 +234,7 @@ when portals are shortly lived, or when portals are made to be obvious with spec
 	var/list/mobs_to_relay = get_hearers_in_view(world.view, T)
 
 	for(var/mob/mob in mobs_to_relay)
-		var/rendered = span("message", "[text]")
+		var/rendered = SPAN_CLASS("message", "[text]")
 		mob.show_message(rendered)
 
 	..()
@@ -243,7 +243,7 @@ when portals are shortly lived, or when portals are made to be obvious with spec
 /obj/effect/map_effect/portal/master/show_message(msg, type, alt, alt_type)
 	if(!counterpart)
 		return
-	var/rendered = span("message", "[msg]")
+	var/rendered = SPAN_CLASS("message", "[msg]")
 	var/turf/T = counterpart.get_focused_turf()
 	var/list/mobs_to_relay = get_hearers_in_view(world.view, T)
 
