@@ -62,6 +62,11 @@
 	fixed_state = TRUE
 	reagents_to_add = list(/singleton/reagent/sugar = 50)
 
+/obj/item/reagent_containers/food/condiment/sweetener
+	icon_state = "sugar"
+	fixed_state = TRUE
+	reagents_to_add = list(/singleton/reagent/sweetener = 50)
+
 /obj/item/reagent_containers/food/condiment/shaker
 	name = "shaker"
 	volume = 20
@@ -153,9 +158,9 @@
 
 /obj/item/reagent_containers/food/condiment/small/packet/sugar
 	name = "sugar packet"
-	desc = "Contains 5u of refined sugar."
+	desc = "Contains 10u of refined sugar."
 	icon_state = "packet_small_white"
-	reagents_to_add = list(/singleton/reagent/sugar = 5)
+	reagents_to_add = list(/singleton/reagent/sugar = 10)
 
 /obj/item/reagent_containers/food/condiment/small/packet/jelly
 	name = "jelly packet"
@@ -166,7 +171,7 @@
 /obj/item/reagent_containers/food/condiment/small/packet/honey
 	name = "honey packet"
 	desc = "Contains 10u of honey."
-	reagents_to_add = list(/singleton/reagent/sugar = 10)
+	reagents_to_add = list(/singleton/reagent/nutriment/honey = 10)
 	icon_state = "packet_medium"
 
 /obj/item/reagent_containers/food/condiment/small/packet/capsaicin
@@ -292,3 +297,19 @@
 /obj/item/reagent_containers/glass/bottle/syrup/caramel
 	name = "caramel syrup dispenser"
 	reagents_to_add = list(/singleton/reagent/drink/syrup_caramel = 50)
+
+//small coffee stuff
+
+/obj/item/reagent_containers/food/condiment/small/packet/creamer
+	name = "coffee creamer pack"
+	desc = "Better not think about what they're making this from."
+	volume = 5
+	icon_state = "packet_small_black"
+	reagents_to_add = list(/singleton/reagent/drink/milk/coffee_creamer = 5)
+
+/obj/item/reagent_containers/food/condiment/small/packet/sweetener
+	name = "\improper Sweet-n-more! pack"
+	desc = "More sweet! Less calories!"
+	volume = 5
+	icon_state = "packet_small_blue"
+	list_reagents = list(/singleton/reagent/sweetener = 5)

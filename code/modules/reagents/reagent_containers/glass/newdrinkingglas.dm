@@ -129,4 +129,36 @@
 	icon_state = "goblet"
 	icon = 'icons/obj/drink_glasses/goblet.dmi'
 	volume = 25
-	
+
+//Coffeepots: for reference, a standard cup is 20u, to allow 10u for sugar/sweetener/milk/creamer
+/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/coffeepot
+	name = "coffeepot"
+	desc = "A large pot for dispensing that ambrosia of corporate life known to mortals only as coffee. Contains 6 standard cups."
+	volume = 120
+	icon_state = "coffeepot"
+	drink_flags = UNIQUE_EMPTY_ICON
+	icon_state = "coffeepot"
+
+/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/bluespace
+	name = "bluespace coffeepot"
+	desc = "The most advanced coffeepot Getmore's finest researchers could cook up: sleek design; graduated lines; connection to a pocket dimension for coffee containment; yep, it's got it all. Contains 12 standard cups."
+	volume = 240
+	icon_state = "coffeepot_bluespace"
+	drink_flags = UNIQUE_EMPTY_ICON
+	icon_state = "coffeepot_bluespace"
+
+/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/coffeepot/update_icon()
+	cut_overlays()
+
+	if(reagents.total_volume)
+		var/image/filling = image(icon, src, "[icon_state]30")
+		var/percent = round((reagents.total_volume / volume) * 100)
+		switch(percent)
+			if(0 to 9)
+				filling.icon_state = null
+				return
+			if(10 to 39) 	filling.icon_state = "[icon_state]30"
+			if(40 to 79)	filling.icon_state = "[icon_state]60"
+			if(80 to INFINITY)	filling.icon_state = "[icon_state]100"
+		filling.color = reagents.get_color()
+		add_overlay(filling)

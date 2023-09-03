@@ -553,6 +553,23 @@
 /singleton/reagent/sugar/affect_blood(var/mob/living/carbon/M, var/alien, var/removed, var/datum/reagents/holder)
 	M.adjustNutritionLoss(-removed*3)
 
+/singleton/reagent/sweetener
+	name = "Sweet-n-more!"
+	description = "An artificial sweetener, made and distributed by Getmore!"
+	reagent_state = SOLID
+	color = "#FFFFFF"
+	taste_description = "sweetness"
+	taste_mult = 3.6 // Double that of sugar
+
+	glass_icon_state = "iceglass"
+	glass_name = "glass of Sweet-n-more!"
+	glass_desc = "You don't think drinking this is a good idea..."
+
+	fallback_specific_heat = 0.332
+	condiment_name = "\improper Sweet-n-more!"
+	condiment_desc = "More sweetness! Less calories!"
+	condiment_icon_state = "sugar"
+
 /singleton/reagent/sulfur
 	name = "Sulfur"
 	description = "A chemical element with a pungent smell."

@@ -1316,6 +1316,20 @@
 		M.heal_organ_damage(0.1 * removed, 0)
 		holder.remove_reagent(/singleton/reagent/capsaicin, 10 * removed)
 
+/singleton/reagent/drink/milk/coffee_creamer
+	name = "Coffee Creamer"
+	description = "Powdered milk for coffee. How delightful."
+	color = "#EFEFF0"
+	default_temperature = T20C
+	reagent_state = SOLID
+	nutriment_factor = 2
+
+	glass_icon_state = "glass_white"
+	glass_name = "glass of coffee creamer"
+	glass_desc = "You should probably add some coffee to this..."
+
+
+
 /singleton/reagent/drink/milk/cream
 	name = "Cream"
 	description = "The fatty, still liquid part of milk. Why don't you mix this with sum scotch, eh?"
@@ -4613,7 +4627,7 @@
 	description = "A good, strong drink must be erected upon the ruins, if any of us are to have a future."
 	strength = 20
 	taste_description = "freedom from want"
-	
+
 	glass_icon_state = "insurrenderglass"
 	glass_name = "glass of instrument of surrender"
 	glass_desc = "A good, strong drink must be erected upon the ruins, if any of us are to have a future."
