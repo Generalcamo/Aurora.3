@@ -12,6 +12,16 @@
 	var/base_block_chance = 25
 	var/shield_power = 100
 	var/can_block_bullets = 0
+	/*
+	 * Color vars
+	 */
+	var/l_range = 2
+	var/l_power = 2
+	var/l_color = COLOR_BLUE
+	///Whether the blade can be colored
+	var/colorable = FALSE
+	///Whether the blade is currently set to have random colors
+	var/rainbow = FALSE
 	item_icons = list(
 		slot_l_hand_str = 'icons/mob/items/weapons/lefthand_energy.dmi',
 		slot_r_hand_str = 'icons/mob/items/weapons/righthand_energy.dmi'
@@ -20,31 +30,37 @@
 /obj/item/melee/energy/proc/activate(mob/living/user)
 	if(active)
 		return
-	active = 1
+	active = TRUE
 	force = active_force
 	throwforce = active_throwforce
 	sharp = 1
 	edge = TRUE
 	w_class = active_w_class
-	playsound(user, 'sound/weapons/saberon.ogg', 50, 1)
+	playsound(user, 'sound/weapons/saberon.ogg', 35, TRUE)
+	balloon_alert(user, "[name] enabled")
+	update_icon()
+	set_light(l_range, l_power, l_color)
 
 /obj/item/melee/energy/proc/deactivate(mob/living/user)
 	if(!active)
 		return
-	playsound(user, 'sound/weapons/saberoff.ogg', 50, 1)
-	active = 0
+	playsound(user, 'sound/weapons/saberoff.ogg', 35, TRUE)
+	balloon_alert(user, "[name] disabled")
+	active = FALSE
 	force = initial(force)
 	throwforce = initial(throwforce)
 	sharp = initial(sharp)
 	edge = initial(edge)
 	w_class = initial(w_class)
+	update_icon()
+	set_light(0, 0)
 
 /obj/item/melee/energy/dropped(var/mob/user)
 	..()
 	if(!istype(loc,/mob))
 		deactivate(user)
 
-/obj/item/melee/energy/attack_self(mob/living/user as mob)
+/obj/item/melee/energy/attack_self(mob/living/user)
 	if(active)
 		if ((user.is_clumsy()) && prob(50))
 			user.visible_message("<span class='danger'>\The [user] accidentally cuts [user.get_pronoun("himself")] with \the [src].</span>",\
@@ -226,7 +242,9 @@
 	desc_antag = "The energy sword is a very strong melee weapon, capable of severing limbs easily, if they are targeted.  It can also has a chance \
 	to block projectiles and melee attacks while it is on and being held.  The sword can be toggled on or off by using it in your hand.  While it is off, \
 	it can be concealed in your pocket or bag."
-	icon_state = "sword0"
+	icon = 'icons/obj/item/melee/esword.dmi'
+	icon_state = "esword"
+	item_state = "esword"
 	active_force = 30
 	armor_penetration = 25
 	active_throwforce = 20
@@ -240,37 +258,52 @@
 	origin_tech = list(TECH_MAGNET = 3, TECH_ILLEGAL = 4)
 	sharp = 1
 	edge = TRUE
-	var/blade_color
 	shield_power = 75
-
-/obj/item/melee/energy/sword/New()
-	blade_color = pick("red","blue","green","purple")
+	colorable = TRUE
+	contained_sprite = TRUE
+	build_from_parts = TRUE
+	worn_overlay = "blade"
+	l_color = COLOR_BLUE
 
 /obj/item/melee/energy/sword/green/New()
-	blade_color = "green"
+	l_color = COLOR_GREEN
+	colorable = FALSE
 
 /obj/item/melee/energy/sword/red/New()
-	blade_color = "red"
+	l_color = COLOR_RED
+	colorable = FALSE
 
 /obj/item/melee/energy/sword/blue/New()
-	blade_color = "blue"
+	l_color = COLOR_BLUE
+	colorable = FALSE
 
 /obj/item/melee/energy/sword/purple/New()
-	blade_color = "purple"
+	l_color = COLOR_PURPLE
+	colorable = FALSE
+
+/obj/item/melee/energy/sword/update_icon()
+	cut_overlays()
+	if(active)
+		var/mutable_appearance/blade = mutable_appearance(icon, "[initial(icon_state)]_[worn_overlay]", EFFECTS_ABOVE_LIGHTING_LAYER)
+		blade.color = l_color
+		add_overlay(blade)
+	..()
 
 /obj/item/melee/energy/sword/activate(mob/living/user)
-	if(!active)
-		to_chat(user, "<span class='notice'>\The [src] is now energised.</span>")
+	if(rainbow)
+		worn_overlay = "blade_rainbow"
+		worn_overlay_color = "#FFFFFF"
+	else
+		worn_overlay = "blade"
+		worn_overlay_color = l_color
 	..()
 	attack_verb = list("attacked", "slashed", "stabbed", "sliced", "torn", "ripped", "diced", "cut")
-	icon_state = "sword[blade_color]"
 
 /obj/item/melee/energy/sword/deactivate(mob/living/user)
-	if(active)
-		to_chat(user, "<span class='notice'>\The [src] deactivates!</span>")
+	worn_overlay = initial(worn_overlay)
+	worn_overlay_color = initial(worn_overlay_color)
 	..()
 	attack_verb = list()
-	icon_state = initial(icon_state)
 
 /obj/item/melee/energy/sword/pirate
 	name = "energy cutlass"
