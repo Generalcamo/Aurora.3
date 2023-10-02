@@ -608,15 +608,15 @@ Turf and target are seperate in case you want to teleport some distance from a t
  * * extra_checks: Optional extra checks, that uses a callback. See [datum/callback].
  *
  */
-/proc/do_after(mob/user, delay, atom/target, do_flags = DO_DEFAULT, incapacitation_flags = INCAPACITATION_DEFAULT, datum/callback/extra_checks)
-	return !do_after_detailed(user, delay, target, do_flags, incapacitation_flags)
+/proc/do_after(mob/user, delay, atom/target, do_flags = DO_DEFAULT, incapacitation_flags = INCAPACITATION_DEFAULT, prog_bar = PROGRESS_GENERIC, datum/callback/extra_checks)
+	return !do_after_detailed(user, delay, target, do_flags, prog_bar, incapacitation_flags)
 
 /**
  * See [/proc/do_after]
  * Returns the exact error, defined in [mobs.dm] for custom error messages.
  * Overlaps with do_flags, with some extra error messages available.
  */
-/proc/do_after_detailed(mob/user, delay, atom/target, do_flags = DO_DEFAULT, incapacitation_flags = INCAPACITATION_DEFAULT, datum/callback/extra_checks)
+/proc/do_after_detailed(mob/user, delay, atom/target, do_flags = DO_DEFAULT, prog_bar = PROGRESS_GENERIC, incapacitation_flags = INCAPACITATION_DEFAULT, datum/callback/extra_checks)
 	if(!delay)
 		return FALSE
 
@@ -656,7 +656,7 @@ Turf and target are seperate in case you want to teleport some distance from a t
 
 	var/datum/progressbar/progbar
 	if (HAS_FLAG(do_flags, DO_SHOW_PROGRESS) && user.client && (user.client.prefs.toggles_secondary & PROGRESS_BARS))
-		progbar = new(user, delay, target || user)
+		progbar = prog_bar ? new prog_bar(user, delay, target || user, HAS_FLAG(do_flags, DO_PUBLIC_PROGRESS)) : null
 
 	SEND_SIGNAL(user, COMSIG_DO_AFTER_BEGAN)
 

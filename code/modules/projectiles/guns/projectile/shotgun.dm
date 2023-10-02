@@ -63,6 +63,8 @@
 	var/recentpump = 0 // to prevent spammage
 	var/rack_sound = /singleton/sound_category/shotgun_pump
 	var/rack_verb = "pump"
+	var/rack_delay = 0.2 SECONDS
+	var/unwielded_rack_delay = 4 SECONDS
 	///Whether the item icon has a cycling animation
 	var/cycle_anim = TRUE
 
@@ -80,9 +82,11 @@
 		recentpump = world.time
 
 /obj/item/gun/projectile/shotgun/pump/proc/pump(mob/M)
+	var/pump_delay = rack_delay
 	if(!wielded)
-		if(!do_after(M, 2 SECONDS)) // have to stand still for 2 seconds instead of doing it instantly. bad idea during a shootout
-			return
+		pump_delay = unwielded_rack_delay
+	if(!do_after(M, pump_delay, prog_bar = PROGRESS_CLOCK)) // have to stand still for 2 seconds instead of doing it instantly. bad idea during a shootout
+		return
 
 	playsound(M, rack_sound, 60, FALSE)
 	to_chat(M, SPAN_NOTICE("You [rack_verb] \the [src]!"))

@@ -83,6 +83,7 @@
 #include "code\__defines\pipes.dm"
 #include "code\__defines\procpath.dm"
 #include "code\__defines\profiler_tracy.dm"
+#include "code\__defines\progress_display.dm"
 #include "code\__defines\projectiles.dm"
 #include "code\__defines\psi.dm"
 #include "code\__defines\qdel.dm"
