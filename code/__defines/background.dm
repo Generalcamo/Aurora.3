@@ -35,6 +35,7 @@
 #define RELIGION_SHINTO "Shinto"
 #define RELIGION_MOROZ "Moroz Holy Tribunal"
 #define RELIGION_TRINARY "Trinary Perfection"
+#define RELIGION_EXCLUSION "Exclusionist"
 #define RELIGION_SCARAB "Scarab Folk Beliefs"
 #define RELIGION_TAOISM "Taoism"
 #define RELIGION_LUCEISM "Luceism"

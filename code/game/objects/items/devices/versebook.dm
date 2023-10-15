@@ -94,6 +94,17 @@
 	. = ..()
 	randomquip = file2list("ingame_manuals/templeist.txt")
 
+/obj/item/device/versebook/exclusionist
+	name = "\improper The Order (exclusionary version)"
+	desc = "The holy text of the Trinary Perfection, modified to remove parts written in Encoded Orepit Liturgical considered \"tampered\" by false Archivists in Mendell City."
+	desc_extended = "This book contains some verses of the core beliefs of the Trinary Perfection, including some of the original works by the Corkfells, and some additions by the prophet-like figure Flock. Parts written by the false Ecclesiarch ARM-1DRIL have been removed, along with parts written in Encoded Orepit Liturgical. This is the abridged version, with only the core beliefs present."
+	icon_state = "exclusionistbook"
+	item_state = "book1"
+
+/obj/item/device/versebook/exclusionist/Initialize()
+	. = ..()
+	randomquip = file2list("ingame_manuals/exclusionist.txt")
+
 /obj/item/device/versebook/siakh
 	name = "\improper Writings of Judizah Si'akh"
 	desc = "A collection of musings, commands and theological discussions, copied many times over from the alleged words of the controversial prophet Judizah Si'akh himself."
