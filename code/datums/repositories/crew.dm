@@ -12,13 +12,16 @@ var/global/datum/repository/crew/crew_repository = new()
 
 /datum/repository/crew
 	var/list/cache_data
+	var/list/cache_data_alert
 
 /datum/repository/crew/New()
 	cache_data = list()
+	cache_data_alert = list()
 	..()
 
 /datum/repository/crew/proc/health_data(var/z_level)
 	var/list/crewmembers = list()
+	var/send_alert = FALSE
 	if(!z_level)
 		return crewmembers
 
@@ -30,6 +33,7 @@ var/global/datum/repository/crew/crew_repository = new()
 	if(world.time < cache_entry.timestamp)
 		return cache_entry.data
 
+	cache_data_alert[num2text(z_level)] = FALSE
 	var/tracked = scan()
 	for(var/t in tracked)
 		var/obj/item/clothing/under/C = t
@@ -68,6 +72,8 @@ var/global/datum/repository/crew/crew_repository = new()
 					crewmemberData["oxyg"] = OXYGENATION_STATE_UNDEFINED
 					if(!H.isSynthetic() && H.should_have_organ(BP_HEART))
 						crewmemberData["tpressure"] = H.get_blood_pressure_alert()
+						if(crewmemberData["tpressure"] == BLOOD_PRESSURE_LOW || crewmemberData["tpressure"] == BLOOD_PRESSURE_HIGH)
+							send_alert = TRUE
 						crewmemberData["pressure"] = H.get_blood_pressure()
 						crewmemberData["toxyg"] = H.get_blood_oxygenation()
 						switch (crewmemberData["toxyg"])
@@ -77,10 +83,13 @@ var/global/datum/repository/crew/crew_repository = new()
 								crewmemberData["oxyg"] = OXYGENATION_STATE_NORMAL
 							if(BLOOD_VOLUME_OKAY to BLOOD_VOLUME_SAFE)
 								crewmemberData["oxyg"] = OXYGENATION_STATE_LOW
+								send_alert = TRUE
 							if(BLOOD_VOLUME_BAD to BLOOD_VOLUME_OKAY)
 								crewmemberData["oxyg"] = OXYGENATION_STATE_VERY_LOW
+								send_alert = TRUE
 							if(-(INFINITY) to BLOOD_VOLUME_BAD)
 								crewmemberData["oxyg"] = OXYGENATION_STATE_NONE
+								send_alert = TRUE
 
 					crewmemberData["bodytemp"] = H.bodytemperature - T0C + (rand(-5, 5) / 10)
 
@@ -91,6 +100,9 @@ var/global/datum/repository/crew/crew_repository = new()
 					crewmemberData["y"] = pos.y
 					crewmemberData["z"] = pos.z
 
+				if(send_alert)
+					cache_data_alert[num2text(z_level)] = TRUE
+					send_alert = FALSE
 				crewmembers += list(crewmemberData)
 
 	crewmembers = sortByKey(crewmembers, "name")
@@ -98,6 +110,13 @@ var/global/datum/repository/crew/crew_repository = new()
 	cache_entry.data = crewmembers
 
 	return crewmembers
+
+/datum/repository/crew/proc/has_health_alert(z_level)
+	. = FALSE
+	if(!z_level)
+		return
+	health_data(z_level) // Make sure cache doesn't get stale
+	. = cache_data_alert[num2text(z_level)]
 
 /datum/repository/crew/proc/scan()
 	var/list/tracked = list()

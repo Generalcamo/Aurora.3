@@ -13,6 +13,7 @@
 	color = LIGHT_COLOR_CYAN
 	tgui_id = "SuitSensors"
 	tgui_theme = "zenghu"
+	var/beeping = FALSE
 
 /datum/computer_file/program/suit_sensors/ui_data(mob/user)
 	var/list/data = list()
@@ -42,3 +43,12 @@
 			var/mob/living/carbon/human/H = locate(params["track"]) in mob_list
 			if(hassensorlevel(H, SUIT_SENSOR_TRACKING))
 				AI.ai_actual_track(H)
+
+/datum/computer_file/program/suit_sensors/process_tick()
+	..()
+
+	if(!has_alert)
+
+/datum/computer_file/program/suit_sensors/proc/ShouldAlert()
+	for(var/z_level in current_map.map_levels)
+		if(crew_repository.has_health)
