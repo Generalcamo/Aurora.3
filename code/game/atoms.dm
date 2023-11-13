@@ -1,5 +1,6 @@
 /atom
 	layer = 2
+	/// Integer. The atom's layering level. Primarily used for determining whether the atom is visible or not on certain tile/flooring types/layers (I.e. plating and non-plating).
 	var/level = 2
 	var/flags = 0
 	var/init_flags = 0
@@ -30,10 +31,15 @@
 
 	var/gfi_layer_rotation = GFI_ROTATION_DEFAULT
 
-	// Extra descriptions.
-	var/desc_extended = null // Regular text about the atom's extended description, if any exists.
-	var/desc_info = null // Blue text (SPAN_NOTICE()), informing the user about how to use the item or about game controls.
-	var/desc_antag = null // Red text (SPAN_ALERT()), informing the user about how they can use an object to antagonize.
+/*
+ * Extra descriptions
+ */
+	/// Regular text about the atom's extended description, if any exists.
+	var/desc_extended = null
+	/// Blue text (SPAN_NOTICE()), informing the user about how to use the item or about game controls.
+	var/desc_info = null
+	/// Red text (SPAN_ALERT()), informing the user about how they can use an object to antagonize.
+	var/desc_antag = null
 
 /atom/proc/reveal_blood()
 	return
