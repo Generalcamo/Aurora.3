@@ -43,7 +43,7 @@
 	holomap_datum = new()
 	original_zLevel = loc.z
 	SSholomap.station_holomaps += src
-	flags |= ON_BORDER // Why? It doesn't help if its not density
+	atom_flags |= ATOM_FLAG_CHECKS_BORDER // Why? It doesn't help if its not density
 	bogus = FALSE
 	var/turf/T = get_turf(src)
 	original_zLevel = T.z
