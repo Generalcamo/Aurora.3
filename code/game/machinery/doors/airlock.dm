@@ -311,19 +311,19 @@
 
 /obj/machinery/door/airlock/command
 	icon_state = "cmd"
-	door_color = "#353c4b"
+	door_color = COLOR_COMMAND_BLUE
 
 /obj/machinery/door/airlock/command/gold
 	icon_state = "cmdgold"
 	paintable = AIRLOCK_PAINTABLE_MAIN | AIRLOCK_PAINTABLE_STRIPE
-	door_color = "#475057"
-	stripe_color = "#ffc443"
+	door_color = COLOR_COMMAND_BLUE
+	stripe_color = COLOR_COMMAND_GOLD
 
 /obj/machinery/door/airlock/security
 	icon_state = "sec"
 	paintable = AIRLOCK_PAINTABLE_MAIN | AIRLOCK_PAINTABLE_STRIPE
-	door_color = "#2b4b68"
-	stripe_color = "#ff4343"
+	door_color = COLOR_SECURITY_BLUE
+	stripe_color = COLOR_SECURITY_RED
 
 /obj/machinery/door/airlock/security/gold
 	icon_state = "sec"

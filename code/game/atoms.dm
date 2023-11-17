@@ -752,3 +752,15 @@
 /atom/proc/clear_bulletholes()
 	for(var/obj/effect/overlay/bmark/bullet_mark in src)
 		qdel(bullet_mark)
+
+/**
+ * Returns the atom's current color or white if it has no color.
+ */
+/atom/proc/get_color()
+	return isnull(color) ? COLOR_WHITE : color
+
+/**
+ * Handler for setting the atom's color.
+ */
+/atom/proc/set_color(color)
+	src.color = color

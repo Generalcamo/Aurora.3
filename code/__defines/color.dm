@@ -68,7 +68,6 @@
 #define COLOR_PAKISTAN_GREEN   "#006600"
 #define COLOR_HULL             "#436b8e"
 #define COLOR_AMBER            "#ffbf00"
-#define COLOR_COMMAND_BLUE     "#46698c"
 #define COLOR_SKY_BLUE         "#5ca1cc"
 #define COLOR_PALE_ORANGE      "#b88a3b"
 #define COLOR_CIVIE_GREEN      "#b7f27d"
@@ -154,5 +153,19 @@
 #define BLOB_COLOR_SHIELD       "#9ed659"
 #define BLOB_COLOR_RAV          "#d65f42"
 #define BLOB_COLOR_PULS         "#b5ff5b"
+
+// Department Colours
+#define COLOR_COMMAND_BLUE "#353c4b"
+#define COLOR_COMMAND_GOLD "#ffc443"
+#define COLOR_SECURITY_BLUE "#2b4b68"
+#define COLOR_SECURITY_RED "#ff4343"
+#define COLOR_RESEARCH_PURPLE "#e943ff"
+#define COLOR_OPERATIONS_ORANGE "#956F30"
+#define COLOR_OPERATIONS_BROWN "#5E340B"
+#define COLOR_ENGINEERING_YELLOW "#caa638"
+#define COLOR_ENGINEERING_ORANGE "#ff7f43"
+#define COLOR_ATMOSPHERICS_GREEN "#62ff43"
+#define COLOR_MEDICAL_GREEN "#345731"
+#define COLOR_SERVICE_GREEN "#6f8751"
 
 #define RANDOM_RGB rgb(rand(0,255), rand(0,255), rand(0,255))

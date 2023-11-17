@@ -13,6 +13,7 @@
 	icon_state = "backbone"
 	density = 1
 	pixel_x = -8
+	atom_flags = ATOM_FLAG_CAN_BE_PAINTED
 
 	// Holders for the final product.
 	var/obj/item/mech_component/manipulators/arms
@@ -24,10 +25,10 @@
 	var/set_name
 	dir = SOUTH
 
-/obj/structure/heavy_vehicle_frame/proc/set_colour(var/new_colour)
+/obj/structure/heavy_vehicle_frame/set_color(var/new_colour)
 	var/painted_component = FALSE
 	for(var/obj/item/mech_component/comp in list(body, arms, legs, head))
-		if(comp.set_colour(new_colour))
+		if(comp.set_color(new_colour))
 			painted_component = TRUE
 	if(painted_component)
 		update_icon()

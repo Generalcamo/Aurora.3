@@ -1,4 +1,3 @@
-
 #define AIRLOCK_REGION_PAINT    "Paint"
 #define AIRLOCK_REGION_STRIPE   "Stripe"
 #define AIRLOCK_REGION_WINDOW   "Window"
@@ -13,7 +12,8 @@
 	contained_sprite = TRUE
 	var/decal =        "remove all decals"
 	var/paint_dir =    "precise"
-	var/paint_colour = COLOR_WHITE
+	var/paint_color = COLOR_WHITE
+	var/color_picker = FALSE
 
 	var/list/decals = list(
 		"quarter-turf" =      list("path" = /obj/effect/floor_decal/corner, "precise" = 1, "coloured" = 1),
@@ -55,6 +55,9 @@
 		"blue" =           COLOR_BLUE_GRAY,
 		"civvie green" =   COLOR_CIVIE_GREEN,
 		"command blue" =   COLOR_COMMAND_BLUE,
+		"command gold" =   COLOR_COMMAND_GOLD,
+		"security blue"=   COLOR_SECURITY_BLUE,
+		"security red" =   COLOR_SECURITY_RED,
 		"cyan" =           COLOR_CYAN,
 		"green" =          COLOR_GREEN,
 		"bottle green" =   COLOR_PALE_BTL_GREEN,
@@ -72,47 +75,53 @@
 		"bulkhead black" = COLOR_WALL_GUNMETAL
 		)
 
-/obj/item/device/paint_sprayer/afterattack(var/atom/A, var/mob/user, proximity, params)
+/obj/item/device/paint_sprayer/afterattack(atom/A, mob/user, proximity, params)
 	if(!proximity)
 		return
 
-	var/mob/living/heavy_vehicle/ES = A
-	if(istype(ES))
-		to_chat(user, "<span class='warning'>You can't paint an active exosuit. Dismantle it first.</span>")
-		return
+	add_fingerprint(user)
 
-	var/obj/structure/heavy_vehicle_frame/EF = A
-	if(istype(EF))
+	if(color_picker)
+		var/new_color
+		if(istype(A, /turf/simulated/floor))
+			new_color = pick_color_from_floor(A, user)
+		else if(istype(A, /obj/machinery/door/airlock))
+			new_color = pick_color_from_airlock(A, user)
+		else
+			new_color = A.get_color()
+		change_color(new_color, user)
+
+	else if(A.atom_flags & ATOM_FLAG_CAN_BE_PAINTED)
+		A.set_color(paint_color)
+		. = TRUE
+
+	else if(istype(A, /turf/simulated/floor))
+		. = paint_floor(A, user, params)
+
+	else if(istype(A, /obj/machinery/door/airlock))
+		. = paint_airlock(A, user)
+
+	else if(istype(A, /mob/living/heavy_vehicle))
+		FEEDBACK_FAILURE(user, "You can't paint an active exosuit. Dismantle it first.")
+		. = FALSE
+
+	else
+		FEEDBACK_FAILURE(user, "\The [src] can only be used on floors, walls, exosuits, or certain airlocks.")
+
+	if (.)
 		playsound(get_turf(src), 'sound/effects/spray3.ogg', 30, 1, -6)
-		EF.set_colour(paint_colour)
-		return
-
-	var/obj/item/mech_component/MC = A
-	if(istype(MC))
-		playsound(get_turf(src), 'sound/effects/spray3.ogg', 30, 1, -6)
-		MC.set_colour(paint_colour)
-		return
-
-	var/obj/structure/bed/B = A
-	if(istype(B))
-		playsound(get_turf(src), 'sound/effects/spray3.ogg', 30, 1, -6)
-		B.set_colour(paint_colour)
-		B.update_icon()
-		return
-
-	else if (istype(A, /obj/machinery/door/airlock))
-		return paint_airlock(A, user)
-
-	else if (istype(A, /turf/simulated/floor))
-		return paint_floor(A, user, params)
+	return .
 
 /obj/item/device/paint_sprayer/proc/paint_floor(turf/simulated/floor/F, mob/user, params)
+	if(!F.flooring)
+		FEEDBACK_FAILURE(user, "You need flooring to paint on.")
+
 	if(!F.flooring.can_paint)
-		to_chat(user, SPAN_WARNING("\The [src] cannot paint this type of flooring."))
+		FEEDBACK_FAILURE(user, "\The [src] cannot paint \the [F.name].")
 		return
 
-	if(!F.flooring || F.broken || F.burnt)
-		to_chat(user, SPAN_WARNING("\The [src] cannot paint damaged or missing tiles."))
+	if(F.broken || F.burnt)
+		FEEDBACK_FAILURE(user, "\The [src] cannot paint damaged or missing tiles.")
 		return
 
 	var/list/decal_data = decals[decal]
@@ -157,28 +166,28 @@
 	else if(paint_dirs[paint_dir])
 		painting_dir = paint_dirs[paint_dir]
 
-	var/painting_colour
-	if(decal_data["coloured"] && paint_colour)
-		painting_colour = paint_colour
+	var/paintint_color
+	if(decal_data["coloured"] && paint_color)
+		paintint_color = paint_color
 
 	playsound(get_turf(src), 'sound/effects/spray3.ogg', 30, 1, -6)
-	new painting_decal(F, painting_dir, painting_colour)
+	new painting_decal(F, painting_dir, paintint_color)
 
 /obj/item/device/paint_sprayer/attack_self(var/mob/user)
-	var/choice = tgui_alert(user, "Do you wish to change the decal type, paint direction, or paint colour?", "Paint Sprayer", list("Decal","Direction", "Colour"))
+	var/choice = tgui_alert(user, "Do you wish to change the decal type, paint direction, or paint color?", "Paint Sprayer", list("Decal","Direction", "Colour"))
 	if(choice == "Decal")
 		choose_decal()
 	else if(choice == "Direction")
 		choose_direction()
-	else if(choice == "Colour")
+	else if(choice == "Color")
 		choose_colour()
 
-/obj/item/device/paint_sprayer/proc/change_colour(new_colour, mob/user)
+/obj/item/device/paint_sprayer/proc/change_color(new_colour, mob/user)
 	if (new_colour)
-		paint_colour = new_colour
+		paint_color = new_colour
 		if (user)
 			add_fingerprint(user)
-			to_chat(user, SPAN_NOTICE("You set \the [src] to paint with <span style='color:[paint_colour]'>a new color</span>."))
+			to_chat(user, SPAN_NOTICE("You set \the [src] to paint with <span style='color:[paint_color]'>a new color</span>."))
 		update_icon()
 		playsound(src, 'sound/weapons/blade_open.ogg', 30, 1)
 		return TRUE
@@ -206,7 +215,7 @@
 		new_color = pick_color_from_floor(A, user)
 	else if (istype(A, /obj/machinery/door/airlock))
 		new_color = pick_color_from_airlock(A, user)
-	if (!change_colour(new_color, user))
+	if (!change_color(new_color, user))
 		to_chat(user, SPAN_WARNING("\The [A] does not have a colour that you could pick from."))
 	return TRUE // There was an attempt to pick a color.
 
@@ -245,11 +254,11 @@
 
 	switch (select_airlock_region(D, user, "What do you wish to paint?"))
 		if (AIRLOCK_REGION_PAINT)
-			D.paint_airlock(paint_colour)
+			D.paint_airlock(paint_color)
 		if (AIRLOCK_REGION_STRIPE)
-			D.stripe_airlock(paint_colour)
+			D.stripe_airlock(paint_color)
 		if (AIRLOCK_REGION_WINDOW)
-			D.paint_window(paint_colour)
+			D.paint_window(paint_color)
 		else
 			return FALSE
 	return TRUE
@@ -291,7 +300,7 @@
 
 /obj/item/device/paint_sprayer/examine(mob/user)
 	. = ..()
-	to_chat(user, "It is configured to produce the '[decal]' decal with a direction of '[paint_dir]' using [paint_colour] paint.")
+	to_chat(user, "It is configured to produce the '[decal]' decal with a direction of '[paint_dir]' using [paint_color] paint.")
 
 /obj/item/device/paint_sprayer/verb/choose_colour()
 	set name = "Choose Colour"
@@ -301,8 +310,8 @@
 
 	if(usr.incapacitated())
 		return
-	var/new_colour = input(usr, "Choose a colour.", "Paint Sprayer", paint_colour) as color|null
-	change_colour(new_colour, usr)
+	var/new_colour = input(usr, "Choose a colour.", "Paint Sprayer", paint_color) as color|null
+	change_color(new_colour, usr)
 
 /obj/item/device/paint_sprayer/verb/choose_preset_colour()
 	set name = "Choose Preset Colour"
@@ -312,10 +321,10 @@
 
 	if(usr.incapacitated())
 		return
-	var/new_colour = input(usr, "Choose a colour.", "paintgun", paint_colour) as null|anything in preset_colors
-	if(new_colour && new_colour != paint_colour)
-		paint_colour = preset_colors[new_colour]
-		to_chat(usr, "<span class='notice'>You set \the [src] to paint with <font color='[paint_colour]'>a new colour</font>.</span>")
+	var/new_colour = input(usr, "Choose a colour.", "Paint Sprayer", paint_color) as null|anything in preset_colors
+	if(new_colour && new_colour != paint_color)
+		paint_color = preset_colors[new_colour]
+		to_chat(usr, "<span class='notice'>You set \the [src] to paint with <font color='[paint_color]'>a new color</font>.</span>")
 
 /obj/item/device/paint_sprayer/verb/choose_decal()
 	set name = "Choose Decal"
@@ -326,7 +335,7 @@
 	if(usr.incapacitated())
 		return
 
-	var/new_decal = tgui_input_list(usr, "Select a decal.", "Paint Sprayer", decals)
+	var/new_decal = tgui_input_list(usr, "Select a decal.", "Paint Sprayer", decals, decal)
 	if(new_decal && !isnull(decals[new_decal]))
 		decal = new_decal
 		to_chat(usr, "<span class='notice'>You set \the [src] decal to '[decal]'.</span>")
@@ -340,7 +349,7 @@
 	if(usr.incapacitated())
 		return
 
-	var/new_dir = tgui_input_list(usr, "Select a direction.", "Paint Sprayer", paint_dirs)
+	var/new_dir = tgui_input_list(usr, "Select a direction.", "Paint Sprayer", paint_dirs, paint_dir)
 	if(new_dir && !isnull(paint_dirs[new_dir]))
 		paint_dir = new_dir
 		to_chat(usr, "<span class='notice'>You set \the [src] direction to '[paint_dir]'.</span>")

@@ -3,6 +3,7 @@
 	w_class = ITEMSIZE_HUGE
 	pixel_x = -8
 	gender = PLURAL
+	atom_flags = ATOM_FLAG_CAN_BE_PAINTED
 	var/on_mech_icon = 'icons/mecha/mech_parts.dmi'
 	var/decal
 	var/exosuit_desc_string
@@ -21,7 +22,7 @@
 	pixel_y = initial(pixel_y)
 	return
 
-/obj/item/mech_component/proc/set_colour(new_colour)
+/obj/item/mech_component/set_color(new_colour)
 	var/last_colour = color
 	color = new_colour
 	return color != last_colour

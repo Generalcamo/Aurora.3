@@ -27,6 +27,7 @@
 	buckle_dir = SOUTH
 	buckle_lying = 1
 	build_amt = 2
+	atom_flags = ATOM_FLAG_CAN_BE_PAINTED
 	var/material/padding_material
 
 	var/base_icon = "bed"
@@ -115,7 +116,7 @@
 		desc = initial(desc)
 		desc += padding_material ? " It's made of [material.use_name] and covered with [padding_material.use_name][painted_colour ? ", colored in <font color='[painted_colour]'>[painted_colour]</font>" : ""]." : " It's made of [material.use_name]." //Yeah plain hex codes suck but at least it's a little funny and less of a headache for players.
 
-/obj/structure/bed/proc/set_colour(new_colour)
+/obj/structure/bed/set_color(new_colour)
 	if(padding_material)
 		var/last_colour = painted_colour
 		painted_colour = new_colour

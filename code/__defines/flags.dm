@@ -38,6 +38,8 @@ var/list/mimic_defines = list(
 #define ATOM_FLAG_POUR_CONTAINER FLAG(5)
 /// Should we use the initial icon for display? Mostly used by overlay only objects
 #define ATOM_FLAG_HTML_USE_INITIAL_ICON FLAG(6)
+/// Can be painted using a paint sprayer or similar
+#define ATOM_FLAG_CAN_BE_PAINTED FLAG(7)
 
 // Movable flags.
 

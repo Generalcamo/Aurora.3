@@ -10,6 +10,7 @@
 	blocks_air = TRUE
 	thermal_conductivity = WALL_HEAT_TRANSFER_COEFFICIENT
 	heat_capacity = 312500 //a little over 5 cm thick , 312500 for 1 m by 2.5 m by 0.25 m plasteel wall
+	atom_flags = ATOM_FLAG_CAN_BE_PAINTED
 	canSmoothWith = list(
 		/turf/simulated/wall,
 		/turf/simulated/wall/r_wall,
@@ -23,7 +24,7 @@
 		/obj/machinery/door,
 		/obj/machinery/door/airlock
 	)
-
+	var/paint_color
 	var/damage = 0
 	var/damage_overlay = 0
 	var/global/damage_overlays[16]
@@ -144,7 +145,8 @@
 			to_chat(user, SPAN_WARNING("It looks moderately damaged."))
 		else
 			to_chat(user, SPAN_DANGER("It looks heavily damaged."))
-
+	if(paint_color)
+		to_chat(user, SPAN_NOTICE("It has a coat of paint applied"))
 	if(locate(/obj/effect/overlay/wallrot) in src)
 		to_chat(user, SPAN_WARNING("There is fungus growing on [src]."))
 
@@ -275,3 +277,10 @@
 
 /turf/simulated/wall/is_wall()
 	return TRUE
+
+/turf/simulated/wall/set_color(paint_color)
+	color = paint_color
+	update_icon()
+
+/turf/simulated/wall/get_color()
+	return color
