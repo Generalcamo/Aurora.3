@@ -471,6 +471,20 @@ It's fairly easy to fix if dealing with single letters but not so much with comp
 			animate(pixel_x =  0 + rand(-(strength), strength), pixel_y = 0 + rand(-(strength), strength), time = TICKS_PER_RECOIL_ANIM, easing = JUMP_EASING|EASE_IN)
 	animate(pixel_x = 0, pixel_y = 0, time = TICKS_PER_RECOIL_ANIM)
 
+///Creates a recoil-like animation on the mob camera.
+/proc/recoil_camera(mob/M, duration, backtime_duration, strength, angle)
+	if(!M?.client)
+		return
+	strength *= world.icon_size
+	var/oldx = M.client.pixel_x
+	var/oldy = M.client.pixel_y
+
+	//get pixels to move the camera in an angle
+	var/mpx = sin(angle) * strength
+	var/mpy = cos(angle) * strength
+	animate(M.client, pixel_x = mpx-oldx, pixel_y = mpy-oldy, time = duration, flags = ANIMATION_RELATIVE)
+	animate(pixel_x = oldx, pixel_y = oldy, time = backtime_duration, easing = BACK_EASING)
+
 /proc/findname(msg)
 	for(var/mob/M in mob_list)
 		if (M.real_name == text("[msg]"))

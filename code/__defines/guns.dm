@@ -19,3 +19,25 @@
 #define RFD_WINDOW_AND_FRAME 2
 #define RFD_AIRLOCK 3
 #define RFD_DECONSTRUCT 4
+
+/**
+ * Caliber Defines
+ */
+
+//Pistol Calibers
+///Generic Solarian Pistol
+#define CALIBER_PISTOL_SOL "9mm"
+///Generic Coalition Pistol
+#define CALIBER_PISTOL_COC "10mm"
+///Service Solarian Pistol
+#define CALIBER_SERVICE_PISTOL_SOL "5.7mm"
+///Service Coalition Pistol (Caseless)
+#define CALIBER_SERVICE_PISTOL_COC "4.6mm Caseless"
+
+//Vintage Calibers
+///Musket
+#define CALIBER_MUSKET "ball"
+///Frontier Rifle
+#define CALIBER_FRONTIER_RIFLE ".40-70 Govt."
+///Frontier Revolver 1
+#define CALIBER_FRONTIER_REVOLVER ".357 Magnum"

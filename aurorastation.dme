@@ -40,6 +40,7 @@
 #include "code\__defines\components.dm"
 #include "code\__defines\construction.dm"
 #include "code\__defines\cooldowns.dm"
+#include "code\__defines\coordinates.dm"
 #include "code\__defines\damage_organs.dm"
 #include "code\__defines\dna.dm"
 #include "code\__defines\documents.dm"

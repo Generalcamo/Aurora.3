@@ -21,7 +21,7 @@
 	fire_sound_text = "blast"
 	recoil = 0
 	suppressed = FALSE
-	muzzle_flash = 3
+	muzzle_flash_lum = 3
 	accuracy = 0   //accuracy is measured in tiles. +1 accuracy means that everything is effectively one tile closer for the purpose of miss chance, -1 means the opposite. launchers are not supported, at the moment.
 	scoped_accuracy = null
 	burst_accuracy = list(0) //allows for different accuracies for each shot in a burst. Applied on top of accuracy

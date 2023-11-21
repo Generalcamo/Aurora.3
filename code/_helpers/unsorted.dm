@@ -70,6 +70,26 @@
 		ty += AM.step_y
 	return SIMPLIFY_DEGREES(arctan(ty - sy, tx - sx))
 
+/proc/Get_Pixel_Angle(dx, dy)
+	var/da = (90 - Atan2(dx, dy))
+	return (da >= 0 ? da : da + 360)
+
+/proc/Get_Angle_With_Scatter(atom/start, atom/end, scatter, x_offset = 16, y_offset = 16)
+	var/end_apx
+	var/end_apy
+	if(isliving(end)) // Center mass
+		end_apx = ABS_COOR(end.x)
+		end_apy = ABS_COOR(end.y)
+	else // Exact pixel
+		end_apx = ABS_COOR_OFFSET(end.x, x_offset)
+		end_apy = ABS_COOR_OFFSET(end.y, y_offset)
+	scatter = (rand(0, min(scatter, 45)) * prob(50) ? 1 : -1) //Up to 45 degrees angle deviation each side
+	. = round((90 - Atan2(end_apx - ABS_COOR(start.x), end_apy - ABS_COOR(start.y))), 1) + scatter
+	if (. < 0)
+		. += 360
+	else if (. >= 360)
+		. -= 360
+
 //Returns location. Returns null if no location was found.
 /proc/get_teleport_loc(turf/location,mob/target,distance = 1, density = 0, errorx = 0, errory = 0, eoffsetx = 0, eoffsety = 0)
 /*

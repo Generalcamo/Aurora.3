@@ -80,4 +80,8 @@
 /// updates sprites
 #define COMSIG_ITEM_ICON_UPDATE "icon_update"
 
+// /obj/item/weapon/gun signals
+#define COMSIG_GUN_USER_UNSET "gun_user_unset"
+#define COMSIG_GUN_USER_SET "gun_user_set"
+
 /*******Component Specific Signals*******/

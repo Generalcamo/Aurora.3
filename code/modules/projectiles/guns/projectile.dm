@@ -16,6 +16,8 @@
 	var/ammo_type = null		//the type of ammo that the gun comes preloaded with
 	var/list/loaded = list()	//stored ammo
 
+	var/click_on_low_ammo = TRUE
+
 	//For MAGAZINE guns
 	var/magazine_type = null	//the type of magazine that the gun comes preloaded with
 	var/obj/item/ammo_magazine/ammo_magazine = null //stored magazine
@@ -95,6 +97,18 @@
 /obj/item/gun/projectile/handle_click_empty()
 	..()
 	process_chambered()
+
+/obj/item/gun/projectile/play_fire_sound()
+	..()
+	var/max_ammo = ammo_magazine?.max_ammo
+	var/current_ammo = get_ammo()
+	var/frequency_to_use = sin((90 / max_ammo) * current_ammo)
+	var/play_click = round(sqrt(max_ammo * 2)) > current_ammo
+	var/volume = suppressed ? suppressed_volume : fire_sound_volume
+	var/falloff = suppressed ? 0.5 : 1.0
+	var/is_global = suppressed ? TRUE : FALSE
+	if(play_click && click_on_low_ammo)
+		playsound(loc, 'sound/weapons/ballistic_empty_click.wav', volume, vary_fire_sound, falloff = falloff, is_global = is_global, frequency = frequency_to_use)
 
 /obj/item/gun/projectile/special_check(var/mob/user)
 	if(!..())

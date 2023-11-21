@@ -207,7 +207,7 @@
 	sel_mode = 1
 	fire_delay = 10
 	accuracy = 20
-	muzzle_flash = 10
+	muzzle_flash_lum = 10
 
 #define GATLINGLASER_DISPERSION_CONCENTRATED list(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 #define GATLINGLASER_DISPERSION_SPRAY list(0, 5, 5, 10, 10, 15, 15, 20, 20, 25, 25, 25, 30, 30, 35, 40)
@@ -482,7 +482,7 @@
 	sel_mode = 1
 	fire_delay = 10
 	accuracy = 80
-	muzzle_flash = 15
+	muzzle_flash_lum = 15
 
 /obj/item/gun/energy/tesla/mounted
 	name = "mounted tesla carbine"
@@ -508,4 +508,4 @@
 	sel_mode = 1
 	fire_delay = 20
 	accuracy = 40
-	muzzle_flash = 10
+	muzzle_flash_lum = 10

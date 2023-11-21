@@ -100,14 +100,32 @@
 	drop_sound = 'sound/items/drop/gun.ogg'
 	pickup_sound = 'sound/items/pickup/gun.ogg'
 
+/*
+ * Muzzle Vars
+ */
+	///Brightness of the muzzle flash effect
+	var/muzzle_flash_lum = 3
+	///Color of the muzzle flash effect
+	var/muzzle_flash_color = COLOR_MUZZLE_FLASH
+
+/*
+ * Stat Vars
+ */
 	var/burst = 1
 	var/can_autofire = FALSE
 	var/fire_delay = 6 	//delay after shooting before the gun can be used again
 	var/burst_delay = 1	//delay between shots, if firing in bursts
 	var/move_delay = 0
 
-	var/recoil = 0		//screen shake
-	var/muzzle_flash = 3
+	///Screenshake when the weapon is fired while unwielded
+	var/recoil = 0
+	///Screenshake when the weapon is fired while wielded
+	var/recoil_wielded = 0
+	///A multiplier of the duration the recoil takes to go back to normal view
+	var/recoil_backtime_modifier = 2
+	///This is how much deviation the gun recoil can have, recoil pushes the screen towards the reverse angle you shot + some deviation which this is the max
+	var/recoil_deviation = 22.5
+
 	var/accuracy = 0   //accuracy is measured in tiles. +1 accuracy means that everything is effectively one tile closer for the purpose of miss chance, -1 means the opposite. launchers are not supported, at the moment.
 	var/offhand_accuracy = 0 // the higher this number, the more accurate this weapon is when fired from the off-hand
 	var/scoped_accuracy = null
@@ -138,7 +156,6 @@
 
 	//wielding information
 	var/fire_delay_wielded = 0
-	var/recoil_wielded = 0
 	var/accuracy_wielded = 0
 	var/wielded = 0
 	var/needspin = TRUE
@@ -155,6 +172,8 @@
 	var/safety_state = TRUE
 	var/has_safety = TRUE
 	var/image/safety_overlay
+	///The mob holding the gun
+	var/mob/living/gun_user
 
 	var/iff_capable = FALSE // if true, applies the user's ID iff_faction to the projectile
 
@@ -221,6 +240,26 @@
 		if(istype(O))
 			O.unwield()
 	return ..()
+
+/obj/item/gun/proc/set_gun_user(mob/user)
+	if(user == gun_user)
+		return
+	if(gun_user)
+		UnregisterSignal(gun_user, list(COMSIG_PARENT_QDELETING))
+		SEND_SIGNAL(gun_user, COMSIG_GUN_USER_UNSET)
+		gun_user = null
+
+	if(!user)
+		return
+	gun_user = user
+	SEND_SIGNAL(gun_user, COMSIG_GUN_USER_SET)
+	RegisterSignal(gun_user, COMSIG_PARENT_QDELETING, PROC_REF(clean_gun_user))
+
+
+///Null out gun user to prevent hard del
+/obj/item/gun/proc/clean_gun_user()
+	SIGNAL_HANDLER
+	set_gun_user(null)
 
 /obj/item/gun/proc/unique_action(var/mob/user)
 	return
@@ -437,8 +476,8 @@
 
 			handle_post_fire() // should be safe to not include arguments here, as there are failsafes in effect (?)
 
-			if (muzzle_flash)
-				set_light(muzzle_flash)
+			if (muzzle_flash_lum)
+				set_light(muzzle_flash_lum, l_color = muzzle_flash_color)
 				addtimer(CALLBACK(src, TYPE_PROC_REF(/atom, set_light), 0), 2, TIMER_UNIQUE | TIMER_OVERRIDE)
 			update_icon()
 
@@ -488,8 +527,8 @@
 					"You hear a [fire_sound_text]!"
 				)
 
-		if(muzzle_flash)
-			set_light(muzzle_flash)
+		if(muzzle_flash_lum)
+			set_light(muzzle_flash_lum, l_color = muzzle_flash_color)
 			addtimer(CALLBACK(src, TYPE_PROC_REF(/atom, set_light), 0), 2)
 
 	if(recoil)
@@ -502,6 +541,19 @@
 			for(var/obj/item/rig_module/stealth_field/S in R.installed_modules)
 				S.deactivate()
 	update_icon()
+
+/obj/item/gun/proc/simulate_recoil(recoil_bonus = 0, firing_angle)
+	if(!gun_user)
+		return TRUE
+	var/total_recoil = recoil_bonus
+	total_recoil += recoil
+
+	var/actual_angle = firing_angle + rand(-recoil_deviation, recoil_deviation) + 180
+	if(actual_angle > 360)
+		actual_angle -= 360
+	if(total_recoil > 0)
+		recoil_camera(gun_user, total_recoil + 1, (total_recoil * recoil_backtime_modifier)+1, total_recoil, actual_angle)
+		return TRUE
 
 /obj/item/gun/proc/play_fire_sound()
 	if(suppressed)
@@ -904,6 +956,7 @@
 		QDEL_NULL(bayonet)
 	if(istype(suppressor))
 		QDEL_NULL(suppressor)
+	set_gun_user(null)
 	return ..()
 
 

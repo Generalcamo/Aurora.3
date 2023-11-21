@@ -160,7 +160,7 @@
 	accuracy = -3
 	scoped_accuracy = 4
 	bolt_open = 0
-	muzzle_flash = 1
+	muzzle_flash_lum = 1
 
 	recoil_wielded = 1
 	accuracy_wielded = 2
