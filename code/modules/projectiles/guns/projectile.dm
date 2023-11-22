@@ -22,6 +22,17 @@
 	var/list/allowed_magazines		//determines list of which magazines will fit in the gun
 	var/auto_eject = 0			//if the magazine should automatically eject itself when empty.
 	var/auto_eject_sound = null
+	var/empty_indicator = FALSE
+
+	var/bolt_type = BOLT_TYPE_STANDARD
+	///Whether to show the bolt icon or not
+	var/show_bolt_icon = TRUE
+	///Whether the gun has to be racked each shot or not
+	var/semi_auto = TRUE
+	///Used for locking bolt and open bolt guns. Set a bit differently for the two but prevents firing when true for both.
+	var/bolt_locked = FALSE
+	var/bolt_wording = "bolt"
+	var/rack_verb = "racked"
 
 	var/jam_num = 0             //Whether this gun is jammed and how many self-uses until it's unjammed
 	var/unjam_cooldown = 0      //Gives the unjammer some time after spamming unjam to not eject their mag
@@ -31,6 +42,22 @@
 	var/suppressor_x_offset
 	///Pixel offset for the suppressor overlay on the y axis.
 	var/suppressor_y_offset
+
+/*
+ * Sound Vars
+ */
+	///Sound of racking
+	var/rack_sound = /singleton/sound_category/shotgun_pump
+	var/rack_sound_volume = 60
+	var/rack_sound_vary = TRUE
+	///sound of when the bolt is locked back manually
+	var/lock_back_sound = /singleton/sound_category/generic_slide_back
+	var/lock_back_sound_volume = 60
+	var/lock_back_sound_vary = TRUE
+	///sound of dropping the bolt or releasing a slide
+	var/bolt_drop_sound = /singleton/sound_category/generic_slide_drop
+	var/bolt_drop_sound_volume = 60
+	var/bolt_drop_sound_vary = TRUE
 
 	//TODO generalize ammo icon states for guns
 	//var/magazine_states = 0
@@ -56,6 +83,7 @@
 
 /obj/item/gun/projectile/update_icon()
 	..()
+//	cut_overlays()
 	if(suppressed)
 		var/mutable_appearance/MA = mutable_appearance('icons/obj/guns/suppressor.dmi', "suppressor")
 		if(suppressor_x_offset)
@@ -63,6 +91,33 @@
 		if(suppressor_y_offset)
 			MA.pixel_y = suppressor_y_offset
 		underlays += MA
+	if(show_bolt_icon)
+		var/bolt_state
+		if(bolt_type == BOLT_TYPE_LOCKING)
+			bolt_state = "[icon_state]_bolt[bolt_locked ? "_locked" : ""]"
+			add_overlay(image(icon, null, bolt_state), TRUE)
+		else if(bolt_type == BOLT_TYPE_OPEN && bolt_locked)
+			bolt_state = "[icon_state]_bolt"
+			add_overlay(image(icon, null, bolt_state), TRUE)
+
+	if(!chambered && empty_indicator)
+		add_overlay(image(icon, null, "[icon_state]_empty"))
+
+/obj/item/gun/projectile/proc/rack(mob/user = null)
+	if(bolt_type == BOLT_TYPE_NO_BOLT)
+		return //Nothing to do
+	if(bolt_type == BOLT_TYPE_OPEN)
+		if(!bolt_locked)
+			if(user)
+				balloon_alert(user, "[bolt_wording] already cocked!")
+			return
+		bolt_locked = FALSE
+	if(user)
+		balloon_alert(user, "[bolt_wording] [rack_verb]")
+	if(bolt_type == BOLT_TYPE_LOCKING && !chambered)
+		bolt_locked = TRUE
+//		play_sound
+	update_icon()
 
 /obj/item/gun/projectile/consume_next_projectile()
 	if(jam_num)

@@ -650,6 +650,30 @@
 		'sound/weapons/reloads/hmg_reload2.ogg',
 		'sound/weapons/reloads/hmg_reload3.ogg'
 	)
+
+/singleton/sound_category/safety_switch_on
+	sounds = list(
+		'sound/weapons/generic/safety_switch_on_1.wav'
+	)
+
+/singleton/sound_category/safety_switch_off
+	sounds = list(
+		'sound/weapons/generic/safety_switch_off_1.wav'
+	)
+
+/singleton/sound_category/generic_slide_drop
+	sounds = list(
+		'sound/weapons/generic/slide_drop_1.wav',
+		'sound/weapons/generic/slide_drop_2.wav'
+	)
+
+/singleton/sound_category/generic_slide_back
+	sounds = list(
+		'sound/weapons/generic/slide_back_1.wav',
+		'sound/weapons/generic/slide_back_2.wav',
+		'sound/weapons/generic/slide_back_3.wav'
+	)
+
 /singleton/sound_category/drillhit_sound
 	sounds = list(
 		'sound/weapons/saw/drillhit1.ogg',

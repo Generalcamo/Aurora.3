@@ -45,11 +45,6 @@
 	desc = "It's a gun. It's pretty terrible, though."
 	desc_info = "This is a gun.  To fire the weapon, ensure your intent is *not* set to 'help', have your gun mode set to 'fire', \
 	then click where you want to fire."
-	icon = 'icons/obj/guns/pistol.dmi'
-	var/gun_gui_icons = 'icons/obj/guns/gun_gui.dmi'
-	icon_state = "pistol"
-	item_state = "pistol"
-	contained_sprite = TRUE
 	flags = CONDUCT
 	slot_flags = SLOT_BELT|SLOT_HOLSTER
 	matter = list(DEFAULT_WALL_MATERIAL = 2000)
@@ -94,11 +89,28 @@
 	///The volume of the suppressed sound
 	var/suppressed_volume = 60
 	///The sound of the safety being turned on
-	var/safetyon_sound = 'sound/weapons/blade_open.ogg'
+	var/safetyon_sound = /singleton/sound_category/safety_switch_on
 	///The sound of the safety being turned off
-	var/safetyoff_sound = 'sound/weapons/blade_close.ogg'
+	var/safetyoff_sound = /singleton/sound_category/safety_switch_off
 	drop_sound = 'sound/items/drop/gun.ogg'
 	pickup_sound = 'sound/items/pickup/gun.ogg'
+
+/*
+ * Icon Vars
+ */
+	icon = 'icons/obj/guns/pistol.dmi'
+	icon_state = "pistol"
+	item_state = "pistol"
+	contained_sprite = TRUE
+	var/gun_gui_icons = 'icons/obj/guns/gun_gui.dmi'
+	///Overlay to apply to gun based on safety state, if any
+	var/safety_icon
+	///Whether the gun has ammo level overlays for its icon, mainly for energy weapons
+	var/ammo_level_icon
+	///Whether the ammo_level_icon is offset in the x axis
+	var/ammo_level_x_offset
+	///Whether the ammo_level_icon is offset in the y axis
+	var/ammo_level_y_offset
 
 	var/burst = 1
 	var/can_autofire = FALSE

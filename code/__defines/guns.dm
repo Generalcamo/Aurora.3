@@ -19,3 +19,13 @@
 #define RFD_WINDOW_AND_FRAME 2
 #define RFD_AIRLOCK 3
 #define RFD_DECONSTRUCT 4
+
+//Gun Bolt Types
+/**
+ * Gun has a bolt, it stays closed while not cycling. The gun must be racked to have a bullet chambered when a mag is inserted.
+ * e.g: Shotguns, Bolt-Actions, Lever-Actions
+ */
+#define BOLT_TYPE_STANDARD 1
+#define BOLT_TYPE_OPEN 2
+#define BOLT_TYPE_NO_BOLT 3
+#define BOLT_TYPE_LOCKING 4

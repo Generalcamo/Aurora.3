@@ -61,8 +61,8 @@
 	fire_sound = 'sound/weapons/gunshot/gunshot_shotgun2.ogg'
 	is_wieldable = TRUE
 	var/recentpump = 0 // to prevent spammage
-	var/rack_sound = /singleton/sound_category/shotgun_pump
-	var/rack_verb = "pump"
+	rack_sound = /singleton/sound_category/shotgun_pump
+	rack_verb = "pump"
 	///Whether the item icon has a cycling animation
 	var/cycle_anim = TRUE
 
