@@ -71,13 +71,13 @@
 		return chambered.BB
 	return null
 
-/obj/item/gun/projectile/shotgun/pump/unique_action(mob/living/user)
-	if(jam_num)
-		to_chat(user, SPAN_WARNING("\The [src] is jammed!"))
-		return
-	if(world.time >= recentpump + 10)
-		pump(user)
-		recentpump = world.time
+///obj/item/gun/projectile/shotgun/pump/unique_action(mob/living/user)
+//	if(jam_num)
+//		to_chat(user, SPAN_WARNING("\The [src] is jammed!"))
+//		return
+//	if(world.time >= recentpump + 10)
+//		pump(user)
+//		recentpump = world.time
 
 /obj/item/gun/projectile/shotgun/pump/proc/pump(mob/M)
 	if(!wielded)

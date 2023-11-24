@@ -14,7 +14,9 @@
 	//For SINGLE_CASING or SPEEDLOADER guns
 	var/max_shells = 0			//the number of casings that will fit inside
 	var/ammo_type = null		//the type of ammo that the gun comes preloaded with
-	var/list/loaded = list()	//stored ammo
+
+	///Whether the gun has an internal magazine or a detatchable one. Overridden by BOLT_TYPE_NO_BOLT.
+	var/internal_magazine = FALSE
 
 	//For MAGAZINE guns
 	var/magazine_type = null	//the type of magazine that the gun comes preloaded with
@@ -33,6 +35,12 @@
 	var/bolt_locked = FALSE
 	var/bolt_wording = "bolt"
 	var/rack_verb = "racked"
+	var/recent_rack = 0
+	var/rack_delay = 0.5 SECONDS
+	///Whether the weapon can be racked unweilded without a penalty
+	var/can_rack_unwielded = FALSE
+	///Determines the penalty for racking if the above is FALSE
+	var/unwielded_rack_penalty_time = 2 SECONDS
 
 	var/jam_num = 0             //Whether this gun is jammed and how many self-uses until it's unjammed
 	var/unjam_cooldown = 0      //Gives the unjammer some time after spamming unjam to not eject their mag
@@ -106,6 +114,12 @@
 /obj/item/gun/projectile/proc/rack(mob/user = null)
 	if(bolt_type == BOLT_TYPE_NO_BOLT)
 		return //Nothing to do
+	if(jam_num)
+		to_chat(user, SPAN_WARNING("\The [src] is jammed!"))
+		return
+	if(!can_rack_unwielded && !wielded && user)
+		if(!do_after(user, unwielded_rack_penalty_time))
+			return
 	if(bolt_type == BOLT_TYPE_OPEN)
 		if(!bolt_locked)
 			if(user)
@@ -116,7 +130,9 @@
 		balloon_alert(user, "[bolt_wording] [rack_verb]")
 	if(bolt_type == BOLT_TYPE_LOCKING && !chambered)
 		bolt_locked = TRUE
-//		play_sound
+		play_sound(src, lock_back_sound, lock_back_sound_volume, lock_back_sound_vary)
+	else
+
 	update_icon()
 
 /obj/item/gun/projectile/consume_next_projectile()
@@ -135,6 +151,20 @@
 	if(chambered)
 		return chambered.BB
 	return null
+
+/obj/item/gun/projectile/proc/chamber_round(replace_new_round)
+	if(chambered || (!magazine && !loaded))
+		return
+	if(loaded.len)
+		chambered = loaded.
+
+///Drops the bolt from a locked position
+/obj/item/gun/projectile/proc/drop_bolt(mob/user = null)
+	playsound(src, bolt_drop_sound, bolt_drop_sound_volume, bolt_drop_sound_vary)
+	if(user)
+		balloon_alert(user, "[bolt_wording] dropped")
+	bolt_locked = FALSE
+	update_icon()
 
 /obj/item/gun/projectile/handle_post_fire(mob/user)
 	..()
@@ -326,6 +356,15 @@
 		unload_ammo(user, allow_dump=0)
 	else
 		return ..()
+
+/obj/item/gun/projectile/unique_action(mob/living/user)
+	if(BOLT_TYPE_LOCKING && bolt_locked)
+		drop_bolt(user)
+		return
+	if(recent_rack > world.time)
+		return
+	rack(user)
+	return
 
 /obj/item/gun/projectile/afterattack(atom/A, mob/living/user)
 	..()

@@ -299,12 +299,15 @@
 	suppressed = FALSE
 	can_suppress = TRUE
 	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2, TECH_ILLEGAL = 2)
+	bolt_type = BOLT_TYPE_LOCKING
+	bolt_wording = "slide"
 	fire_sound = 'sound/weapons/gunshot/gunshot_pistol.ogg'
 	load_method = MAGAZINE
 	magazine_type = /obj/item/ammo_magazine/mc9mm
 	allowed_magazines = list(/obj/item/ammo_magazine/mc9mm)
 	fire_delay = ROF_PISTOL
-	suppressor_x_offset = 5
+	suppressor_x_offset = 10
+	suppressor_y_offset = -1
 
 /obj/item/gun/projectile/pistol/flash
 	name = "9mm signal pistol"
@@ -339,12 +342,6 @@
 		return
 	name = input
 	to_chat(usr, "You name the gun [input]. Say hello to your new friend.")
-
-/obj/item/gun/projectile/pistol/update_icon()
-	..()
-	icon_state = "pistol"
-	if(!(ammo_magazine && ammo_magazine.stored_ammo.len))
-		icon_state = "[icon_state]-e"
 
 /obj/item/gun/projectile/pirate
 	name = "zip gun"
