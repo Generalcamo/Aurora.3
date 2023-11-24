@@ -48,7 +48,7 @@
 	icon = 'icons/obj/guns/shotgun.dmi'
 	icon_state = "shotgun"
 	item_state = "shotgun"
-	max_shells = 4
+	magazine_type = /obj/item/ammo_magazine/internal/shotgun
 	w_class = ITEMSIZE_LARGE
 	force = 10
 	flags = CONDUCT
@@ -94,16 +94,10 @@
 		playsound(src.loc, chambered.drop_sound, DROP_SOUND_VOLUME, FALSE, required_asfx_toggles = ASFX_DROPSOUND)
 		chambered = null
 
-	handle_pump_loading()
+//	handle_pump_loading()
 
 	update_maptext()
 	update_icon()
-
-/obj/item/gun/projectile/shotgun/pump/proc/handle_pump_loading()
-	if(length(loaded))
-		var/obj/item/ammo_casing/AC = loaded[1] //load next casing.
-		loaded -= AC //Remove casing from loaded list.
-		chambered = AC
 
 /obj/item/gun/projectile/shotgun/pump/combat
 	name = "combat shotgun"
@@ -112,7 +106,7 @@
 	icon_state = "cshotgun"
 	item_state = "cshotgun"
 	origin_tech = list(TECH_COMBAT = 5, TECH_MATERIAL = 2)
-	max_shells = 7 //match the ammo box capacity, also it can hold a round in the chamber anyways, for a total of 8.
+	magazine_type = /obj/item/ammo_magazine/internal/shotgun/extended
 	ammo_type = /obj/item/ammo_casing/shotgun
 	fire_sound = 'sound/weapons/gunshot/gunshot_shotgun.ogg'
 	cycle_anim = FALSE
@@ -137,7 +131,7 @@
 	//In principle someone could make a speedloader for it, so it makes sense.
 	load_method = SINGLE_CASING|SPEEDLOADER
 	handle_casings = CYCLE_CASINGS
-	max_shells = 2
+	magazine_type = /obj/item/ammo_magazine/internal/shotgun/barrel/double
 	w_class = ITEMSIZE_LARGE
 	force = 10
 	flags = CONDUCT
@@ -214,7 +208,7 @@
 	w_class = ITEMSIZE_NORMAL
 	ammo_type = /obj/item/ammo_casing/shotgun/pellet
 	load_method = SINGLE_CASING|SPEEDLOADER
-	max_shells = 1
+	magazine_type = /obj/item/ammo_magazine/internal/shotgun/barrel
 	caliber = "shotgun"
 	fire_sound = 'sound/weapons/gunshot/gunshot_shotgun2.ogg'
 	origin_tech = list(TECH_COMBAT = 3, TECH_MATERIAL = 2, TECH_ILLEGAL = 2)

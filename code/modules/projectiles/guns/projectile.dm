@@ -86,7 +86,6 @@
 /obj/item/gun/projectile/Destroy()
 	chambered = null
 	QDEL_NULL(ammo_magazine)
-	QDEL_NULL_LIST(loaded)
 	. = ..()
 
 /obj/item/gun/projectile/update_icon()
@@ -214,10 +213,7 @@
 			chambered.throw_at(get_ranged_target_turf(get_turf(src),turn(loc.dir,270),1), rand(0,1), 5)
 			playsound(chambered, /singleton/sound_category/casing_drop_sound, 50, FALSE)
 		if(CYCLE_CASINGS) //cycle the casing back to the end.
-			if(ammo_magazine)
-				ammo_magazine.stored_ammo += chambered
-			else
-				loaded += chambered
+			ammo_magazine.stored_ammo += chambered
 
 	if(handle_casings != HOLD_CASINGS)
 		chambered = null
@@ -392,14 +388,12 @@
 	to_chat(user, "Has [get_ammo()] round\s remaining.")
 	return
 
-/obj/item/gun/projectile/get_ammo()
+/obj/item/gun/projectile/get_ammo(countchambered = TRUE)
 	var/bullets = 0
-	if(loaded)
-		bullets += loaded.len
-	if(ammo_magazine && ammo_magazine.stored_ammo)
-		bullets += ammo_magazine.stored_ammo.len
-	if(chambered)
-		bullets += 1
+	if(ammo_magazine)
+		bullets += ammo_magazine.ammo_count()
+	if(chambered && countchambered)
+		bullets++
 	return bullets
 
 /obj/item/gun/projectile/get_print_info()
@@ -407,8 +401,8 @@
 	if(load_method & (SINGLE_CASING|SPEEDLOADER))
 		. += "Load Type: Single Casing or Speedloader<br>"
 		. += "Max Shots: [max_shells]<br>"
-		if(length(loaded))
-			var/obj/item/ammo_casing/casing = loaded[1]
+		if(ammo_magazine)
+			var/obj/item/ammo_casing/casing = ammo_magazine.ammo_type
 			var/obj/item/projectile/P = new casing.projectile_type
 			. += "<br><b>Projectile</b><br>"
 			. += P.get_print_info()

@@ -185,6 +185,16 @@
 	. = ..()
 	to_chat(user, "There [(stored_ammo.len == 1)? "is" : "are"] [stored_ammo.len] round\s left!")
 
+/obj/item/ammo_magazine/proc/ammo_count()
+	var/bullets = 0
+	for(var/obj/item/ammo_casing/bullet in stored_ammo)
+		if(bullet)
+			bullets++
+	return bullets
+
+/obj/item/ammo_magazine/proc/ammo_list()
+	return stored_ammo.Copy()
+
 //magazine icon state caching (caching lists are in SSicon_cache)
 
 /proc/initialize_magazine_icondata(var/obj/item/ammo_magazine/M)
