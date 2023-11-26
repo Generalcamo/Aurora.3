@@ -29,3 +29,18 @@
 #define BOLT_TYPE_OPEN 2
 #define BOLT_TYPE_NO_BOLT 3
 #define BOLT_TYPE_LOCKING 4
+
+///receiver_flags. Used to determine how the gun cycles, what kind of ammo it uses, etc.
+#define AMMO_RECEIVER_REQUIRES_UNIQUE_ACTION BITFLAG(0)
+	#define AMMO_RECEIVER_UNIQUE_ACTION_LOCKS BITFLAG(1)
+#define AMMO_RECEIVER_MAGAZINES BITFLAG(2)
+	#define AMMO_RECEIVER_AUTO_EJECT BITFLAG(3)
+#define AMMO_RECEIVER_HANDFULS (1<<4)
+#define AMMO_RECEIVER_TOGGLES_OPEN (1<<5)
+	#define AMMO_RECEIVER_TOGGLES_OPEN_EJECTS (1<<6)
+#define AMMO_RECEIVER_CLOSED (1<<7)
+#define AMMO_RECEIVER_ROTATES_CHAMBER (1<<8)
+#define AMMO_RECEIVER_DO_NOT_EJECT_HANDFULS (1<<9)
+#define AMMO_RECEIVER_DO_NOT_EMPTY_ROUNDS_AFTER_FIRE (1<<10)
+#define AMMO_RECEIVER_CYCLE_ONLY_BEFORE_FIRE (1<<11) //The ammo stay in the magazine until the last moment
+#define AMMO_RECEIVER_AUTO_EJECT_LOCKED (1<<12) //Not allowed to turn automatic unloading off
