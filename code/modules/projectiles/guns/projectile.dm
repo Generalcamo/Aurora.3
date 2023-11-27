@@ -10,10 +10,6 @@
 	var/handle_casings = EJECT_CASINGS	//determines how spent casings should be handled
 	var/obj/item/ammo_casing/chambered = null
 
-	//For SINGLE_CASING or SPEEDLOADER guns
-	var/max_shells = 0			//the number of casings that will fit inside
-	var/ammo_type = null		//the type of ammo that the gun comes preloaded with
-
 	///Whether the gun has an internal magazine or a detatchable one. Overridden by BOLT_TYPE_NO_BOLT.
 	var/internal_magazine = FALSE
 
@@ -129,20 +125,16 @@
 		balloon_alert(user, "[bolt_wording] [rack_verb]")
 	if(bolt_type == BOLT_TYPE_LOCKING && !chambered)
 		bolt_locked = TRUE
-		play_sound(src, lock_back_sound, lock_back_sound_volume, lock_back_sound_vary)
+		playsound(src, lock_back_sound, lock_back_sound_volume, lock_back_sound_vary)
 	else
-
+		playsound(src, rack_sound, rack_sound_volume, rack_sound_vary)
 	update_icon()
 
 /obj/item/gun/projectile/consume_next_projectile()
 	if(jam_num)
 		return FALSE
 	//get the next casing
-	if(loaded.len)
-		chambered = loaded[1] //load next casing.
-		if(handle_casings != HOLD_CASINGS)
-			loaded -= chambered
-	else if(ammo_magazine && ammo_magazine.stored_ammo.len)
+	if(ammo_magazine && ammo_magazine.stored_ammo.len)
 		chambered = ammo_magazine.stored_ammo[1]
 		if(handle_casings != HOLD_CASINGS)
 			ammo_magazine.stored_ammo -= chambered
@@ -152,10 +144,21 @@
 	return null
 
 /obj/item/gun/projectile/proc/chamber_round(replace_new_round)
-	if(chambered || (!magazine && !loaded))
+	if(chambered || !magazine)
 		return
-	if(loaded.len)
-		chambered = loaded.
+	if(magazine.ammo_count)
+		chambered = magazine.get_round((bolt_type == BOLT_TYPE_OPEN && !bolt_locked) || bolt_type == BOLT_TYPE_NO_BOLT)
+		if(bolt_type != BOLT_TYPE_OPEN && !(internal_magazine && bolt_type == BOLT_TYPE_NO_BOLT))
+			chambered.forceMove(src)
+		else
+			RegisterSignal(chambered, COMSIG_MOVABLE_MOVED, PROC_REF(clear_chambered))
+		if(replace_new_round)
+			magazine.give_round(new chambered.type)
+
+/obj/item/gun/projectile/proc/clear_chambered(datum/source)
+	SIGNAL_HANDLER
+	UnregisterSignal(chambered, COMSIG_MOVABLE_MOVED)
+	chambered = null
 
 ///Drops the bolt from a locked position
 /obj/item/gun/projectile/proc/drop_bolt(mob/user = null)
@@ -218,62 +221,6 @@
 	if(handle_casings != HOLD_CASINGS)
 		chambered = null
 
-
-//Attempts to load A into src, depending on the type of thing being loaded and the load_method
-//Maybe this should be broken up into separate procs for each load method?
-/obj/item/gun/projectile/proc/load_ammo(var/obj/item/A, mob/user)
-	if(istype(A, /obj/item/ammo_magazine))
-		var/obj/item/ammo_magazine/AM = A
-		if(!(load_method & AM.mag_type) || caliber != AM.caliber || (allowed_magazines && !is_type_in_list(A, allowed_magazines)))
-			to_chat(user,"<span class='warning'>[AM] won't load into [src]!</span>")
-			return
-		switch(AM.mag_type)
-			if(MAGAZINE)
-				if(ammo_magazine)
-					to_chat(user,"<span class='warning'>[src] already has a magazine loaded.</span>") //already a magazine here
-					return
-				user.remove_from_mob(AM)
-				AM.forceMove(src)
-				ammo_magazine = AM
-				user.visible_message("[user] inserts [AM] into [src].", "<span class='notice'>You insert [AM] into [src].</span>")
-				playsound(src.loc, AM.insert_sound, 50, FALSE)
-			if(SPEEDLOADER)
-				if(loaded.len >= max_shells)
-					to_chat(user,"<span class='warning'>[src] is full!</span>")
-					return
-				var/count = 0
-				for(var/obj/item/ammo_casing/C in AM.stored_ammo)
-					if(loaded.len >= max_shells)
-						break
-					if(C.caliber == caliber)
-						C.forceMove(src)
-						loaded += C
-						AM.stored_ammo -= C //should probably go inside an ammo_magazine proc, but I guess less proc calls this way...
-						count++
-				if(count)
-					user.visible_message("[user] reloads [src].", "<span class='notice'>You load [count] round\s into [src] using \the [AM].</span>")
-					playsound(src.loc, AM.insert_sound, 50, FALSE)
-		AM.update_icon()
-	else if(istype(A, /obj/item/ammo_casing))
-		var/obj/item/ammo_casing/C = A
-		if(!(load_method & SINGLE_CASING))
-			to_chat(user,"<span class='warning'>[src] can not be loaded with single casings.</span>")
-			return //incompatible
-		if(caliber != C.caliber)
-			to_chat(user,"<span class='warning'>\The [C] does not fit.</span>")
-			return //incompatible
-		if(loaded.len >= max_shells)
-			to_chat(user,"<span class='warning'>[src] is full.</span>")
-			return
-
-		user.remove_from_mob(C)
-		C.forceMove(src)
-		loaded.Insert(1, C) //add to the head of the list
-		user.visible_message("[user] inserts \a [C] into [src].", "<span class='notice'>You insert \a [C] into [src].</span>")
-		playsound(src.loc, C.reload_sound, 50, FALSE)
-	update_maptext()
-	update_icon()
-
 //attempts to unload src. If allow_dump is set to 0, the speedloader unloading method will be disabled
 /obj/item/gun/projectile/proc/unload_ammo(mob/user, var/allow_dump = 1, var/drop_mag = FALSE)
 	if(ammo_magazine)
@@ -285,24 +232,6 @@
 		playsound(src.loc, ammo_magazine.eject_sound, 50, FALSE)
 		ammo_magazine.update_icon()
 		ammo_magazine = null
-	else if(loaded.len)
-		//presumably, if it can be speed-loaded, it can be speed-unloaded.
-		if(allow_dump && (load_method & SPEEDLOADER))
-			var/count = 0
-			var/turf/T = get_turf(user)
-			if(T)
-				for(var/obj/item/ammo_casing/C in loaded)
-					C.forceMove(T)
-					playsound(C, /singleton/sound_category/casing_drop_sound, 50, FALSE)
-					count++
-				loaded.Cut()
-			if(count)
-				user.visible_message("[user] unloads [src].", "<span class='notice'>You unload [count] round\s from [src].</span>")
-		else if(load_method & SINGLE_CASING)
-			var/obj/item/ammo_casing/C = loaded[loaded.len]
-			loaded.len--
-			user.put_in_hands(C)
-			user.visible_message("[user] removes \a [C] from [src].", "<span class='notice'>You remove \a [C] from [src].</span>")
 	else
 		to_chat(user, "<span class='warning'>[src] is empty.</span>")
 	update_maptext()

@@ -54,7 +54,6 @@
 	name = "magazine (.45)"
 	icon_state = "45x"
 	origin_tech = list(TECH_COMBAT = 3)
-	mag_type = MAGAZINE
 	matter = list(DEFAULT_WALL_MATERIAL = 600)
 	caliber = ".45"
 	ammo_type = /obj/item/ammo_casing/c45
@@ -65,7 +64,6 @@
 	name = "magazine (.50)"
 	icon_state = "50ae"
 	origin_tech = list(TECH_COMBAT = 2)
-	mag_type = MAGAZINE
 	caliber = ".50"
 	matter = list(DEFAULT_WALL_MATERIAL = 1260)
 	ammo_type = /obj/item/ammo_casing/a50
@@ -73,12 +71,11 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/a50/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/c45m
 	name = "magazine (.45)"
 	icon_state = "45"
-	mag_type = MAGAZINE
 	ammo_type = /obj/item/ammo_casing/c45
 	matter = list(DEFAULT_WALL_MATERIAL = 525) //metal costs are very roughly based around 1 .45 casing = 75 metal
 	caliber = ".45"
@@ -98,7 +95,7 @@
 	max_ammo = 18
 
 /obj/item/ammo_magazine/c45m/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/c45m/rubber
 	name = "magazine (.45 rubber)"
@@ -127,7 +124,6 @@
 	name = "magazine (4.6mm)"
 	icon_state = "4.6x30p"
 	origin_tech = list(TECH_COMBAT = 2)
-	mag_type = MAGAZINE
 	caliber = "4.6mm"
 	desc = "A magazine designed for the dNAC-4.6 pistol."
 	ammo_type = /obj/item/ammo_casing/c46mm
@@ -140,7 +136,6 @@
 	icon_state = "k2557"
 	caliber = ".599 Kumar Super"
 	ammo_type = /obj/item/ammo_casing/kumar_super
-	mag_type = MAGAZINE
 	max_ammo = 5
 	multiple_sprites = 1
 	insert_sound = 'sound/weapons/k2557-insert.ogg'
@@ -149,7 +144,6 @@
 	name = "magazine (10mm)"
 	desc = "A detachable magazine for a modified NanoTrasen Mk1, made from stamped sheet metal."
 	icon_state = "12mm"
-	mag_type = MAGAZINE
 	ammo_type = /obj/item/ammo_casing/c10mm
 	matter = list(DEFAULT_WALL_MATERIAL = 475) //metal costs are very roughly based around 1 .45 casing = 75 metal
 	caliber = "10mm"
@@ -157,7 +151,7 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/mc10mm/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/mc10mm/rubber
 	name = "magazine (10mm rubber)"
@@ -166,7 +160,6 @@
 /obj/item/ammo_magazine/mc10mm/leyon
 	name = "ammo clip (10mm)"
 	icon_state = "10mmclip"
-	mag_type = SPEEDLOADER
 	matter = list(DEFAULT_WALL_MATERIAL = 1800)
 	max_ammo = 5
 	multiple_sprites = 1
@@ -176,7 +169,6 @@
 	name = "magazine (9mm)"
 	icon_state = "9x19p"
 	origin_tech = list(TECH_COMBAT = 2)
-	mag_type = MAGAZINE
 	matter = list(DEFAULT_WALL_MATERIAL = 600)
 	caliber = "9mm"
 	ammo_type = /obj/item/ammo_casing/c9mm
@@ -184,7 +176,7 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/mc9mm/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/mc9mm/flash
 	name = "magazine (9mm flash)"
@@ -204,12 +196,11 @@
 	max_ammo = 30
 
 /obj/item/ammo_magazine/c9mm/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/mc9mmt
 	name = "top mounted magazine (9mm)"
 	icon_state = "9mmt"
-	mag_type = MAGAZINE
 	ammo_type = /obj/item/ammo_casing/c9mm
 	matter = list(DEFAULT_WALL_MATERIAL = 1200)
 	caliber = "9mm"
@@ -218,7 +209,7 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/mc9mmt/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/mc9mmt/rubber
 	name = "top mounted magazine (9mm rubber)"
@@ -238,13 +229,12 @@
 	max_ammo = 30
 
 /obj/item/ammo_magazine/c9mm/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/a10mm
 	name = "magazine (10mm)"
 	icon_state = "12mm"
 	origin_tech = list(TECH_COMBAT = 2)
-	mag_type = MAGAZINE
 	caliber = "10mm"
 	insert_sound = /singleton/sound_category/polymer_slide_reload
 	matter = list(DEFAULT_WALL_MATERIAL = 1500)
@@ -253,12 +243,11 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/a10mm/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/c45uzi
 	name = "stick magazine (.45)"
 	icon_state = "uzi45"
-	mag_type = MAGAZINE
 	ammo_type = /obj/item/ammo_casing/c45
 	matter = list(DEFAULT_WALL_MATERIAL = 1200)
 	caliber = ".45"
@@ -267,12 +256,11 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/c45uzi/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/submachinemag
 	name = "magazine (.45)"
 	icon_state = "tommy-mag"
-	mag_type = MAGAZINE
 	ammo_type = /obj/item/ammo_casing/c45
 	matter = list(DEFAULT_WALL_MATERIAL = 1500)
 	caliber = ".45"
@@ -280,13 +268,12 @@
 	max_ammo = 20
 
 /obj/item/ammo_magazine/submachinemag/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/submachinedrum
 	name = "drum magazine (.45)"
 	icon_state = "tommy-drum"
 	w_class = ITEMSIZE_NORMAL // Bulky ammo doesn't fit in your pockets!
-	mag_type = MAGAZINE
 	ammo_type = /obj/item/ammo_casing/c45
 	matter = list(DEFAULT_WALL_MATERIAL = 3750)
 	caliber = ".45"
@@ -300,7 +287,6 @@
 	name = "magazine (5.56mm)"
 	icon_state = "5.56"
 	origin_tech = list(TECH_COMBAT = 2)
-	mag_type = MAGAZINE
 	caliber = "a556"
 	insert_sound = /singleton/sound_category/rifle_slide_reload
 	matter = list(DEFAULT_WALL_MATERIAL = 1800)
@@ -309,7 +295,7 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/a556/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/a556/practice
 	name = "magazine (5.56mm practice)"
@@ -334,7 +320,7 @@
 	max_ammo = 15
 
 /obj/item/ammo_magazine/a556/carbine/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/a556/carbine/practice
 	name = "carbine magazine (5.56mm practice)"
@@ -365,13 +351,12 @@
 	max_ammo = 7
 
 /obj/item/ammo_magazine/a556/makeshift/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/a65
 	name = "magazine (6.5mm)"
 	icon_state = "c6.5mm"
 	origin_tech = list(TECH_COMBAT = 3)
-	mag_type = MAGAZINE
 	caliber = "a65"
 	insert_sound = /singleton/sound_category/rifle_slide_reload
 	matter = list(DEFAULT_WALL_MATERIAL = 1800)
@@ -380,12 +365,11 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/a65/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/a75
 	name = "ammo magazine (20mm)"
 	icon_state = "75"
-	mag_type = MAGAZINE
 	caliber = "75"
 	insert_sound = /singleton/sound_category/rifle_slide_reload
 	ammo_type = /obj/item/ammo_casing/a75
@@ -393,12 +377,11 @@
 	max_ammo = 4
 
 /obj/item/ammo_magazine/a75/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/trodpack
 	name = "tungsten rod pack"
 	icon_state = "trodpack-2"
-	mag_type = MAGAZINE
 	caliber = "trod"
 	insert_sound = 'sound/weapons/reloads/rifle_slide3.ogg'
 	ammo_type = /obj/item/ammo_casing/trod
@@ -406,13 +389,12 @@
 	max_ammo = 2
 
 /obj/item/ammo_magazine/trodpack/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/a762
 	name = "magazine box (7.62mm)"
 	icon_state = "a762"
 	origin_tech = list(TECH_COMBAT = 2)
-	mag_type = MAGAZINE
 	caliber = "a762"
 	insert_sound = /singleton/sound_category/rifle_slide_reload
 	matter = list(DEFAULT_WALL_MATERIAL = 4500)
@@ -421,12 +403,11 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/a762/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/c762
 	name = "magazine (7.62mm)"
 	icon_state = "c762"
-	mag_type = MAGAZINE
 	caliber = "a762"
 	insert_sound = /singleton/sound_category/rifle_slide_reload
 	matter = list(DEFAULT_WALL_MATERIAL = 1800)
@@ -462,7 +443,6 @@
 /obj/item/ammo_magazine/d762
 	name = "magazine (7.62mm)"
 	icon_state = "SVD"
-	mag_type = MAGAZINE
 	caliber = "a762"
 	matter = list(DEFAULT_WALL_MATERIAL = 1200)
 	ammo_type = /obj/item/ammo_casing/a762
@@ -470,14 +450,13 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/d762/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 // Shotguns and special //
 /obj/item/ammo_magazine/flechette
 	name = "flechette rounds"
 	icon = 'icons/obj/terminator.dmi'
 	icon_state = "flechette"
-	mag_type = MAGAZINE
 	caliber = "flechette"
 	insert_sound = /singleton/sound_category/rifle_slide_reload
 	matter = list(DEFAULT_WALL_MATERIAL = 1200)
@@ -486,14 +465,13 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/flechette/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/flechette/explosive
 	name = "explosive flechette rounds"
 	desc = "A box of ten explosive flechettes that can be remotely detonated by a certain signal."
 	icon = 'icons/obj/terminator.dmi'
 	icon_state = "flechette_e"
-	mag_type = MAGAZINE
 	caliber = "flechette"
 	matter = list(DEFAULT_WALL_MATERIAL = 1200)
 	ammo_type = /obj/item/ammo_casing/flechette/explosive
@@ -501,14 +479,13 @@
 	multiple_sprites = 1
 
 /obj/item/ammo_magazine/flechette/explosive/empty
-	initial_ammo = 0
+	start_empty = TRUE
 
 /obj/item/ammo_magazine/assault_shotgun
 	name = "magazine (slug)"
 	icon_state = "csmb"
 	caliber = "shotgun"
 	insert_sound = /singleton/sound_category/rifle_slide_reload
-	mag_type = MAGAZINE
 	ammo_type = /obj/item/ammo_casing/shotgun
 	max_ammo = 8
 	matter = list(MATERIAL_STEEL = 2880)
@@ -538,7 +515,6 @@
 	icon_state = "xanu_shell_magazine"
 	caliber = "shotgun"
 	insert_sound = /singleton/sound_category/rifle_slide_reload
-	mag_type = MAGAZINE
 	ammo_type = /obj/item/ammo_casing/shotgun
 	max_ammo = 8
 	matter = list(MATERIAL_STEEL = 2880)
@@ -582,7 +558,6 @@
 /obj/item/ammo_magazine/minigun
 	name = "minigun magazine box (7.62mm)"
 	icon_state = "a762"
-	mag_type = MAGAZINE
 	caliber = "a762"
 	ammo_type = /obj/item/ammo_casing/a762
 	max_ammo = 1000
@@ -590,7 +565,6 @@
 /obj/item/ammo_magazine/gauss
 	name = "tungsten slug box"
 	icon_state = "slugbox"
-	mag_type = MAGAZINE
 	caliber = "gauss"
 	ammo_type = /obj/item/ammo_casing/gauss
 	max_ammo = 7
@@ -607,7 +581,6 @@
 /obj/item/ammo_magazine/plasma
 	name = "heavy duty plasma cell"
 	icon_state = "heavy_plasma_cell"
-	mag_type = MAGAZINE
 	caliber = "plasma slug"
 	insert_sound = 'sound/weapons/railgun_insert_emp.ogg'
 	ammo_type = /obj/item/ammo_casing/plasma_slug
@@ -629,7 +602,6 @@
 	name = "nuclear launcher cartridge"
 	icon_state = "nukemag"
 	w_class = ITEMSIZE_NORMAL
-	mag_type = MAGAZINE
 	caliber = "nuke"
 	insert_sound = 'sound/weapons/reloads/rifle_slide3.ogg'
 	ammo_type = /obj/item/ammo_casing/nuke

@@ -44,3 +44,8 @@
 #define AMMO_RECEIVER_DO_NOT_EMPTY_ROUNDS_AFTER_FIRE (1<<10)
 #define AMMO_RECEIVER_CYCLE_ONLY_BEFORE_FIRE (1<<11) //The ammo stay in the magazine until the last moment
 #define AMMO_RECEIVER_AUTO_EJECT_LOCKED (1<<12) //Not allowed to turn automatic unloading off
+
+///Magazine_flags. Used to determine magazine behavior
+#define MAGAZINE_REFILLABLE BITFLAG(0)
+	#define MAGAZINE_MULTIFILL BITFLAG(1)
+		#define MAGAZINE_MULTIFILL_SPEEDLOADER BITFLAG(2)

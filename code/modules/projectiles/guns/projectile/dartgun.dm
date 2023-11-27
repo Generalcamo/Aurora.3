@@ -35,7 +35,6 @@
 	icon_state = "darts"
 	item_state = "rcdammo"
 	origin_tech = list(TECH_MATERIAL = 2)
-	mag_type = MAGAZINE
 	caliber = "dart"
 	ammo_type = /obj/item/ammo_casing/chemdart
 	max_ammo = 5

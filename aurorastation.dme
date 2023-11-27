@@ -2931,6 +2931,7 @@
 #include "code\modules\projectiles\pins.dm"
 #include "code\modules\projectiles\projectile.dm"
 #include "code\modules\projectiles\suppressor.dm"
+#include "code\modules\projectiles\ammunition\_ammo_magazine.dm"
 #include "code\modules\projectiles\ammunition\ammo_pile.dm"
 #include "code\modules\projectiles\ammunition\boxes.dm"
 #include "code\modules\projectiles\ammunition\bullets.dm"

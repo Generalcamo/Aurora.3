@@ -26,10 +26,9 @@
 	var/casing_phrasing = "cartridge"
 
 	var/ammo_type = /obj/item/ammo_casing //ammo type that is initially loaded
-	var/initial_ammo = null
+	var/start_empty = FALSE
 
-	///Allows
-	var/multiload = TRUE
+	var/magazine_flags = MAGAZINE_REFILLABLE
 
 	var/multiple_sprites = 0
 	//because BYOND doesn't support numbers as keys in associative lists
@@ -42,22 +41,44 @@
 	///Sound that plays when a bullet is inserted into the magazine
 	var/bullet_insert_sound = 'sound/weapons/reload_bullet.ogg'
 
+	/// If this and ammo_band_icon aren't null, run update_ammo_band(). Is the color of the band, such as black on the Xanan shotgun's AP bullets
+	var/ammo_band_color
+	/// If this and ammo_band_color aren't null, run update_ammo_band() Is the greyscale icon used for the ammo band.
+	var/ammo_band_icon
+	/// Is the greyscale icon used for the ammo band when it's empty of bullets, only if it's not null.
+	var/ammo_band_icon_empty
+
 /obj/item/ammo_magazine/Initialize()
 	. = ..()
 	if(multiple_sprites)
 		initialize_magazine_icondata(src)
 
-	if(isnull(initial_ammo))
-		initial_ammo = max_ammo
-
-	if(initial_ammo)
-		for(var/i in 1 to initial_ammo)
-			stored_ammo += new ammo_type(src)
+	if(!start_empty)
+		top_off(starting = TRUE)
 	update_icon()
 
 /obj/item/ammo_magazine/Destroy()
 	QDEL_NULL_LIST(stored_ammo)
 	. = ..()
+
+/**
+ * top_off is used to refill the magazine to max, in case you want to increase the size of a magazine with VV then refill it at once
+ *
+ * Arguments:
+ * * load_type - if you want to specify a specific ammo casing type to load, enter the path here, otherwise it'll use the basic [/obj/item/ammo_box/var/ammo_type]. Must be a compatible round
+ * * starting - Relevant for revolver cylinders, if FALSE then we mind the nulls that represent the empty cylinders (since those nulls don't exist yet if we haven't initialized when this is TRUE)
+ */
+/obj/item/ammo_magazine/proc/top_off(load_type, starting=TRUE)
+	if(!load_type)
+		load_type = ammo_type
+
+	var/obj/item/ammo_casing/round_check = load_type
+	if(!starting && !(caliber ? (caliber == initial(round_check.caliber)) : (ammo_type == load_type)))
+		stack_trace("Tried loading unsupported ammo casing type [load_type] into magazine [type].")
+
+	for(var/i in max(1, stored_ammo.len) to max_ammo)
+		stored_ammo += new round_check(src)
+	update_icon()
 
 ///Puts a round into the magazine
 /obj/item/ammo_magazine/proc/add_round(obj/item/ammo_casing/R, replace_spent = FALSE)
@@ -81,6 +102,17 @@
 				return TRUE
 	return FALSE
 
+///gets a round from the magazine, if keep is TRUE the round will be moved to the bottom of the list.
+/obj/item/ammo_magazine/proc/get_round(keep = FALSE)
+	var/ammo_len = length(stored_ammo)
+	if(!ammo_len)
+		return null
+	var/casing = stored_ammo[ammo_len]
+	if(keep)
+		stored_ammo -= casing
+		stored_ammo.Insert(1,casing)
+	return casing
+
 /obj/item/ammo_magazine/attackby(obj/item/W, mob/user, replace_spent = FALSE)
 	var/num_loaded = 0
 	if(istype(W, /obj/item/ammo_casing))
@@ -99,9 +131,9 @@
 
 /obj/item/ammo_magazine/attack_self(mob/user)
 	if(!stored_ammo.len)
-		to_chat(user, "<span class='notice'>[src] is already empty!</span>")
+		FEEDBACK_FAILURE(user, "\The [src] is already empty!")
 		return
-	to_chat(user, "<span class='notice'>You empty [src].</span>")
+	to_chat(user, SPAN_NOTICE("You empty [src]."))
 	for(var/obj/item/ammo_casing/C in stored_ammo)
 		C.forceMove(user.loc)
 		playsound(C, /singleton/sound_category/casing_drop_sound, 50, FALSE)
