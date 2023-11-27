@@ -1,44 +1,3 @@
-/*
-	Defines a firing mode for a gun.
-
-	A firemode is created from a list of fire mode settings. Each setting modifies the value of the gun var with the same name.
-	If the fire mode value for a setting is null, it will be replaced with the initial value of that gun's variable when the firemode is created.
-	Obviously not compatible with variables that take a null value. If a setting is not present, then the corresponding var will not be modified.
-*/
-/datum/firemode
-	var/name = "default"
-	var/list/settings = list()
-	var/list/original_settings
-
-/datum/firemode/New(obj/item/gun/gun, list/properties = null)
-	..()
-	if(!properties) return
-
-	for(var/propname in properties)
-		var/propvalue = properties[propname]
-
-		if(propname == "mode_name")
-			name = propvalue
-		else if(isnull(propvalue))
-			settings[propname] = gun.vars[propname] //better than initial() as it handles list vars like burst_accuracy
-		else
-			settings[propname] = propvalue
-
-/datum/firemode/proc/apply_to(obj/item/gun/gun)
-	LAZYINITLIST(original_settings)
-
-	for(var/propname in settings)
-		original_settings[propname] = gun.vars[propname]
-		gun.vars[propname] = settings[propname]
-
-/datum/firemode/proc/unapply_to(obj/item/gun/gun)
-	if (LAZYLEN(original_settings))
-		for (var/propname in original_settings)
-			gun.vars[propname] = original_settings[propname]
-
-		LAZYCLEARLIST(original_settings)
-		original_settings = null
-
 //Parent gun type. Guns are weapons that can be aimed at mobs and act over a distance
 /obj/item/gun
 	name = "gun"
@@ -51,6 +10,7 @@
 	item_state = "pistol"
 	contained_sprite = TRUE
 	obj_flags = OBJ_FLAG_CONDUCTABLE
+	appearance_flags = TILE_BOUND|PIXEL_SCALE|LONG_GLIDE|KEEP_TOGETHER
 	slot_flags = SLOT_BELT|SLOT_HOLSTER
 	matter = list(DEFAULT_WALL_MATERIAL = 2000)
 	w_class = ITEMSIZE_NORMAL
@@ -291,7 +251,8 @@
 			return TRUE
 
 /obj/item/gun/afterattack(atom/A, mob/living/user, adjacent, params)
-	if(adjacent) return //A is adjacent, is the user, or is on the user's person
+	if(adjacent)
+		return //A is adjacent, is the user, or is on the user's person
 
 	if(!user.aiming)
 		user.aiming = new(user)
@@ -358,7 +319,13 @@
 	return TRUE
 
 /obj/item/gun/proc/Fire(atom/target, mob/living/user, clickparams, pointblank=0, reflex=0, accuracy_decrease=0, is_offhand=0)
+	if(QDELETED(target))
+		return FALSE
+
 	if(!fire_checks(target,user,clickparams,pointblank,reflex))
+		return FALSE
+
+	if(SEND_SIGNAL(src, COMSIG_GUN_TRY_FIRE, user, target, pointblank, reflex, accuracy_decrease, is_offhand) & COMPONENT_CANCEL_GUN_FIRE)
 		return FALSE
 
 	if(!is_offhand && user.a_intent == I_HURT) // no recursion
@@ -663,6 +630,11 @@
 	suppressed = FALSE
 	suppressor = null
 	update_icon()
+
+//check if there's enough ammo/energy/whatever to shoot one time
+//i.e if clicking would make it shoot
+/obj/item/gun/proc/can_shoot()
+	return TRUE
 
 /obj/item/gun/examine(mob/user, distance, is_adjacent)
 	. = ..()
