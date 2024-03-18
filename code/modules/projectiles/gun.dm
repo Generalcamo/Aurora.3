@@ -303,13 +303,26 @@
 		Fire(A,user,params) //Otherwise, fire normally.
 
 /obj/item/gun/attack(atom/A, mob/living/user, def_zone)
-	if (A == user && user.zone_sel.selecting == BP_MOUTH && !mouthshoot)
-		handle_suicide(user)
+	var/suicide
+	if(user == A)
+		suicide = TRUE
+		if(user.zone_sel.selecting == BP_MOUTH && (!user.aiming || !user.aiming.active))
+			user.toggle_gun_mode()
 	else if(user.a_intent != I_HURT && user.aiming && user.aiming.active) //if aim mode, don't pistol whip
 		if (user.aiming.aiming_at != A)
+			var/checkperm
+			if(suicide)
+				if(!(user.aiming.target_permissions & TARGET_CAN_CLICK))
+					user.aiming.toggle_permission(TARGET_CAN_CLICK)
+					checkperm = TRUE
 			PreFire(A, user)
+			if(checkperm)
+				addtimer(CALLBACK(user.aiming, /obj/aiming_overlay/proc/toggle_permission, TARGET_CAN_CLICK, TRUE), 1)
 		else
-			Fire(A, user, pointblank=1)
+			if(suicide && user.zone_sel.selecting == BP_MOUTH && istype(user, /mob/living/carbon/human))
+				handle_suicide(user)
+			else
+				Fire(A, user, pointblank=1)
 	else if(user.a_intent == I_HURT) //point blank shooting
 		Fire(A, user, pointblank=1)
 	else if(bayonet)
@@ -576,55 +589,69 @@
 	return !P.launch_from_gun(target, target_zone, user, params, null, added_spread, src)
 
 //Suicide handling.
-/obj/item/gun/var/mouthshoot = FALSE //To stop people from suiciding twice... >.>
 /obj/item/gun/proc/handle_suicide(mob/living/user)
-	if(!ishuman(user))
-		return
 	var/mob/living/carbon/human/M = user
-
-	mouthshoot = TRUE
-	M.visible_message(SPAN_DANGER("\The [user] sticks \the [src] in their mouth, their finger ready to pull the trigger..."))
-	if(!do_after(user, 4 SECONDS))
-		M.visible_message(SPAN_GOOD("\The [user] takes \the [src] out of their mouth."))
-		mouthshoot = FALSE
+	if(!special_check(M))
 		return
-	var/obj/item/projectile/in_chamber = consume_next_projectile()
-	if(istype(in_chamber))
-		user.visible_message(SPAN_DANGER("\The [user] pulls the trigger."))
-		if (!pin && needspin) // Checks the pin of the gun.
-			handle_click_empty(user)
-			mouthshoot = FALSE
-			return
-		if (!pin.pin_auth() && needspin)
-			handle_click_empty(user)
-			mouthshoot = FALSE
-			return
-		if(safety() && user.a_intent != I_HURT)
-			handle_click_empty(user)
-			mouthshoot = FALSE
-			return
+	if(world.time < next_fire_time)
+		if(world.time % 3)
+			to_chat(M, SPAN_WARNING("\The [src] is not ready to fire again!"))
+		return
+	M.setClickCooldown((burst - 1) * burst_delay)
+	next_fire_time = world.time + max(burst_delay + 1, fire_delay)
+	if(safety_state == TRUE)
+		handle_click_empty(M)
+		return
+	if(!pin && needspin)
+		handle_click_empty(M)
+		return
+	if(!pin.pin_auth() && needspin)
+		handle_click_empty(M)
+		return
+	admin_attack_log(M, "is trying to commit suicide with \a [src]")
+	user.visible_message(M, SPAN_WARNING("\The [M] pulls the trigger."))
+	to_chat(M, SPAN_NOTICE("You feel \the [src] go off..."))
+
+	var/obj/item/organ/brain = M.internal_organs_by_name[BP_BRAIN]
+	var/bodypart = brain.parent_organ
+	if(brain.parent_organ == BP_HEAD)
+		bodypart = BP_MOUTH
+	var/obj/item/blocked = M.get_clothing_coverage(bodypart)
+
+	for(var/i = 1 to burst)
+		var/obj/item/projectile/in_chamber = consume_next_projectile()
+		if(!in_chamber)
+			handle_click_empty(M)
+			break
 		play_fire_sound()
-
-		in_chamber.on_hit(M)
-
-		if(in_chamber.damage == 0)
-			user.show_message(SPAN_WARNING("You feel rather silly, trying to commit suicide with a toy."))
-			mouthshoot = FALSE
-			return
-		else if(in_chamber.damage_type == DAMAGE_PAIN)
-			user.apply_damage(in_chamber.damage * 2, DAMAGE_PAIN, BP_HEAD)
+		if(in_chamber.damage_type != DAMAGE_PAIN)
+			in_chamber.on_hit(M, 0, brain.parent_organ)
+			if(istype(in_chamber, /obj/item/projectile/ion))
+				in_chamber.on_impact(M)
+			if(in_chamber.damage != 0)
+				M.apply_damage(in_chamber.damage * 2, in_chamber.damage_type, brain.parent_organ, in_chamber.damage_flags(), used_weapon = "Point blank shot in the mouth with \a [in_chamber]")
+				var/dmgmultiplier
+				if(prob(95))
+					dmgmultiplier = rand(30, 50) / 10
+				else
+					dmgmultiplier = 0.5
+				if(blocked)
+					to_chat(M, SPAN_WARNING("A clear shot to your [bodypart] is blocked by \the [blocked], significantly reducing damage to \the [brain.name]!"))
+					dmgmultiplier = dmgmultiplier/5
+				var/obj/item/organ/internal/brain/b = brain
+				b.take_internal_damage(in_chamber.damage*dmgmultiplier, 0)
 		else
-			log_and_message_admins("[key_name(user)] commited suicide using \a [src].")
-			user.apply_damage(in_chamber.damage * 20, in_chamber.damage_type, BP_HEAD, used_weapon = "Point blank shot in the mouth with \a [in_chamber]", damage_flags = DAMAGE_FLAG_SHARP)
-			user.death()
+			M.apply_effect(110, DAMAGE_PAIN, 0)
+		qdel(in_chamber)
+		update_icon()
+		if(i < burst)
+			sleep(burst_delay)
 
-		handle_post_fire(user, user, FALSE, FALSE, FALSE)
-		mouthshoot = FALSE
-		return
-	else
-		handle_click_empty(user)
-		mouthshoot = FALSE
-		return
+	var/delay = max(burst_delay + 1, fire_delay)
+	M.setClickCooldown(min(delay, DEFAULT_QUICK_COOLDOWN))
+	next_fire_time = world.time + delay
+	if (brain.damage > brain.max_damage)
+		brain.die()
 
 /obj/item/gun/proc/toggle_scope(var/zoom_amount=2.0, var/mob/user)
 	//looking through a scope limits your periphereal vision

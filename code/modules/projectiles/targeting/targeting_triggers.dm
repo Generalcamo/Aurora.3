@@ -36,7 +36,11 @@
 		return FALSE
 	if(!owner.canClick())
 		return FALSE
-
+	if(!istype(G))
+		return FALSE
+	if(owner == aiming_at)
+		addtimer(CALLBACK(G, /obj/item/gun/proc/handle_suicide, owner, 2))
+		return TRUE
 	owner.setClickCooldown(DEFAULT_QUICK_COOLDOWN) // Spam prevention, essentially.
 	owner.visible_message(
 		SPAN_DANGER("\The [owner] pulls the trigger reflexively!"),

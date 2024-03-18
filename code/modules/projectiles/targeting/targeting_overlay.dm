@@ -61,12 +61,15 @@
 
 	. = ..()
 
-/obj/aiming_overlay/proc/toggle_permission(perm)
+/obj/aiming_overlay/proc/toggle_permission(perm, silent)
 
 	if(target_permissions & perm)
 		target_permissions &= ~perm
 	else
 		target_permissions |= perm
+
+	if(silent)
+		return
 
 	// Update HUD icons.
 	if(owner.gun_move_icon)
@@ -167,7 +170,7 @@
 		spawn(0)
 			owner.set_dir(get_dir(get_turf(owner), get_turf(src)))
 
-/obj/aiming_overlay/proc/aim_at(mob/target, obj/thing)
+/obj/aiming_overlay/proc/aim_at(mob/target, obj/thing, no_target_change)
 
 	if(QDELETED(target))
 		return
@@ -188,23 +191,48 @@
 		FEEDBACK_FAILURE(owner, "You cannot aim a gun while handcuffed.")
 		return
 
+	var/gunPointedTarget = SPAN_DANGER("You now have \a [thing] pointed at you. No sudden moves!")
+	var/gunPointedSelf = ""
+	var/mob/living/carbon/human/user = owner
+
+	if(istype(user))
+		if(user.zone_sel.selecting == BP_MOUTH)
+			admin_attack_log(user, "is getting ready to suicide with \a [src]")
+			if(user.check_has_mouth() && !(user.check_mouth_coverage()))
+				gunPointedSelf = SPAN_DANGER("\The [owner] puts the barrel of \the [thing] in their mouth, ready to pull the trigger...")
+			else
+				gunPointedSelf = SPAN_DANGER("\The [owner] aims \the [thing] at themselves, ready to pull the trigger...")
+		else
+			gunPointedSelf = SPAN_DANGER("\The [owner] aims \the [thing] at themselves!")
+
 	if(aiming_at)
-		if(aiming_at == target)
-			return
-		cancel_aiming(TRUE)
-		owner.visible_message(SPAN_DANGER("\The [owner] turns \the [thing] on \the [target]!"))
-	else
+		if(!no_target_change)
+			if(aiming_at == target)
+				return
+			cancel_aiming(TRUE)
+		if(owner != target)
+			owner.visible_message(SPAN_DANGER("\The [owner] turns \the [thing] on \the [target]!"))
+			to_chat(target, "[gunPointedTarget]")
+		else
+			owner.visible_message("[gunPointedSelf]")
+	else if (owner != target)
 		owner.visible_message(SPAN_DANGER("\The [owner] aims \the [thing] at \the [target]!"))
+		to_chat(target, "[gunPointedTarget]")
+	else
+		owner.visible_message("[gunPointedSelf]")
+
+	aiming_with = thing
+
+	if(istype(aiming_with, /obj/item/gun))
+		sound_to(aiming_at, sound('sound/weapons/TargetOn.ogg'))
+		sound_to(owner, sound('sound/weapons/TargetOn.ogg'))
+
+	if(no_target_change)
+		return
 
 	if(owner.client)
 		owner.client.add_gun_icons()
-	to_chat(target, SPAN_DANGER("You now have a gun pointed at you. No sudden moves!"))
-	aiming_with = thing
 	aiming_at = target
-	if(istype(aiming_with, /obj/item/gun))
-		playsound(get_turf(owner), 'sound/weapons/TargetOn.ogg', 50,1)
-
-	admin_attack_log(owner, aiming_at, "\The [owner] is aiming at \the [aiming_at] with \the [aiming_with].", "\The [owner] is aiming at \the [aiming_at] with \the [aiming_with].", "\The [owner] is aiming at \the [aiming_at] with \the [aiming_with].")
 
 	forceMove(get_turf(target))
 	START_PROCESSING(SSprocessing, src)

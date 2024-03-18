@@ -161,6 +161,33 @@ emp_act
 			return gear
 	return null
 
+///Returns null or the first equipped item covering the bodypart
+/mob/living/carbon/human/proc/get_clothing_coverage(bodypart)
+	switch(bodypart)
+		if(BP_HEAD)
+			bodypart = HEAD
+		if(BP_EYES)
+			bodypart = EYES
+		if(BP_MOUTH)
+			bodypart = FACE
+		if(BP_CHEST)
+			bodypart = UPPER_TORSO
+		if(BP_GROIN)
+			bodypart = LOWER_TORSO
+		if(BP_L_ARM, BP_R_ARM)
+			bodypart = ARMS
+		if(BP_L_HAND, BP_R_HAND)
+			bodypart = HANDS
+		if(BP_L_LEG, BP_R_LEG)
+			bodypart = LEGS
+		if(BP_L_FOOT, BP_R_FOOT)
+			bodypart = FEET
+
+	for(var/obj/item/clothing/C in list(head, wear_mask, wear_suit, w_uniform, gloves, shoes, glasses))
+		if(C.body_parts_covered & bodypart)
+			return C
+	return null
+
 /mob/living/carbon/human/proc/check_shields(var/damage = 0, var/atom/damage_source = null, var/mob/attacker = null, var/def_zone = null, var/attack_text = "the attack")
 	for(var/obj/item/shield in list(l_hand, r_hand, wear_suit, back))
 		if(!shield)

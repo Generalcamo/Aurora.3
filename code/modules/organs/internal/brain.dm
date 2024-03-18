@@ -152,11 +152,11 @@
 	to_chat(owner, "<span class = 'notice'><font size=4><B>Where am I...?</B></font></span>")
 	owner.Paralyse(20)
 	sleep(5 SECONDS)
-	if(!owner)
+	if(!owner || owner.stat == DEAD || (status & ORGAN_DEAD))
 		return
 	to_chat(owner, "<span class = 'notice'><font size=4><B>What's going on...?</B></font></span>")
 	sleep(10 SECONDS)
-	if(!owner)
+	if(!owner || owner.stat == DEAD || (status & ORGAN_DEAD))
 		return
 	to_chat(owner, "<span class = 'notice'><font size=4><B>What happened...?</B></font></span>")
 	alert(owner.find_mob_consciousness(), "You have taken massive brain damage! You will not be able to remember the events leading up to your injury.", "Brain Damaged")
