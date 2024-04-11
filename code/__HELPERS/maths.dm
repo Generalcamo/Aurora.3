@@ -243,3 +243,19 @@
 #define BEARING_RELATIVE(observer_x, observer_y, target_x, target_y) (90 - Atan2(target_x - observer_x, target_y - observer_y))
 
 #define ISINTEGER(x) (round(x) == x)
+
+/proc/MakeGenerator(g_type, g_min, g_max, g_rand = UNIFORM_RAND)
+	switch (g_rand)
+		if (1)
+			g_rand = NORMAL_RAND
+		if (2)
+			g_rand = LINEAR_RAND
+		if (3)
+			g_rand = SQUARE_RAND
+		else
+			g_rand = UNIFORM_RAND
+
+	if (!isnum(g_min) || !isnum(g_max))
+		return null
+
+	return generator(g_type, g_min, g_max, g_rand)

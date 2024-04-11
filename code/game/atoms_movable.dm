@@ -104,6 +104,9 @@
 	if (bound_overlay)
 		QDEL_NULL(bound_overlay)
 
+	if (particles)
+		particles = null
+
 /atom/movable/proc/moveToNullspace()
 	. = TRUE
 

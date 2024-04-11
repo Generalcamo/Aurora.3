@@ -72,6 +72,9 @@ GLOBAL_LIST_EMPTY(poster_designs)
 /// All uplinks.
 GLOBAL_LIST_EMPTY_TYPED(world_uplinks, /obj/item/device/uplink)
 
+/// All particles
+GLOBAL_LIST_EMPTY(all_particles)
+
 /// Preferences stuff below.
 /// Stores /datum/sprite_accessory/hair indexed by name.
 GLOBAL_LIST_EMPTY(hair_styles_list)
@@ -250,7 +253,13 @@ GLOBAL_LIST_EMPTY(contained_clothing_species_adaption_cache)
 		var/datum/poster/P = new T
 		GLOB.poster_designs += P
 
-	return 1
+	//Particles
+	paths = subtypesof(/particles)
+	for(var/path in paths)
+		var/particles/P = new path()
+		GLOB.all_particles[P.name] = P
+
+	return TRUE
 
 GLOBAL_LIST_INIT(correct_punctuation, list("!" = TRUE, "." = TRUE, "?" = TRUE, "-" = TRUE, "~" = TRUE, \
 										"*" = TRUE, "/" = TRUE, ">" = TRUE, "\"" = TRUE, "'" = TRUE, \
