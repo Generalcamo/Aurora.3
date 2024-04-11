@@ -23,6 +23,27 @@ GLOBAL_LIST_EMPTY(total_active_bonfires)
 	var/last_ambient_message
 	var/burn_out = TRUE //Whether or not it deletes itself when fuel is depleted
 
+	var/obj/particle_emitter/SM
+	var/obj/particle_emitter/SP
+	var/obj/particle_emitter/FR
+
+/obj/structure/bonfire/Initialize()
+	. = ..()
+	fuel = rand(1000, 2000)
+	create_reagents(120)
+	update_particles()
+
+/obj/structure/bonfire/Destroy()
+	STOP_PROCESSING(SSprocessing, src)
+	GLOB.total_active_bonfires -= src
+	QDEL_NULL(SM)
+	QDEL_NULL(SP)
+	QDEL_NULL(FR)
+	. = ..()
+
+/obj/structure/bonfire/get_examine_text(mob/user, distance, is_adjacent, infix, suffix)
+	. = ..()
+
 /obj/structure/bonfire/feedback_hints(mob/user, distance, is_adjacent)
 	. += ..()
 	if(distance > 2)
@@ -57,6 +78,7 @@ GLOBAL_LIST_EMPTY(total_active_bonfires)
 	. = ..()
 
 /obj/structure/bonfire/update_icon()
+	update_particles()
 	if(on_fire)
 		if(fuel < 200)
 			icon_state = "[initial(icon_state)]_warm"
@@ -65,6 +87,18 @@ GLOBAL_LIST_EMPTY(total_active_bonfires)
 	else
 		icon_state = initial(icon_state)
 
+/obj/structure/bonfire/proc/update_particles()
+	if(on_fire)
+		if(SM == null)
+			SM = new/obj/particle_emitter/smoke(src.loc)
+		if(SP == null)
+			SP = new/obj/particle_emitter/fire_sparks/bonfire(src.loc)
+		if(FR == null)
+			FR = new/obj/particle_emitter/fire/bonfire(src.loc)
+	else
+		SM = null
+		SP = null
+		FR = null
 
 /obj/structure/bonfire/AltClick(mob/user)
 	if(!ishuman(user))

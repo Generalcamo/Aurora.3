@@ -74,9 +74,9 @@
 	update_use_power(POWER_USE_IDLE)
 	set_light(0)
 
-/obj/machinery/power/fusion_core/proc/AddParticles(name, quantity = 1)
+/obj/machinery/power/fusion_core/proc/AddReactants(name, quantity = 1)
 	if(owned_field)
-		owned_field.AddParticles(name, quantity)
+		owned_field.AddReactants(name, quantity)
 		. = 1
 
 /obj/machinery/power/fusion_core/bullet_act(obj/projectile/hitting_projectile, def_zone, piercing_hit)

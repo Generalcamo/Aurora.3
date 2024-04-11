@@ -151,6 +151,9 @@
 	QDEL_NULL(light)
 	QDEL_NULL(static_light)
 
+	if (particles)
+		particles = null
+
 /atom/movable/proc/moveToNullspace()
 	. = TRUE
 
