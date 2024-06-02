@@ -103,9 +103,9 @@
 
 /singleton/origin_item/origin/ncf
 	name = "Non-Coalition Frontier"
-	desc = "The frontier beyond the Coalition of Colonies before unexplored \"deadspace,\" has seen limited human colonization, but still dwells mostly outside of the influence of any government. Most residents of this distant frontier that drift back to the more populated Orion Spur eventually claim citizenship with the Coalition of Colonies due to its ease of acquisition."
+	desc = "The frontier beyond the Coalition of Colonies before unexplored \"deadspace,\" has seen limited human colonization, but still dwells mostly outside of the influence of any government. Most residents of this distant frontier that drift back to the more populated Orion Spur eventually claim citizenship with the Coalition of Colonies due to its ease of acquisition, though some stubbornly keep to their original citizenship despite limited recognition."
 	possible_accents = list(ACCENT_NCF)
-	possible_citizenships = list(CITIZENSHIP_COALITION, CITIZENSHIP_BIESEL, CITIZENSHIP_SOL)
+	possible_citizenships = list(CITIZENSHIP_COALITION, CITIZENSHIP_BIESEL, CITIZENSHIP_SOL, CITIZENSHIP_INDEPENDENT)
 	possible_religions = list(RELIGION_NONE, RELIGION_CHRISTIANITY, RELIGION_ISLAM, RELIGION_BUDDHISM, RELIGION_HINDU, RELIGION_TAOISM, RELIGION_JUDAISM, RELIGION_OTHER, RELIGION_TRINARY, RELIGION_LUCEISM, RELIGION_MOROZ, RELIGION_SCARAB, RELIGION_STOLITISM)
 
 /singleton/origin_item/origin/other_coalition

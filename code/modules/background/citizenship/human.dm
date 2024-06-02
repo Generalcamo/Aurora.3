@@ -352,3 +352,11 @@
 		/obj/item/storage/box/dominia_honor = 1,
 		/obj/item/gun/projectile/pistol/dominia = 1
 	)
+
+/datum/citizenship/independent
+	name = CITIZENSHIP_INDEPENDENT
+	description = "A catch-all for the citizens of the many systems outside of the space of the major factions. These planets and systems vary wildly, and all sorts of people and places can be found within them. Recognition is typically limited, with Biesel being one of the few open to letting them work."
+	job_species_blacklist = list(
+		"Consular Officer" = ALL_SPECIES,
+		"Diplomatic Aide" = ALL_SPECIES
+	)
