@@ -20,9 +20,16 @@ BREATH ANALYZER
 	throw_range = 10
 	matter = list(MATERIAL_ALUMINIUM = 200)
 	origin_tech = list(TECH_MAGNET = 1, TECH_BIO = 1)
+	/// Time since last scan, used for spam prevention
 	var/last_scan = 0
-	var/mode = 1
+	/// Internal var for if the next scan should play a sound
 	var/sound_scan = FALSE
+	/// Apparently controls whether to show specific limb damage or not.
+	var/mode = 1
+	/// Handles the tier of the analyzer. More advanced analyzers show more information.
+	var/adv_scan = 0
+	/// Whether to show advanced information. Advanced information takes longer to scan.
+	var/show_adv_scan = TRUE
 
 /obj/item/device/healthanalyzer/attack(mob/living/target_mob, mob/living/user, target_zone)
 	sound_scan = FALSE
@@ -88,7 +95,7 @@ BREATH ANALYZER
 		output = capitalize(output)
 	return output
 
-/proc/health_scan_mob(var/mob/M, var/mob/living/user, var/show_limb_damage = TRUE, var/just_scan = FALSE, var/sound_scan)
+/proc/health_scan_mob(mob/M, mob/living/user, show_limb_damage = TRUE, just_scan = FALSE, sound_scan, show_adv_scan = TRUE, adv_scan)
 	if(!just_scan)
 		if (((user.is_clumsy()) || (user.mutations & DUMB)) && prob(50))
 			user.visible_message("<b>[user]</b> runs the scanner over the floor.",
@@ -141,26 +148,34 @@ BREATH ANALYZER
 	if(H.stat == DEAD || H.status_flags & FAKEDEATH)
 		dat += "<span class='scan_warning'>[b]Time of Death:[endb] [worldtime2text(H.timeofdeath)]</span>"
 
-	// Brain activity.
-	var/brain_status = H.get_brain_status()
-	dat += "Brain activity: [brain_status]"
+	// Brain activity requires at least a level 3 scanner
+	if(adv_scan > 1 && show_adv_scan) {
+		var/brain_status = H.get_brain_status()
+		dat += "Brain activity: [brain_status]"
+	}
+
 	var/brain_result = H.get_brain_result()
 
 	if(sound_scan)
-		switch(brain_result)
-			if(0)
-				playsound(user.loc, 'sound/items/healthscanner/healthscanner_dead.ogg', 25, extrarange = SILENCED_SOUND_EXTRARANGE)
-			if(-1)
-				playsound(user.loc, 'sound/items/healthscanner/healthscanner_used.ogg', 25, extrarange = SILENCED_SOUND_EXTRARANGE)
-			else
-				if(brain_result <= 25)
-					playsound(user.loc, 'sound/items/healthscanner/healthscanner_critical.ogg', 25, extrarange = SHORT_RANGE_SOUND_EXTRARANGE)
-				else if(brain_result <= 50)
-					playsound(user.loc, 'sound/items/healthscanner/healthscanner_danger.ogg', 25, extrarange = SHORT_RANGE_SOUND_EXTRARANGE)
-				else if(brain_result <= 90)
+		// Advanced scanners can use sound to show the patient state
+		if(adv_scan > 1 && show_adv_scan)
+			switch(brain_result)
+				if(0)
+					playsound(user.loc, 'sound/items/healthscanner/healthscanner_dead.ogg', 25, extrarange = SILENCED_SOUND_EXTRARANGE)
+				if(-1)
 					playsound(user.loc, 'sound/items/healthscanner/healthscanner_used.ogg', 25, extrarange = SILENCED_SOUND_EXTRARANGE)
 				else
-					playsound(user.loc, 'sound/items/healthscanner/healthscanner_stable.ogg', 25, extrarange = SILENCED_SOUND_EXTRARANGE)
+					if(brain_result <= 25)
+						playsound(user.loc, 'sound/items/healthscanner/healthscanner_critical.ogg', 25, extrarange = SHORT_RANGE_SOUND_EXTRARANGE)
+					else if(brain_result <= 50)
+						playsound(user.loc, 'sound/items/healthscanner/healthscanner_danger.ogg', 25, extrarange = SHORT_RANGE_SOUND_EXTRARANGE)
+					else if(brain_result <= 90)
+						playsound(user.loc, 'sound/items/healthscanner/healthscanner_used.ogg', 25, extrarange = SILENCED_SOUND_EXTRARANGE)
+					else
+						playsound(user.loc, 'sound/items/healthscanner/healthscanner_stable.ogg', 25, extrarange = SILENCED_SOUND_EXTRARANGE)
+		// Otherwise, just use the default sound
+		else
+			playsound(user.loc, 'sound/items/healthscanner/healthscanner_used.ogg', 25, extrarange = SILENCED_SOUND_EXTRARANGE)
 
 	// Pulse rate.
 	var/pulse_result = "normal"
@@ -271,20 +286,47 @@ BREATH ANALYZER
 		else
 			dat += "No detectable limb injuries."
 
+	// Radiation. Requires at least a level 3 scanner to show details
+	if(H.total_radiation)
+		if(advscan > 1 && showadvscan == TRUE)
+			var/severity = ""
+			if(H.total_radiation >= 75)
+				severity = "Critical"
+			else if(H.total_radiation >= 50)
+				severity = "Severe"
+			else if(H.total_radiation >= 25)
+				severity = "Moderate"
+			else if(H.total_radiation >= 1)
+				severity = "Low"
+			dat += "<span class='warning'>[severity] levels of radiation detected. [(severity == "Critical") ? " Immediate treatment advised." : ""]</span><br>"
+		else
+			dat += "<span class='warning'>Radiation detected.</span><br>"
+
+	// Infections, fractures, dislocation,
+	var/basic_fracture = FALSE	// If it's a basic scanner
+	var/fracture_dat = ""	// All the fractures
+	var/infection_dat = ""	// All the infections
 	for(var/name in H.organs_by_name)
 		var/obj/item/organ/external/e = H.organs_by_name[name]
 		if(!e)
 			continue
 		var/limb = e.name
+		// Broken limbs
 		if(e.status & ORGAN_BROKEN)
 			if(((e.name == BP_L_ARM) || (e.name == BP_R_ARM) || (e.name == BP_L_LEG) || (e.name == BP_R_LEG)) && !(e.status & ORGAN_SPLINTED))
-				dat += "<span class='scan_warning'>Unsecured fracture in subject [limb]. Splinting recommended for transport.</span>"
+				fracture_dat += "<span class='scan_warning'>Unsecured fracture in subject [limb]. Splinting recommended for transport.</span>"
+			else if(adv_scan >= 1 && show_adv_scan == TRUE)
+				fracture_dat += "<span class='warning'>Bone fractures detected in subject [limb].</span><br>"
+			else
+				basic_fracture = TRUE
+		// Infections
+		if(e.has_infected_wound())
+			dat += "<span class='warning'>Infected wound detected in subject [limb]. Disinfection recommended.</span><br>"
+		if(basic_fracture)
+			fracture_dat += "<span class='warning'>Bone fractures detected. Advanced scanner required for location.</span><br>"
+		dat += fracture_dat
+		dat += infection_dat
 
-	for(var/name in H.organs_by_name)
-		var/obj/item/organ/external/e = H.organs_by_name[name]
-		if(e && e.status & ORGAN_BROKEN)
-			dat += "<span class='scan_warning'>Bone fractures detected. Advanced scanner required for location.</span>"
-			break
 
 	var/found_bleed
 	var/found_tendon
