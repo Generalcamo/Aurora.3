@@ -93,3 +93,8 @@
 					Stolitism is closely tied with local folklore and the planet as a whole - the majority of Vysokans are believers, but it has spread little elsewhere.\
 					Vysokan shamanism revolves around both the worship of one’s ancestors, who are believed to have all descended from a “Progenitor Spirit” that became \
 					the first man. After dying, the Progenitor’s soul, or Arihuin, was “sown” and split into new souls."
+
+/datum/religion/jainism
+	name = RELIGION_JAINISM
+	description = "Jainism, also known as Jain Dharma, is one of humanity's oldest still-practiced religions. \
+				It originated in the Indian subcontinent and centers around the teachings of the Tirthankaras—enlightened spiritual guides."

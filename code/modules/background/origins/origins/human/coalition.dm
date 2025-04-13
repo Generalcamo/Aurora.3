@@ -20,7 +20,7 @@
 	desc = "Xanu Prime has long been considered one of the most important planets in the Coalition of Colonies, housing its current capital. The citizens of the All-Xanu Republic, the government of the planet, are a diverse body of people that value their freedom highly, and are known throughout the broader Spur as traders. Much of Xanu's surface is scarred due to damage inflicted upon the planet by the Solarian Alliance during the Interstellar War."
 	possible_accents = list(ACCENT_XANU)
 	possible_citizenships = CITIZENSHIPS_COALITION
-	possible_religions = list(RELIGION_NONE, RELIGION_CHRISTIANITY, RELIGION_ISLAM, RELIGION_BUDDHISM, RELIGION_SHINTO, RELIGION_HINDU, RELIGION_TAOISM, RELIGION_JUDAISM, RELIGION_SIKHISM, RELIGION_OTHER, RELIGION_TRINARY, RELIGION_STOLITISM, RELIGION_MOROZ, RELIGION_LUCEISM)
+	possible_religions = list(RELIGION_NONE, RELIGION_CHRISTIANITY, RELIGION_ISLAM, RELIGION_BUDDHISM, RELIGION_SHINTO, RELIGION_HINDU, RELIGION_TAOISM, RELIGION_JUDAISM, RELIGION_SIKHISM, RELIGION_OTHER, RELIGION_TRINARY, RELIGION_STOLITISM, RELIGION_MOROZ, RELIGION_LUCEISM, RELIGION_JAINISM)
 
 /singleton/origin_item/origin/himeo
 	name = "United Syndicates of Himeo"
@@ -52,7 +52,7 @@
 	desc = "The offworlders of the Coalition of Colonies are an odd mix of nomadic or semi-nomadic peoples that do not call any planet home, and instead opt to live in spaceborne fleets. The most notable offworlder group in the Coalition is the Scarabs, though many more are present in the Coalition's borders."
 	possible_accents = list(ACCENT_NCF, ACCENT_SCARAB, ACCENT_COC, ACCENT_BURZSIA)
 	possible_citizenships = CITIZENSHIPS_COALITION
-	possible_religions = list(RELIGION_NONE, RELIGION_CHRISTIANITY, RELIGION_ISLAM, RELIGION_BUDDHISM, RELIGION_HINDU, RELIGION_TAOISM, RELIGION_JUDAISM, RELIGION_OTHER, RELIGION_TRINARY, RELIGION_SCARAB)
+	possible_religions = list(RELIGION_NONE, RELIGION_CHRISTIANITY, RELIGION_ISLAM, RELIGION_BUDDHISM, RELIGION_HINDU, RELIGION_TAOISM, RELIGION_JUDAISM, RELIGION_OTHER, RELIGION_TRINARY, RELIGION_SCARAB, RELIGION_JAINISM, RELIGION_SIKHISM)
 
 /singleton/origin_item/origin/gadpathur
 	name = "United Planetary Defense Council of Gadpathur"
@@ -106,7 +106,7 @@
 	desc = "The frontier beyond the Coalition of Colonies before unexplored \"deadspace,\" has seen limited human colonization, but still dwells mostly outside of the influence of any government. Most residents of this distant frontier that drift back to the more populated Orion Spur eventually claim citizenship with the Coalition of Colonies due to its ease of acquisition."
 	possible_accents = list(ACCENT_NCF)
 	possible_citizenships = list(CITIZENSHIP_COALITION, CITIZENSHIP_BIESEL, CITIZENSHIP_SOL)
-	possible_religions = list(RELIGION_NONE, RELIGION_CHRISTIANITY, RELIGION_ISLAM, RELIGION_BUDDHISM, RELIGION_HINDU, RELIGION_TAOISM, RELIGION_JUDAISM, RELIGION_OTHER, RELIGION_TRINARY, RELIGION_LUCEISM, RELIGION_MOROZ, RELIGION_SCARAB, RELIGION_STOLITISM)
+	possible_religions = list(RELIGION_NONE, RELIGION_CHRISTIANITY, RELIGION_ISLAM, RELIGION_BUDDHISM, RELIGION_HINDU, RELIGION_TAOISM, RELIGION_JUDAISM, RELIGION_OTHER, RELIGION_TRINARY, RELIGION_LUCEISM, RELIGION_MOROZ, RELIGION_SCARAB, RELIGION_STOLITISM, RELIGION_JAINISM)
 
 /singleton/origin_item/origin/other_coalition
 	name = "Other Coalition"
