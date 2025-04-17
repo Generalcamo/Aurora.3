@@ -13,35 +13,6 @@
  */
 
 /*
- * Wrench
- */
-/obj/item/wrench
-	name = "wrench"
-	desc = "An adjustable tool used for gripping and turning nuts or bolts."
-	icon = 'icons/obj/tools.dmi'
-	item_icons = list(
-		slot_l_hand_str = 'icons/mob/items/lefthand_tools.dmi',
-		slot_r_hand_str = 'icons/mob/items/righthand_tools.dmi',
-		)
-	icon_state = "wrench"
-	item_state = "wrench"
-	obj_flags = OBJ_FLAG_CONDUCTABLE
-	slot_flags = SLOT_BELT
-	force = 18
-	throwforce = 7
-	w_class = WEIGHT_CLASS_SMALL
-	origin_tech = list(TECH_MATERIAL = 1, TECH_ENGINEERING = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 150)
-	attack_verb = list("bashed", "battered", "bludgeoned", "whacked")
-	usesound = 'sound/items/wrench.ogg'
-	surgerysound = 'sound/items/surgery/bonesetter.ogg'
-	drop_sound = 'sound/items/drop/wrench.ogg'
-	pickup_sound = 'sound/items/pickup/wrench.ogg'
-
-/obj/item/wrench/iswrench()
-	return TRUE
-
-/*
  * Screwdriver
  */
 /obj/item/screwdriver
