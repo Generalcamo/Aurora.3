@@ -5,6 +5,7 @@
 
 /singleton/surgery_step/generic
 	can_infect = TRUE
+	shock_level = 10
 
 /singleton/surgery_step/generic/can_use(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	if(isslime(target))
@@ -25,7 +26,8 @@
 /singleton/surgery_step/generic/cut_with_laser
 	name = "Make Laser Incision"
 	allowed_tools = list(
-	/obj/item/surgery/scalpel/laser = 100
+	/obj/item/surgery/scalpel/laser = 100,
+	/obj/item/melee/energy/sword = 5
 	)
 	priority = 2
 	min_duration = 50

@@ -6,22 +6,31 @@
 
 	// type path referencing tools that can be used for this step, and how well are they suited for it
 	var/list/allowed_tools = null
-	// type paths referencing races that this step applies to.
+	/// type paths referencing species that this step applies to.
 	var/list/allowed_species = null
+	/// type paths referencing species that this step never applies to.
 	var/list/disallowed_species = list("Nymph")
 
-	// duration of the step
+	/// Minimum duration of the step
 	var/min_duration = 0
+
+	/// Maximum duration of the step
 	var/max_duration = 0
 
-	// evil infection stuff that will make everyone hate me
+	/// if this step NEEDS stable optable or can be done on any valid surface with no penalty
+	var/delicate = FALSE
+
+	/// what shock level will this step put patient on
+	var/shock_level = 0
+
+	/// Whether this step can cause an infection, if the surgeon is not clean
 	var/can_infect = FALSE
 	//How much blood this step can get on surgeon. 1 - hands, 2 - full body.
 	var/blood_level = 0
 
 	var/requires_surgery_compatibility = TRUE
 
-	//returns how well tool is suited for this step
+///Returns how well tool is suited for this step
 /singleton/surgery_step/proc/tool_quality(obj/item/tool)
 	for(var/T in allowed_tools)
 		var/return_value = check_tool_quality(tool, T, allowed_tools[T], requires_surgery_compatibility)
@@ -31,7 +40,7 @@
 			return allowed_tools[T]
 	return FALSE
 
-	// Checks if this step applies to the user mob at all
+///Checks if this step applies to the user mob at all
 /singleton/surgery_step/proc/is_valid_target(mob/living/carbon/human/target)
 	if(!ishuman(target))
 		return FALSE
@@ -66,6 +75,8 @@
 			H.bloody_hands(target,0)
 		if(blood_level > 1)
 			H.bloody_body(target,0)
+	if(shock_level)
+		target.shock_stage = max(target.shock_stage, shock_level)
 	playsound(target.loc, tool.surgerysound, 50, TRUE)
 	return TRUE
 
@@ -108,19 +119,24 @@
 	// What surgeries does our tool/target enable?
 	var/list/possible_surgeries
 	var/list/all_surgeries = GET_SINGLETON_SUBTYPE_MAP(/singleton/surgery_step)
-	for(var/decl in all_surgeries)
-		var/singleton/surgery_step/S = all_surgeries[decl]
-		if(S.tool_quality(tool) && S.can_use(user, M, zone, tool))
-			LAZYSET(possible_surgeries, S, TRUE)
+	for(var/singleton in all_surgeries)
+		var/singleton/surgery_step/S = all_surgeries[singleton]
+		if(S.name && S.tool_quality(tool) && S.can_use(user, M, zone, tool))
+			var/image/radial_button = image(icon = tool.icon, icon_state = tool.icon_state)
+			radial_button.name = S.name
+			LAZYSET(possible_surgeries, S, radial_button)
 
 	// Which surgery, if any, do we actually want to do?
 	var/singleton/surgery_step/S
-	if(LAZYLEN(possible_surgeries) == 1)
-		S = possible_surgeries[1]
-	else if(LAZYLEN(possible_surgeries) >= 1)
-		if(user.client) // In case of future autodocs.
-			S = tgui_input_list(user, "Which surgery would you like to perform?", "Surgery", possible_surgeries)
+	if(user.client && length(possible_surgeries))
+		if(length(possible_surgeries) == 1)
+			S = possible_surgeries[1]
+		else
+			S = show_radial_menu(user, M, possible_surgeries, radius = 42, tooltips = TRUE, require_near = TRUE)
+//		if(!user.use_check_and_message(user))
+//			S = null
 
+	var/obj/item/gripper/gripper = user.get_active_hand()
 	// We didn't find a surgery, or decided not to perform one.
 	if(!istype(S))
 		if(tool.item_flags & ITEM_FLAG_SURGERY) //Is this supposed to be used for surgery?

@@ -14,6 +14,7 @@
 
 	min_duration = 30
 	max_duration = 40
+	shock_level = 20
 
 /singleton/surgery_step/glue_bone/can_use(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	if(!..())
@@ -50,6 +51,7 @@
 
 	min_duration = 30
 	max_duration = 50
+	delicate = TRUE
 
 /singleton/surgery_step/set_bone/can_use(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	if(!..())

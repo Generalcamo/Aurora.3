@@ -206,15 +206,21 @@
 		if(I && (I.status & ORGAN_ZOMBIFIED))
 			continue
 		if(I && !(I.status & ORGAN_CUT_AWAY) && I.parent_organ == target_zone)
-			attached_organs |= organ
+			var/image/radial_button = image(icon = I.icon, icon_state = I.icon_state)
+			radial_button.name = "Detach \the [I.name]"
+			attached_organs[I] = organ
 
-	var/organ_to_remove = tgui_input_list(user, "Which organ do you want to prepare for removal?", "Surgery", attached_organs)
-	if(!organ_to_remove)
-		return FALSE
-
-	target.op_stage.current_organ = organ_to_remove
-
-	return organ_to_remove
+	if(!LAZYLEN(attached_organs))
+		FEEDBACK_FAILURE(user, "You can't find any organs to seperate.")
+	if(length(attached_organs) == 1)
+		target.op_stage.current_organ = attached_organs[1]
+		return attached_organs[1]
+	else
+		var/organ_to_remove = show_radial_menu(user, tool, attached_organs, radius = 42, require_near = TRUE)
+		if(!organ_to_remove)
+			return FALSE
+		target.op_stage.current_organ = organ_to_remove
+		return organ_to_remove
 
 /singleton/surgery_step/internal/detach_organ/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
