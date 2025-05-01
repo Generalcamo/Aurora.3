@@ -119,6 +119,7 @@
 #include "code\__DEFINES\projectiles.dm"
 #include "code\__DEFINES\psi.dm"
 #include "code\__DEFINES\qdel.dm"
+#include "code\__DEFINES\radial.dm"
 #include "code\__DEFINES\radiation.dm"
 #include "code\__DEFINES\radio.dm"
 #include "code\__DEFINES\random_map.dm"

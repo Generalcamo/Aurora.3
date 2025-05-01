@@ -29,7 +29,6 @@
 	/obj/item/surgery/scalpel/laser = 100,
 	/obj/item/melee/energy/sword = 5
 	)
-	priority = 2
 	min_duration = 50
 	max_duration = 70
 
@@ -72,7 +71,6 @@
 	allowed_tools = list(
 	/obj/item/surgery/scalpel/manager = 100
 	)
-	priority = 2
 	min_duration = 60
 	max_duration = 80
 

@@ -1,6 +1,5 @@
 // Internal surgeries.
-/singleton/surgery_step/internal
-	priority = 2
+ABSTRACT_TYPE(/singleton/surgery_step/internal)
 	can_infect = TRUE
 	blood_level = 1
 
@@ -178,7 +177,6 @@
 
 /singleton/surgery_step/internal/detach_organ
 	name = "Separate Organ"
-	priority = 1
 	allowed_tools = list(
 	/obj/item/surgery/scalpel = 100,
 	/obj/item/material/knife = 75,

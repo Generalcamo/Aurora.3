@@ -850,7 +850,6 @@ Turf and target are seperate in case you want to teleport some distance from a t
 			mobs += M
 	return mobs
 
-
 /proc/parse_zone(zone)
 	if(zone == BP_R_HAND) return "right hand"
 	else if (zone == BP_L_HAND) return "left hand"
@@ -966,28 +965,33 @@ GLOBAL_LIST_INIT(common_tools, list(
 /proc/is_borg_item(obj/item/W)
 	return W && W.loc && isrobot(W.loc)
 
-//check if mob is lying down on something we can operate him on.
-/proc/can_operate(mob/living/carbon/M) //If it's 2, commence surgery, if it's 1, fail surgery, if it's 0, attack
-	var/surgery_attempt = SURGERY_IGNORE
-	var/located = FALSE
-	if(locate(/obj/machinery/optable, M.loc))
-		located = TRUE
-		surgery_attempt = SURGERY_SUCCESS
-	else if(locate(/obj/structure/bed/roller, M.loc))
-		located = TRUE
-		if(prob(80))
-			surgery_attempt = SURGERY_SUCCESS
-		else
-			surgery_attempt = SURGERY_FAIL
-	else if(locate(/obj/structure/table, M.loc))
-		located = TRUE
-		if(prob(66))
-			surgery_attempt = SURGERY_SUCCESS
-		else
-			surgery_attempt = SURGERY_FAIL
-	if(!M.lying && surgery_attempt != SURGERY_SUCCESS && located)
-		surgery_attempt = SURGERY_IGNORE //hit yourself if you're not lying
-	return surgery_attempt
+///Checks if the user can operate on the target
+/proc/can_operate(mob/living/user, mob/living/carbon/target)
+	if(target == user)
+		var/zone = check_zone(user.zone_sel.selecting)
+		if(zone == BP_HEAD)
+			FEEDBACK_FAILURE(user, "You can't operate on your own face!")
+			return FALSE
+		if(user.hand)
+			switch(zone)
+				if(BP_L_ARM, BP_L_HAND)
+					FEEDBACK_FAILURE(user, "You can't operate on the same arm you're using to hold the surgical tool!")
+					return FALSE
+		switch(zone)
+			if(BP_R_ARM, BP_R_HAND)
+				FEEDBACK_FAILURE(user, "You can't operate on the same arm you're using to hold the surgical tool!")
+				return FALSE
+	var/turf/target_turf = get_turf(target)
+	if (locate(/obj/machinery/optable, target_turf))
+		return TRUE
+	if (locate(/obj/structure/bed, target_turf))
+		return TRUE
+	if (locate(/obj/structure/table, target_turf))
+		return TRUE
+	if (locate(/obj/effect/rune, target_turf))
+		return TRUE
+
+	return FALSE
 
 /*
 Checks if that loc and dir has a item on the wall

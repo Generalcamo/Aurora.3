@@ -17,6 +17,7 @@
 	min_cold_protection_temperature = GLOVES_MIN_COLD_PROTECTION_TEMPERATURE
 	heat_protection = HANDS
 	max_heat_protection_temperature = GLOVES_MAX_HEAT_PROTECTION_TEMPERATURE
+	item_flags = ITEM_FLAG_THICK_MATERIAL
 
 /obj/item/clothing/gloves/swat/ert
 	species_restricted = null
@@ -38,6 +39,7 @@
 	min_cold_protection_temperature = GLOVES_MIN_COLD_PROTECTION_TEMPERATURE
 	heat_protection = HANDS
 	max_heat_protection_temperature = GLOVES_MAX_HEAT_PROTECTION_TEMPERATURE
+	item_flags = ITEM_FLAG_THICK_MATERIAL
 
 /obj/item/clothing/ring/ninja
 	desc = "A pair of plain black infiltration gloves. Too thin to protect anything, but can fit underneath a hardsuit gauntlet."
@@ -139,6 +141,7 @@
 	siemens_coefficient = 0.50 //thick work gloves
 	drop_sound = 'sound/items/drop/leather.ogg'
 	pickup_sound = 'sound/items/pickup/leather.ogg'
+	item_flags = ITEM_FLAG_THICK_MATERIAL
 
 /obj/item/clothing/gloves/botanic_leather/unathi
 	name = "unathi leather gloves"
@@ -195,6 +198,7 @@
 	heat_protection = HANDS
 	max_heat_protection_temperature = GLOVES_MAX_HEAT_PROTECTION_TEMPERATURE
 
+	item_flags = ITEM_FLAG_THICK_MATERIAL
 	var/active = 1 //i am actually too lazy to code an on/off switch so if you want it off, take them off for now.  yes.
 	var/amplification = 2
 
@@ -240,6 +244,7 @@
 	drop_sound = 'sound/items/drop/toolbox.ogg'
 	pickup_sound = 'sound/items/pickup/toolbox.ogg'
 	gender = NEUTER
+	item_flags = ITEM_FLAG_THICK_MATERIAL
 
 /obj/item/clothing/gloves/powerfist/Touch(atom/A, mob/living/user, proximity)
 	if(!proximity)
@@ -281,6 +286,7 @@
 	edge = TRUE
 	drop_sound = 'sound/items/drop/toolbox.ogg'
 	pickup_sound = 'sound/items/pickup/toolbox.ogg'
+	item_flags = ITEM_FLAG_THICK_MATERIAL
 
 /obj/item/clothing/gloves/offworlder
 	name = "starmitts"
@@ -306,6 +312,7 @@
 	gender = NEUTER
 	var/obj/item/gun/projectile/mounted
 	var/gun_type = /obj/item/gun/projectile/shotgun/doublebarrel/pellet
+	item_flags = ITEM_FLAG_THICK_MATERIAL
 
 /obj/item/clothing/gloves/ballistic/Initialize()
 	. = ..()
@@ -381,6 +388,7 @@
 	pickup_sound = 'sound/items/pickup/toolbox.ogg'
 	gender = NEUTER
 	var/charged = TRUE
+	item_flags = ITEM_FLAG_THICK_MATERIAL
 
 /obj/item/clothing/gloves/tesla/Touch(atom/A, mob/living/user, proximity)
 	if(!charged)

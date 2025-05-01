@@ -3,8 +3,7 @@
 //						LIMB SURGERY							//
 //////////////////////////////////////////////////////////////////
 
-/singleton/surgery_step/limb
-	priority = 3 // Must be higher than /singleton/surgery_step/internal
+ABSTRACT_TYPE(/singleton/surgery_step/limb)
 	can_infect = FALSE
 
 /singleton/surgery_step/limb/can_use(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)

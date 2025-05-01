@@ -66,14 +66,8 @@ avoid code duplication. This includes items that may sometimes act as a standard
 		return FALSE
 
 	var/selected_zone = user.zone_sel ? user.zone_sel.selecting : BP_CHEST
-	var/operating = can_operate(src)
-	if(operating == SURGERY_SUCCESS)
+	if((attacking_item.item_flags & ITEM_FLAG_SURGERY) && can_operate(user, src))
 		if(do_surgery(src, user, attacking_item))
-			return TRUE
-		else
-			return attacking_item.attack(src, user, selected_zone) //This is necessary to make things like health analyzers work. -mattatlas
-	if(operating == SURGERY_FAIL)
-		if(do_surgery(src, user, attacking_item, TRUE))
 			return TRUE
 		else
 			return attacking_item.attack(src, user, selected_zone)

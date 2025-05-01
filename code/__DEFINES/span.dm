@@ -50,3 +50,13 @@
 #define FONT_LARGE(str) SPAN_SIZE(FONT_SIZE_LARGE, str)
 #define FONT_HUGE(str) SPAN_SIZE(FONT_SIZE_HUGE, str)
 #define FONT_GIANT(str) SPAN_SIZE(FONT_SIZE_GIANT, str)
+
+/*
+#####################
+	Font styles
+#####################
+*/
+
+#define STYLE_SMALLFONTS(X, S, C1) SPAN_STYLE("font-family: 'Small Fonts'; color: [C1]; font-size: [S]px", "[X]")
+
+#define STYLE_SMALLFONTS_OUTLINE(X, S, C1, C2) SPAN_STYLE("font-family: 'Small Fonts'; color: [C1]; -dm-text-outline: 1 [C2]; font-size: [S]px", "[X]")

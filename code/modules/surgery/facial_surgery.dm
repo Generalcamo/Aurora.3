@@ -6,7 +6,6 @@
 
 /singleton/surgery_step/face
 	name = "Retract Facial Incisions"
-	priority = 2
 	can_infect = FALSE
 
 /singleton/surgery_step/face/can_use(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
@@ -131,7 +130,6 @@
 	target.apply_damage(5, DAMAGE_BURN, affected)
 
 /singleton/surgery_step/robotics/face
-	priority = 2
 	can_infect = FALSE
 
 /singleton/surgery_step/robotics/face/can_use(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)

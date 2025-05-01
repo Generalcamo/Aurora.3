@@ -6,7 +6,6 @@
 
 /singleton/surgery_step/fix_vein
 	name = "Repair Arterial Bleeding"
-	priority = 3
 	allowed_tools = list(
 	/obj/item/surgery/fix_o_vein = 100, \
 	/obj/item/stack/cable_coil = 75
@@ -53,7 +52,6 @@
 
 /singleton/surgery_step/internal/fix_dead_tissue //Debridement
 	name = "Debride Damaged Tissue"
-	priority = 4
 	allowed_tools = list(
 		/obj/item/surgery/scalpel = 100,
 		/obj/item/material/knife = 75,
@@ -116,7 +114,6 @@
 
 /singleton/surgery_step/treat_necrosis
 	name = "Treat Necrosis"
-	priority = 4
 	allowed_tools = list(
 		/obj/item/reagent_containers/dropper = 100,
 		/obj/item/reagent_containers/glass/bottle = 75,
@@ -186,7 +183,6 @@
 
 /singleton/surgery_step/fix_tendon
 	name = "Repair Tendons"
-	priority = 2
 	allowed_tools = list(
 		/obj/item/surgery/fix_o_vein = 100, \
 		/obj/item/stack/cable_coil = 75
@@ -298,8 +294,7 @@
 			return FALSE
 
 	if(affected.limb_flags & ORGAN_CAN_AMPUTATE)
-		var/confirmation = alert("You are about to amputate [target]'s [affected.name]! Are you sure you want to do that?", "Amputation confirmation", "Yes", "No")
-		return confirmation == "Yes"
+		return TRUE
 
 /singleton/surgery_step/amputate/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)

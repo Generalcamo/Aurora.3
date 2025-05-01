@@ -5,7 +5,6 @@
 //////////////////////////////////////////////////////////////////
 
 /singleton/surgery_step/cavity
-	priority = 1
 
 /singleton/surgery_step/cavity/can_use(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	if(!..())
@@ -71,7 +70,6 @@
 
 /singleton/surgery_step/cavity/close_space
 	name = "Close Cavity"
-	priority = 2
 	allowed_tools = list(
 	/obj/item/surgery/cautery = 100,			\
 	/obj/item/clothing/mask/smokable/cigarette = 75,	\
@@ -103,7 +101,6 @@
 
 /singleton/surgery_step/cavity/place_item
 	name = "Place Item in Cavity"
-	priority = 0
 	allowed_tools = list(/obj/item = 100)
 
 	min_duration = 60
