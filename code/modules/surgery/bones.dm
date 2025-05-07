@@ -20,7 +20,7 @@
 	if(!..())
 		return FALSE
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	return affected && !BP_IS_ROBOTIC(affected) && affected.open >= ORGAN_OPEN_RETRACTED && affected.open < ORGAN_ENCASED_RETRACTED && affected.stage == BONE_PRE_OP && (affected.status & ORGAN_BROKEN)
+	return affected
 
 /singleton/surgery_step/glue_bone/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -57,7 +57,7 @@
 	if(!..())
 		return FALSE
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	return affected && affected.name != BP_HEAD && !BP_IS_ROBOTIC(affected) && affected.open >= ORGAN_OPEN_RETRACTED && affected.stage == BONE_GLUED
+	return affected
 
 /singleton/surgery_step/set_bone/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -97,7 +97,7 @@
 	if(!..())
 		return FALSE
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	return affected && affected.name == BP_HEAD && !BP_IS_ROBOTIC(affected) && affected.open >= ORGAN_OPEN_RETRACTED && affected.stage == BONE_GLUED
+	return affected
 
 /singleton/surgery_step/mend_skull/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	user.visible_message("[user] is beginning to piece together [target]'s skull with \the [tool]."  , \
@@ -108,7 +108,7 @@
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
 	user.visible_message("<b>[user]</b> sets [target]'s skull with \the [tool]." , \
 		SPAN_NOTICE("You set [target]'s skull with \the [tool]."))
-	affected.stage = ORGAN_OPEN_RETRACTED
+	affected.stage = ORGAN_RETRACTED
 
 /singleton/surgery_step/mend_skull/fail_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -134,7 +134,7 @@
 	if(!..())
 		return FALSE
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	return affected && affected.open >= ORGAN_OPEN_RETRACTED && affected.open < ORGAN_ENCASED_RETRACTED && !BP_IS_ROBOTIC(affected) && affected.stage == BONE_SET
+	return affected && affected.stage >= ORGAN_RETRACTED && affected.stage < ORGAN_ENCASED && !BP_IS_ROBOTIC(affected) && affected.stage == BONE_SET
 
 /singleton/surgery_step/finish_bone/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)

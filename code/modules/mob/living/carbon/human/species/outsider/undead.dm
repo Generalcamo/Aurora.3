@@ -526,8 +526,8 @@
 			return
 
 		var/obj/item/organ/external/E = target.organs_by_name[BP_CHEST]
-		if(E && E.open < 3 && target.getBruteLoss() > 100)
-			E.open = min(E.open + 1, 3)
+		if(E && E.stage < 3 && target.getBruteLoss() > 100)
+			E.stage = min(E.stage + 1, 3)
 			target.update_surgery() //Update broken ribcage sprites etc.
 
 		adjustBruteLoss(-5)

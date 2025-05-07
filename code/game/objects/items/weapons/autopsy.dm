@@ -174,7 +174,7 @@
 	if(!S)
 		to_chat(usr, SPAN_WARNING("You can't scan this body part."))
 		return
-	if(!S.open)
+	if(!S.stage)
 		to_chat(usr, SPAN_WARNING("You have to cut the limb open first!"))
 		return
 	for(var/mob/O in viewers(M))

@@ -17,140 +17,129 @@
 	dir = SOUTH
 	organ_tag = "limb"
 
+	// Strings
+	///Name to use when this limb is a prosthetic. If null, will use the standard name variable
 	var/force_prosthetic_name
-
-	var/icon_name = null
-	var/body_part = null
-	var/icon_position = 0
-
-	var/damage_state = "00"
-
+	///Fracture string to use, if any.
+	var/broken_description
 	//Damage variables.
 	var/brute_mod = 1
-
 	///Actual current brute damage
 	var/brute_dam = 0
-
 	///Ratio of current brute damage to max damage
 	var/brute_ratio = 0
-
-
 	var/burn_mod = 1
-
 	///Actual current burn damage
 	var/burn_dam = 0
-
 	///Ratio of current burn damage to max damage
 	var/burn_ratio = 0
-
+	///Internal variable, used in healing/processing calculations.
 	var/last_dam = -1
-
 	///Amount of current genetic damage
 	var/genetic_degradation = 0
-
 	///How much the limb hurts
 	var/pain = 0
-
 	///The amount of `pain` at which a limb becomes unusable
 	var/pain_disability_threshold
-
 	///Organ behaviour flags, see `ORGAN_CAN_*` and `ORGAN_HAS_*` in `code\__DEFINES\damage_organs.dm`
 	var/limb_flags = ORGAN_CAN_AMPUTATE | ORGAN_CAN_BREAK | ORGAN_CAN_MAIM
-
 	var/max_size = 0
+	var/limb_name
 
+	// Appearance vars.
+	///Icon state base.
+	var/icon_name = null
+	///Part flag
+	var/body_part = null
+	///Used in mob overlay layering calculations.
+	var/icon_position = 0
+	///Used to force override of species-specific limb icons (for prosthetics).
+	var/force_icon
+	///Modifier used for generating the on-mob damage overlay for this limb.
+	var/damage_state = "00"
 	///The `/icon` of the mob that has this organ
 	var/icon/mob_icon
-
 	///A list of overlays for the organ
 	var/list/mutable_appearance/mob_overlays
-
-	var/gendered_icon = 0
-	var/force_icon
-
 	/// If set, will use this as the robotized force icon instead of the robotype
 	var/override_robotize_force_icon
-
 	/// If set, will use tihs as the painted value instead of the robotype
 	var/override_robotize_painted
-
-	/// Will robotize the children of this limb if set to true
-	var/robotize_children = TRUE
-
-	var/limb_name
-	var/disfigured = 0
-
+	var/gendered_icon = 0
 	var/s_tone
 	var/skin_color
+	///Color of hair
 	var/hair_color
+	///Icon blend for body hair if any.
+	var/body_hair
+	///Markings (body_markings) to apply to the icon
+	var/list/genetic_markings
+	///Same as `genetic_markings`, but not preserved when cloning
+	var/list/temporary_markings
+	///The `genetic_markings` and `temporary_markings` cached for perf. reasons
+	var/list/cached_markings
+	var/list/image/additional_images
 
+	// Wound and structural data.
+	///How often wounds should be updated, a higher number means less often
+	var/wound_update_accuracy = 1
 	///A `/list` of wounds
 	var/list/datum/wound/wounds = list()
-
+	///Cache the number of wounds, which is NOT length(wounds)!
+	var/number_wounds = 0
+	///The parent organ
+	var/obj/item/organ/external/parent
+	///A `/list` of organs that have this organ as a parent
+	var/list/obj/item/organ/external/children
+	///Internal organs of this body part
+	var/list/obj/item/organ/internal/internal_organs = list()
 	///A list of implants present in this organ
 	var/list/implants = list()
 
-	///Cache the number of wounds, which is NOT wounds.len!
-	var/number_wounds = 0
+	/// Will robotize the children of this limb if set to true
+	var/robotize_children = TRUE
+	var/disfigured = 0
+
+	//Joint/State Stuff
+	///Descriptive string used in dislocation
+	var/joint = "joint"
+	///Descriptive string used in amputation
+	var/amputation_point
+	///If the joint is dislocated
+	var/dislocated = FALSE
+	///Needs to be opened with a saw to access the organs
+	var/encased
+	///Name of the limb's tendon. Achilles heel, etc.
+	var/tendon_name = "tendon"
+	///The tendon
+	var/datum/tendon/tendon
+	///A path of the type of tendon to create when this organ is created
+	var/tendon_path = /datum/tendon
+	///Name of the artery. Carotid artery, aorta, etc.
+	var/artery_name = "artery"
+	///Multiplier for bleeding in a limb
+	var/arterial_bleed_severity = 1
 
 	var/perma_injury = 0
 
-	///The parent organ
-	var/obj/item/organ/external/parent
-
-	///A `/list` of organs that have this organ as a parent
-	var/list/obj/item/organ/external/children
-
 	///Boolean, if this organ supports childrens, which will be added in `children`
 	var/supports_children = TRUE
-
-	///Internal organs of this body part
-	var/list/obj/item/organ/internal/internal_organs = list()
-
-	///The tendon
-	var/datum/tendon/tendon
-
-	///A path of the type of tendon to create when this organ is created
-	var/tendon_path = /datum/tendon
-
-	///Name of the limb's tendon. Achilles heel, etc.
-	var/tendon_name = "tendon"
 
 	///HP value of the limb's tendon
 	var/tendon_health = 30
 
 	var/list/tendon_msgs = list("tore apart", "ripped away")
 
+	//Surgery vars
 	var/damage_msg = SPAN_WARNING("You feel an intense pain!")
-	var/broken_description
-	var/open = 0
+	var/hatch_state = HATCH_CLOSED
 	var/stage = 0
 	var/cavity = 0
+	///Pressure applied to wounds. It'll make them bleed less, generally.
+	var/atom/movable/applied_pressure
 
 	///Boolean, if it was sabotaged (emagged), make it detonate when it fails
 	var/sabotaged = FALSE
-
-	///Needs to be opened with a saw to access the organs
-	var/encased
-
-	///Descriptive string used in dislocation
-	var/joint = "joint"
-
-	///Name of the artery. Cartoid, etc.
-	var/artery_name = "artery"
-
-	///Multiplier for bleeding in a limb
-	var/arterial_bleed_severity = 1
-
-	///Descriptive string used in amputation
-	var/amputation_point
-
-	///If the joint is dislocated
-	var/dislocated = FALSE
-
-	///How often wounds should be updated, a higher number means less often
-	var/wound_update_accuracy = 1
-	var/body_hair
 	var/painted = 0
 
 	/// The amount of bandages on our sprite
@@ -158,20 +147,6 @@
 
 	///For special projectile gibbing calculation, dubbed "maiming"
 	var/maim_bonus = 0
-
-	///Markings (body_markings) to apply to the icon
-	var/list/genetic_markings
-
-	///Same as `genetic_markings`, but not preserved when cloning
-	var/list/temporary_markings
-
-	///The `genetic_markings` and `temporary_markings` cached for perf. reasons
-	var/list/cached_markings
-
-	var/list/image/additional_images
-
-	///Pressure applied to wounds. It'll make them bleed less, generally.
-	var/atom/movable/applied_pressure
 
 	var/image/hud_damage_image
 
@@ -230,7 +205,7 @@
 
 
 /obj/item/organ/external/attack_self(var/mob/user)
-	if(!contents.len)
+	if((owner && loc == owner) || !length(contents))
 		return ..()
 	var/list/removable_objects = list()
 	for(var/obj/item/organ/external/E in (contents + src))
@@ -240,7 +215,7 @@
 			if(istype(I,/obj/item/organ))
 				continue
 			removable_objects |= I
-	if(removable_objects.len)
+	if(length(removable_objects))
 		var/obj/item/I = pick(removable_objects)
 		I.forceMove(get_turf(user)) //just in case something was embedded that is not an item
 		if(istype(I))
@@ -259,29 +234,59 @@
 			. += SPAN_DANGER("There is \a [I] sticking out of it.")
 
 /obj/item/organ/external/attackby(obj/item/attacking_item, mob/user)
+	if(try_remove_internal_item(attacking_item, user))
+		return TRUE
+	return ..()
+
+///Handles removing internal organs/implants/items still in the detached limb.
+/obj/item/organ/external/proc/try_remove_internal_item(obj/item/attacking_item, mob/user)
 	switch(stage)
-		if(0)
-			if(istype(attacking_item, /obj/item/surgery/scalpel))
-				user.visible_message(SPAN_DANGER("<b>[user]</b> cuts [src] open with [attacking_item]!"))
+		if(ORGAN_CLOSED)
+			if(attacking_item.sharp)
+				user.visible_message(SPAN_NOTICE("<b>\The [user]</b> cuts \the [src] open with \the [attacking_item]!"))
 				stage++
-				return
-		if(1)
+				return TRUE
+		if(ORGAN_OPEN)
 			if(istype(attacking_item, /obj/item/surgery/retractor))
-				user.visible_message(SPAN_DANGER("<b>[user]</b> cracks [src] open like an egg with [attacking_item]!"))
+				user.visible_message(SPAN_NOTICE("<b>\The [user]</b> levers \the [src] open with \the [attacking_item]!"))
 				stage++
-				return
-		if(2)
-			if(istype(attacking_item, /obj/item/surgery/hemostat))
-				if(contents.len)
-					var/obj/item/removing = pick(contents)
-					removing.forceMove(get_turf(user.loc))
-					if(!(user.l_hand && user.r_hand))
-						user.put_in_hands(removing)
-					user.visible_message(SPAN_DANGER("<b>[user]</b> extracts [removing] from [src] with [attacking_item]!"))
+				return TRUE
+		if(ORGAN_RETRACTED || ORGAN_ENCASED)
+			if(istype(attacking_item, /obj/item/surgery/hemostat) || attacking_item.sharp || attacking_item.iswirecutter())
+				var/list/removable_organs
+				var/list/contents = get_contents_recursive()
+				for(var/organ as anything in contents)
+					var/obj/item/content = organ
+					var/image/radial_button = image(icon = content.icon, icon_state = content.icon_state)
+					radial_button.name = content.name
+					LAZYSET(removable_organs, content, radial_button)
+				if(LAZYLEN(removable_organs))
+					var/obj/item/removing = show_radial_menu(user, src, removable_organs, radius = 42, require_near = TRUE, use_labels = TRUE, tooltips = TRUE)
+					if(removing)
+						removing.forceMove(get_turf(user.loc))
+						if(!(user.l_hand && user.r_hand))
+							user.put_in_hands(removing)
+						user.visible_message(SPAN_NOTICE("<b>\The [user]</b> extracts \the [removing] from \the [src] with \the [attacking_item]!"))
 				else
-					user.visible_message(SPAN_DANGER("<b>[user]</b> fishes around fruitlessly in [src] with [attacking_item]."))
-				return
-	..()
+					user.visible_message(SPAN_NOTICE("<b>\The [user]</b> fishes around fruitlessly in \the [src] with \the [attacking_item]."))
+				return TRUE
+	return FALSE
+
+/**
+ *  Get a list of contents of this organ and all the child organs
+ */
+/obj/item/organ/external/proc/get_contents_recursive()
+	var/list/all_items = list()
+
+	if(LAZYLEN(implants))
+		all_items.Add(implants)
+	if(LAZYLEN(internal_organs))
+		all_items.Add(internal_organs)
+
+	for(var/obj/item/organ/external/child in children)
+		all_items.Add(child.get_contents_recursive())
+
+	return all_items
 
 /obj/item/organ/external/proc/dislocate(var/primary)
 	if(dislocated == -1)
@@ -976,7 +981,7 @@ Note that amputating the affected organ does in fact remove the infection from t
 		number_wounds += W.amount
 
 	//things tend to bleed if they are CUT OPEN
-	if (open && !clamped && (H && !(H.species.flags & NO_BLOOD) && !(status & ORGAN_ROBOT)))
+	if (stage && !clamped && (H && !(H.species.flags & NO_BLOOD) && !(status & ORGAN_ROBOT)))
 		status |= ORGAN_BLEEDING
 
 	if (istype(tendon))
@@ -1354,7 +1359,6 @@ Note that amputating the affected organ does in fact remove the infection from t
 		W.forceMove(owner)
 
 /obj/item/organ/external/removed(var/mob/living/user, var/ignore_children = 0)
-
 	if(!owner)
 		return
 	var/is_robotic = status & ORGAN_ROBOT
@@ -1385,7 +1389,8 @@ Note that amputating the affected organ does in fact remove the infection from t
 	// Grab all the internal giblets too.
 	for(var/obj/item/organ/organ in internal_organs)
 		organ.removed()
-		organ.forceMove(src)
+		if(!QDELETED(organ))
+			organ.forceMove(src)
 
 	// Remove parent references
 	parent?.children -= src
@@ -1440,10 +1445,10 @@ Note that amputating the affected organ does in fact remove the infection from t
 					. += "some [LL ? pick ("fresh skins","burn scars","healing burns") : "burns"]"
 				if(21 to INFINITY)
 					. += "[LL ? pick("roasted synth-flesh","melted internal wiring") : pick("many burns","scorched metal")]"
-		if(open)
+		if(stage)
 			if(brute_dam || burn_dam)
 				. += " and "
-			if(open == 1)
+			if(stage == 1)
 				. += "some exposed screws"
 			else
 				. += "an open panel"
@@ -1451,9 +1456,9 @@ Note that amputating the affected organ does in fact remove the infection from t
 		return
 
 	var/list/wound_descriptors = list()
-	if(open > 1)
+	if(stage > 1)
 		wound_descriptors["an open incision"] = 1
-	else if (open)
+	else if (stage)
 		wound_descriptors["an incision"] = 1
 	for(var/datum/wound/W in wounds)
 		var/this_wound_desc = W.desc
@@ -1470,13 +1475,13 @@ Note that amputating the affected organ does in fact remove the infection from t
 		else
 			wound_descriptors[this_wound_desc] = W.amount
 
-	if(open > 1)
+	if(stage > 1)
 		var/bone = encased ? encased : "bone"
 		if(status & ORGAN_BROKEN)
 			bone = "broken [bone]"
 		wound_descriptors["a [bone] exposed"] = 1
 
-		if(!encased || open > 1)
+		if(!encased || stage > 1)
 			var/list/bits = list()
 			for(var/obj/item/organ/internal/organ in internal_organs)
 				bits += organ.get_visible_state()

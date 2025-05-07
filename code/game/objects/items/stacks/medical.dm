@@ -145,7 +145,7 @@ Contains:
 		var/mob/living/carbon/human/H = target_mob
 		var/obj/item/organ/external/affecting = H.get_organ(user.zone_sel.selecting)
 
-		if(affecting.open == 0)
+		if(affecting.stage == 0)
 			if(affecting.is_bandaged())
 				to_chat(user, SPAN_WARNING("The wounds on [target_mob]'s [affecting.name] have already been bandaged."))
 				return 1
@@ -221,7 +221,7 @@ Contains:
 		var/mob/living/carbon/human/H = target_mob
 		var/obj/item/organ/external/affecting = H.get_organ(user.zone_sel.selecting)
 
-		if(affecting.open == 0)
+		if(affecting.stage == 0)
 			if(affecting.is_salved())
 				to_chat(user, SPAN_WARNING("The wounds on [target_mob]'s [affecting.name] have already been salved."))
 				return 1
@@ -272,7 +272,7 @@ Contains:
 		var/mob/living/carbon/human/H = target_mob
 		var/obj/item/organ/external/affecting = H.get_organ(user.zone_sel.selecting)
 
-		if(affecting.open == 0)
+		if(affecting.stage == 0)
 			if(affecting.is_bandaged() && affecting.is_disinfected())
 				to_chat(user, SPAN_WARNING("The wounds on [target_mob]'s [affecting.name] have already been treated."))
 				return 1
@@ -345,7 +345,7 @@ Contains:
 		var/mob/living/carbon/human/H = target_mob
 		var/obj/item/organ/external/affecting = H.get_organ(user.zone_sel.selecting)
 
-		if(affecting.open == 0)
+		if(affecting.stage == 0)
 			if(affecting.is_salved())
 				to_chat(user, SPAN_WARNING("The wounds on [target_mob]'s [affecting.name] have already been salved."))
 				return 1

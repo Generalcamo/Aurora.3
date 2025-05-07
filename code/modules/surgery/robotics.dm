@@ -43,7 +43,7 @@
 		return FALSE
 
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	if(affected?.open == ORGAN_CLOSED)
+	if(affected?.stage == ORGAN_CLOSED)
 		return TRUE
 	return FALSE
 
@@ -57,7 +57,7 @@
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
 	user.visible_message("<b>[user]</b> has opened the maintenance hatch on [target]'s [affected.name] with \the [tool].", \
 		SPAN_NOTICE("You have opened the maintenance hatch on [target]'s [affected.name] with \the [tool]."),)
-	affected.open = ORGAN_OPEN_INCISION
+	affected.stage = ORGAN_OPEN_INCISION
 
 /singleton/surgery_step/robotics/unscrew_hatch/fail_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -85,7 +85,7 @@
 		return FALSE
 
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	if(affected?.open == ORGAN_OPEN_INCISION)
+	if(affected?.stage == ORGAN_OPEN)
 		return TRUE
 	return FALSE
 
@@ -99,7 +99,7 @@
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
 	user.visible_message("<b>[user]</b> has closed the maintenance hatch on [target]'s [affected.name] with \the [tool].", \
 		SPAN_NOTICE("You have closed the maintenance hatch on [target]'s [affected.name] with \the [tool]."),)
-	affected.open = ORGAN_CLOSED
+	affected.stage = ORGAN_CLOSED
 
 /singleton/surgery_step/robotics/screw_hatch/fail_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -122,7 +122,7 @@
 		return FALSE
 
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	if(affected?.open == ORGAN_OPEN_INCISION)
+	if(affected?.stage == ORGAN_OPEN)
 		return TRUE
 	return FALSE
 
@@ -136,7 +136,7 @@
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
 	user.visible_message(SPAN_NOTICE("[user] opens the maintenance hatch on [target]'s [affected.name] with \the [tool]."), \
 		SPAN_NOTICE("You open the maintenance hatch on [target]'s [affected.name] with \the [tool]."))
-	affected.open = ORGAN_ENCASED_RETRACTED
+	affected.stage = ORGAN_ENCASED_RETRACTED
 
 /singleton/surgery_step/robotics/open_hatch/fail_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -162,7 +162,7 @@
 		return FALSE
 
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	if(affected?.open > ORGAN_OPEN_INCISION)
+	if(affected?.stage > ORGAN_OPEN_INCISION)
 		return TRUE
 	return FALSE
 
@@ -176,7 +176,7 @@
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
 	user.visible_message("<b>[user]</b> closes the hatch on [target]'s [affected.name] with \the [tool].", \
 		SPAN_NOTICE("You close the hatch on [target]'s [affected.name] with \the [tool]."))
-	affected.open = ORGAN_OPEN_INCISION
+	affected.stage = ORGAN_OPEN_INCISION
 	affected.germ_level = 0
 
 /singleton/surgery_step/robotics/close_hatch/fail_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
@@ -203,7 +203,7 @@
 		var/obj/item/weldingtool/welder = tool
 		if(!welder.isOn() || welder.get_fuel() < 2)
 			return FALSE
-	return affected && affected.open == ORGAN_ENCASED_RETRACTED && affected.brute_dam > 0 && target_zone != BP_MOUTH
+	return affected && affected.stage == ORGAN_ENCASED_RETRACTED && affected.brute_dam > 0 && target_zone != BP_MOUTH
 
 /singleton/surgery_step/robotics/repair_brute/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -245,7 +245,7 @@
 
 	var/obj/item/stack/cable_coil/C = tool
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	var/limb_can_operate = (affected && affected.open == ORGAN_ENCASED_RETRACTED && affected.burn_dam > 0 && target_zone != BP_MOUTH)
+	var/limb_can_operate = (affected && affected.stage == ORGAN_ENCASED_RETRACTED && affected.burn_dam > 0 && target_zone != BP_MOUTH)
 	if(limb_can_operate)
 		if(istype(C))
 			if(!C.get_amount() >= 6)
@@ -287,7 +287,7 @@
 		return FALSE
 
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	if(affected.open != ORGAN_ENCASED_RETRACTED)
+	if(affected.stage != ORGAN_ENCASED_RETRACTED)
 		return FALSE
 
 	target.op_stage.current_organ = null
@@ -339,7 +339,7 @@
 		return FALSE
 
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	if(affected.open != ORGAN_ENCASED_RETRACTED)
+	if(affected.stage != ORGAN_ENCASED_RETRACTED)
 		return FALSE
 
 	target.op_stage.current_organ = null
@@ -392,7 +392,7 @@
 
 	var/obj/item/device/mmi/M = tool
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	if(!(affected && affected.open == ORGAN_ENCASED_RETRACTED))
+	if(!(affected && affected.stage == ORGAN_ENCASED_RETRACTED))
 		return FALSE
 
 	if(!istype(M))

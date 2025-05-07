@@ -176,7 +176,7 @@
 	var/list/traits = prefs.disabilities
 	for(var/M in traits)
 		var/datum/character_disabilities/trait = GLOB.chargen_disabilities_list[M]
-		trait.apply_self(src)
+		trait?.apply_self(src)
 
 // Helper proc that grabs whatever organ this humantype uses to see.
 // Usually eyes, but can be something else.

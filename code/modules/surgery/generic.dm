@@ -36,7 +36,7 @@
 	if(!..())
 		return FALSE
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	return affected && affected.open == ORGAN_CLOSED && target_zone != BP_MOUTH
+	return affected
 
 /singleton/surgery_step/generic/cut_with_laser/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -49,7 +49,7 @@
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
 	user.visible_message("<b>[user]</b> has made a bloodless incision on [target]'s [affected.name] with \the [tool].", \
 		SPAN_NOTICE("You have made a bloodless incision on [target]'s [affected.name] with \the [tool]."))
-	affected.open = ORGAN_OPEN_INCISION
+	affected.stage = ORGAN_OPEN
 
 	if(istype(target) && !(target.species.flags & NO_BLOOD))
 		affected.status |= ORGAN_BLEEDING
@@ -78,7 +78,7 @@
 	if(!..())
 		return FALSE
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	return affected && affected.open == ORGAN_CLOSED && target_zone != BP_MOUTH
+	return affected && affected.stage == ORGAN_CLOSED && target_zone != BP_MOUTH
 
 /singleton/surgery_step/generic/incision_manager/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -91,14 +91,14 @@
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
 	user.visible_message("<b>[user]</b> constructs a prepared incision on and within [target]'s [affected.name] with \the [tool].", \
 		SPAN_NOTICE("You have constructed a prepared incision on and within [target]'s [affected.name] with \the [tool]."),)
-	affected.open = ORGAN_OPEN_INCISION
+	affected.stage = ORGAN_OPEN
 
 	if(istype(target) && !(target.species.flags & NO_BLOOD))
 		affected.status |= ORGAN_BLEEDING
 
 	target.apply_damage(1, DAMAGE_BRUTE, target_zone, 0)
 	affected.clamp_organ()
-	affected.open = ORGAN_OPEN_RETRACTED
+	affected.stage = ORGAN_RETRACTED
 
 /singleton/surgery_step/generic/incision_manager/fail_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -125,7 +125,7 @@
 		return FALSE
 	else
 		var/obj/item/organ/external/affected = target.get_organ(target_zone)
-		return affected && affected.open == ORGAN_CLOSED && target_zone != BP_MOUTH
+		return affected && affected.stage == ORGAN_CLOSED && target_zone != BP_MOUTH
 
 /singleton/surgery_step/generic/cut_open/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -138,7 +138,7 @@
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
 	user.visible_message("<b>[user]</b> has made an incision on [target]'s [affected.name] with \the [tool].", \
 		SPAN_NOTICE("You have made an incision on [target]'s [affected.name] with \the [tool]."),)
-	affected.open = ORGAN_OPEN_INCISION
+	affected.stage = ORGAN_OPEN
 
 	if(istype(target) && !(target.species.flags & NO_BLOOD))
 		affected.status |= ORGAN_BLEEDING
@@ -169,7 +169,7 @@
 		return FALSE
 	else
 		var/obj/item/organ/external/affected = target.get_organ(target_zone)
-		return affected && affected.open == ORGAN_CLOSED && target_zone != BP_MOUTH
+		return affected && affected.stage == ORGAN_CLOSED && target_zone != BP_MOUTH
 
 /singleton/surgery_step/generic/cut_open_vaurca/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -182,7 +182,7 @@
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
 	user.visible_message("<b>[user]</b> has drilled into [target]'s [affected.name] carapace with \the [tool].", \
 							SPAN_NOTICE("You have drilled into [target]'s [affected.name] carapace with \the [tool]."),)
-	affected.open = ORGAN_OPEN_INCISION
+	affected.stage = ORGAN_OPEN_INCISION
 
 	if(istype(target) && !(target.species.flags & NO_BLOOD))
 		affected.status |= ORGAN_BLEEDING
@@ -211,7 +211,7 @@
 		return FALSE
 
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	return affected && affected.open > ORGAN_CLOSED && (affected.status & ORGAN_BLEEDING)
+	return affected && affected.stage > ORGAN_CLOSED && (affected.status & ORGAN_BLEEDING)
 
 /singleton/surgery_step/generic/clamp_bleeders/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -250,7 +250,7 @@
 		return FALSE
 
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	return affected && affected.open == ORGAN_OPEN_INCISION
+	return affected && affected.stage == ORGAN_OPEN_INCISION
 
 /singleton/surgery_step/generic/retract_skin/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -277,7 +277,7 @@
 		msg = "<b>[user]</b> keeps the incision open on [target]'s lower abdomen with \the [tool]."
 		self_msg = SPAN_NOTICE("You keep the incision open on [target]'s lower abdomen with \the [tool].")
 	user.visible_message(msg, self_msg)
-	affected.open = ORGAN_OPEN_RETRACTED
+	affected.stage = ORGAN_OPEN_RETRACTED
 
 	if(!affected.encased)
 		for(var/obj/item/implant/I in affected.implants)
@@ -313,7 +313,7 @@
 		return FALSE
 
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	return affected && affected.open > ORGAN_CLOSED && target_zone != BP_MOUTH
+	return affected && affected.stage > ORGAN_CLOSED && target_zone != BP_MOUTH
 
 /singleton/surgery_step/generic/cauterize/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -326,7 +326,7 @@
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
 	user.visible_message("<b>[user]</b> cauterizes the incision on [target]'s [affected.name] with \the [tool].", \
 		SPAN_NOTICE("You cauterize the incision on [target]'s [affected.name] with \the [tool]."))
-	affected.open = ORGAN_CLOSED
+	affected.stage = ORGAN_CLOSED
 	affected.germ_level = 0
 	affected.status &= ~ORGAN_BLEEDING
 

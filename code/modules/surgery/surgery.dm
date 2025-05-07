@@ -34,6 +34,9 @@ ABSTRACT_TYPE(/singleton/surgery_step)
 	/// Sound (or list of sounds) to play on begin step.
 	var/begin_step_sound = "rustle"
 
+/singleton/surgery_step/proc/is_self_surgery_permitted(mob/target, bodypart)
+	return TRUE
+
 ///Returns how well tool is suited for this step
 /singleton/surgery_step/proc/tool_quality(obj/item/tool)
 	for(var/T in allowed_tools)
@@ -70,9 +73,32 @@ ABSTRACT_TYPE(/singleton/surgery_step)
 		var/obj/item/organ/external/affected = target.get_organ(target_zone)
 		if(affected)
 			// Check various conditional flags
-			if(((surgery_candidate_flags & SURGERY_NO_ROBOTIC) && BP_IS_ROBOTIC(affected)) || \
-			((surgery_candidate_flags & SURGERY_NO_STUMP) && affected.is_stump()))
+			if((surgery_candidate_flags & SURGERY_NO_ROBOTIC) && BP_IS_ROBOTIC(affected))
+				FEEDBACK_FAILURE(user, "You notice that \the [target.name] in [user]'s [affected.name] is a mechanical organ, and you cannot perform this task with a mechanical organ.")
 				return FALSE
+			if((surgery_candidate_flags & SURGERY_NO_FLESH) && !(BP_IS_ROBOTIC(affected)))
+				FEEDBACK_FAILURE(user, "You notice that \the [target.name] in [user]'s [affected.name] is a biological organ, and you cannot perform this task with a biological organ.")
+				return FALSE
+			if((surgery_candidate_flags & SURGERY_NO_STUMP) && affected.is_stump())
+				FEEDBACK_FAILURE(user, "\The [user]'s [affected.name] is nothing but a stump! You cannot perform this task with a stump!")
+				return FALSE
+			// Check if the surgery target is accessible
+			if(BP_IS_ROBOTIC(affected))
+				if(((surgery_candidate_flags & SURGERY_NEEDS_ENCASEMENT) || \
+				(surgery_candidate_flags & SURGERY_NEEDS_RETRACTED) || \
+				(surgery_candidate_flags & SURGERY_NEEDS_INCISION)) && \
+				affected.hatch_state != HATCH_OPENED)
+					return FALSE
+//			else
+//				var/open_threshold
+//				if(surgery_candidate_flags & SURGERY_NEEDS_INCISION)
+//					//open_threshold = SURGERY_OPEN
+//				else if(surgery_candidate_flags & SURGERY_NEEDS_RETRACTED)
+//					//open_threshold = SURGERY_RETRACTED
+//				else if(surgery_candidate_flags & SURGERY_NEEDS_ENCASEMENT)
+					//open_threshold = (affected.encased ? SURGERY_ENCASED : SURGERY_RETRACTED)
+				//if(open_threshold && ((strict_access_requirement && affected.how_open() != open_threshold) || affected.how_open() < open_threshold))
+				//	return FALSE
 			// Check if clothing is blocking access
 			var/obj/item/I = target.get_covering_equipped_item_by_zone(target_zone)
 			if(I?.item_flags & ITEM_FLAG_THICK_MATERIAL)
@@ -137,7 +163,7 @@ ABSTRACT_TYPE(/singleton/surgery_step)
 	// What surgeries does our tool/target enable?
 	var/list/possible_surgeries
 	var/list/all_surgeries = GET_SINGLETON_SUBTYPE_MAP(/singleton/surgery_step)
-	for(var/singleton in all_surgeries)
+	for(var/singleton as anything in all_surgeries)
 		var/singleton/surgery_step/S = all_surgeries[singleton]
 		if(S.name && S.tool_quality(tool) && S.can_use(user, M, zone, tool))
 			var/image/radial_button = image(icon = tool.icon, icon_state = tool.icon_state)
@@ -145,21 +171,30 @@ ABSTRACT_TYPE(/singleton/surgery_step)
 			LAZYSET(possible_surgeries, S, radial_button)
 
 	// Which surgery, if any, do we actually want to do?
+	var/cancelled_surgery = FALSE
 	var/singleton/surgery_step/S
-	if(user.client && length(possible_surgeries))
-		if(length(possible_surgeries) == 1)
+	if(LAZYLEN(possible_surgeries) == 1)
+		S = possible_surgeries[1]
+	else if (LAZYLEN(possible_surgeries) >= 1)
+		if(!user.client) // In case of future autodocs
 			S = possible_surgeries[1]
 		else
 			S = show_radial_menu(user, M, possible_surgeries, radius = 42, tooltips = TRUE, require_near = TRUE, use_labels = TRUE)
-//		if(!user.use_check_and_message(user))
-//			S = null
+			if(!istype(S))
+				cancelled_surgery = TRUE
 
-//	var/obj/item/gripper/gripper = user.get_active_hand()
 	// We didn't find a surgery, or decided not to perform one.
 	if(!istype(S))
+
+		// If they cancelled, do not continue at all!
+		if(cancelled_surgery)
+			return TRUE
+
 		if(tool.item_flags & ITEM_FLAG_SURGERY) //Is this supposed to be used for surgery?
 			to_chat(user, SPAN_WARNING("You aren't sure what you could do to \the [M] with \the [tool]."))
 			return TRUE
+
+		return FALSE
 
 	// Otherwise we can make a start on surgery!
 	else if(istype(M) && !QDELETED(M) && tool)
@@ -168,50 +203,53 @@ ABSTRACT_TYPE(/singleton/surgery_step)
 			USE_FEEDBACK_FAILURE("You can't operate on this area while surgery is already in progress.")
 		else if(S.is_valid_target(M) && S.can_use(user, M, zone, tool))
 			M.op_stage.in_progress += list(zone = user)
-			S.begin_step(user, M, zone, tool)
-			var/duration = rand(S.min_duration, S.max_duration) / get_location_modifier(M)
-			var/do_result = do_after_detailed(user, duration, M, DO_SURGERY)
-			var/do_surgery_result = SURGERY_IGNORE
-			switch(do_result)
-				if(DO_MISSING_TARGET)
-					USE_FEEDBACK_FAILURE("\The [M] no longer exists!")
-				if(DO_INCAPACITATED)
-					to_chat(user, SPAN_DANGER("Your [tool.name] slips as you become incapacitated!"))
-					do_surgery_result = SURGERY_FAIL
-				if(DO_USER_CAN_MOVE)
-					to_chat(user, SPAN_DANGER("Your [tool.name] slips as you move!"))
-					do_surgery_result = SURGERY_FAIL
-				if(DO_TARGET_CAN_MOVE)
-					to_chat(user, SPAN_DANGER("Your [tool.name] slips as \the [M] moves!"))
-					do_surgery_result = SURGERY_FAIL
-				if(DO_USER_CAN_TURN)
-					to_chat(user, SPAN_DANGER("Your [tool.name] slips as you turn!"))
-					do_surgery_result = SURGERY_FAIL
-				if(DO_TARGET_CAN_TURN)
-					to_chat(user, SPAN_DANGER("Your [tool.name] slips as \the [M] turns!"))
-					do_surgery_result = SURGERY_FAIL
-				if(DO_USER_SAME_HAND)
-					USE_FEEDBACK_FAILURE("You must remain on the same active hand to perform that action!")
-				if(DO_USER_UNIQUE_ACT)
-					USE_FEEDBACK_FAILURE("You stop what you're doing with \the [M].")
-				if(DO_USER_SAME_ZONE)
-					USE_FEEDBACK_FAILURE("You must remain targeting the same zone to perform that action!")
-				if(FALSE)
-					do_surgery_result = SURGERY_SUCCESS
-			if(do_surgery_result == SURGERY_SUCCESS)
-				if(!prob(S.success_chance(user, M, tool, zone)))
-					do_surgery_result = SURGERY_FAIL
-			if(do_surgery_result == SURGERY_SUCCESS)
-				S.end_step(user, M, zone, tool)
-			else if (do_surgery_result == SURGERY_FAIL)
-				S.fail_step(user, M, zone, tool)
+			try
+				S.begin_step(user, M, zone, tool)
+				var/duration = rand(S.min_duration, S.max_duration) / get_location_modifier(M)
+				var/do_result = do_after_detailed(user, duration, M, DO_SURGERY)
+				var/do_surgery_result = SURGERY_IGNORE
+				switch(do_result)
+					if(DO_MISSING_TARGET)
+						USE_FEEDBACK_FAILURE("\The [M] no longer exists!")
+					if(DO_INCAPACITATED)
+						to_chat(user, SPAN_DANGER("Your [tool.name] slips as you become incapacitated!"))
+						do_surgery_result = SURGERY_FAIL
+					if(DO_USER_CAN_MOVE)
+						to_chat(user, SPAN_DANGER("Your [tool.name] slips as you move!"))
+						do_surgery_result = SURGERY_FAIL
+					if(DO_TARGET_CAN_MOVE)
+						to_chat(user, SPAN_DANGER("Your [tool.name] slips as \the [M] moves!"))
+						do_surgery_result = SURGERY_FAIL
+					if(DO_USER_CAN_TURN)
+						to_chat(user, SPAN_DANGER("Your [tool.name] slips as you turn!"))
+						do_surgery_result = SURGERY_FAIL
+					if(DO_TARGET_CAN_TURN)
+						to_chat(user, SPAN_DANGER("Your [tool.name] slips as \the [M] turns!"))
+						do_surgery_result = SURGERY_FAIL
+					if(DO_USER_SAME_HAND)
+						USE_FEEDBACK_FAILURE("You must remain on the same active hand to perform that action!")
+					if(DO_USER_UNIQUE_ACT)
+						USE_FEEDBACK_FAILURE("You stop what you're doing with \the [M].")
+					if(DO_USER_SAME_ZONE)
+						USE_FEEDBACK_FAILURE("You must remain targeting the same zone to perform that action!")
+					if(FALSE)
+						do_surgery_result = SURGERY_SUCCESS
+				if(do_surgery_result == SURGERY_SUCCESS)
+					if(!prob(S.success_chance(user, M, tool, zone)))
+						do_surgery_result = SURGERY_FAIL
+				if(do_surgery_result == SURGERY_SUCCESS)
+					S.end_step(user, M, zone, tool)
+				else if (do_surgery_result == SURGERY_FAIL)
+					S.fail_step(user, M, zone, tool)
+			catch(var/exception/E)
+				stack_trace("Exception during surgery: [E]")
 			if(!QDELETED(M))
 				M.op_stage.in_progress -= list(zone = user)
 				if(ishuman(M))
 					var/mob/living/carbon/human/H = M
 					H.update_surgery()
 		return TRUE
-	return TRUE
+	return FALSE
 
 /singleton/surgery_step/proc/success_chance(mob/living/user, mob/living/carbon/human/target, obj/item/tool, target_zone)
 	. = tool_quality(tool)

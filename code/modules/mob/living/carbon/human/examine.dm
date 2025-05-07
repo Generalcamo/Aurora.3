@@ -314,11 +314,11 @@
 				continue
 			var/thin_covering = (skipbody & body_part) ? TRUE : FALSE
 			if((temp.status & ORGAN_ASSISTED) && !thin_covering)
-				if(!(temp.brute_dam + temp.burn_dam) && !(temp.open))
+				if(!(temp.brute_dam + temp.burn_dam) && !(temp.stage))
 					continue
 				else
 					wound_flavor_text["[temp.name]"] = SPAN_WARNING("[get_pronoun("He")] [get_pronoun("has")] [temp.get_wounds_desc()] on [get_pronoun("his")] [temp.name].<br>")
-			else if(length(temp.wounds) || temp.open)
+			else if(length(temp.wounds) || temp.stage)
 				if(!thin_covering)
 					if(temp.is_stump() && temp.parent_organ && organs_by_name[temp.parent_organ])
 						var/obj/item/organ/external/parent = organs_by_name[temp.parent_organ]

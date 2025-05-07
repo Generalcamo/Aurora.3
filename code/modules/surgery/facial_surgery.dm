@@ -116,7 +116,7 @@
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
 	user.visible_message("<b>[user]</b> cauterizes the incision on [target]'s face and neck with \the [tool].", \
 		SPAN_NOTICE("You cauterize the incision on [target]'s face and neck with \the [tool]."))
-	affected.open = ORGAN_CLOSED
+	affected.stage = ORGAN_CLOSED
 	affected.status &= ~ORGAN_BLEEDING
 	if(target.op_stage.face == 3)
 		var/obj/item/organ/external/head/h = affected
@@ -260,7 +260,7 @@
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
 	user.visible_message(SPAN_NOTICE("[user] seals the incision on [target]'s synthskin face and neck with \the [tool]."), \
 		SPAN_NOTICE("You seal the incision on [target]'s synthskin face and neck with \the [tool]."))
-	affected.open = ORGAN_CLOSED
+	affected.stage = ORGAN_CLOSED
 	if(target.op_stage.face == FACE_ALTERED)
 		var/obj/item/organ/external/head/h = affected
 		h.disfigured = FALSE

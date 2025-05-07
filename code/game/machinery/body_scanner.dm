@@ -543,7 +543,7 @@
 			wounds += "dislocated"
 		if(O.status & ORGAN_BROKEN)
 			wounds += "[O.broken_description]"
-		if(O.open)
+		if(O.stage)
 			wounds += "open incision"
 
 		var/list/infection = list()

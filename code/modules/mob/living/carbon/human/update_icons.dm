@@ -1518,14 +1518,15 @@ There are several things that need to be remembered:
 	if(update_icons)
 		update_icon()
 
-/mob/living/carbon/human/proc/update_surgery(var/update_icons=1)
+/mob/living/carbon/human/proc/update_surgery(update_icons)
+	SHOULD_CALL_PARENT(TRUE)
 	overlays_raw[SURGERY_LAYER] = null
 
 	var/image/total = new
 	for(var/obj/item/organ/external/E in organs)
 		if(E.status & ORGAN_ROBOT || E.is_stump())
 			continue
-		if(!E.open)
+		if(!E.stage)
 			continue
 
 		var/surgery_icon = E.owner.species.get_surgery_overlay_icon(src)
@@ -1533,7 +1534,7 @@ There are several things that need to be remembered:
 			continue
 
 		var/list/surgery_states = icon_states(surgery_icon)
-		var/base_state = "[E.icon_name][E.open]"
+		var/base_state = "[E.icon_name][E.stage]"
 		var/overlay_state = "[base_state]-flesh"
 		var/list/overlays_to_add
 

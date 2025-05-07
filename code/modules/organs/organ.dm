@@ -78,6 +78,7 @@ INITIALIZE_IMMEDIATE(/obj/item/organ)
 		if(internal)
 			holder.internal_organs |= src
 	START_PROCESSING(SSprocessing, src)
+	RegisterSignal(src, COMSIG_MOB_ORGANREMOVED, PROC_REF(on_organ_loss))
 
 
 /obj/item/organ/Destroy()
@@ -422,12 +423,14 @@ INITIALIZE_IMMEDIATE(/obj/item/organ)
 	surge_damage = clamp(0, surge + surge_damage, MAXIMUM_SURGE_DAMAGE) //We want X seconds at most of hampered movement or what have you.
 	surge_time = world.time
 
-/obj/item/organ/proc/removed(var/mob/living/carbon/human/target,var/mob/living/user)
+/obj/item/organ/proc/removed(var/mob/living/carbon/human/target,var/mob/living/user, drop_organ = TRUE)
+	SIGNAL_HANDLER
 	if(!istype(owner))
 		return
 
 	action_button_name = null
 
+	if(drop_organ)
 	owner.internal_organs_by_name[organ_tag] = null
 	owner.internal_organs_by_name -= organ_tag
 	owner.internal_organs_by_name -= null

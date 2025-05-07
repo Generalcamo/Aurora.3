@@ -425,7 +425,7 @@
 			else
 				repair_organ(user, H, S)
 
-		else if(S.open != 2)
+		else if(S.stage != 2)
 			to_chat(user, SPAN_NOTICE("You can't see any external damage to repair."))
 	else
 		return ..()

@@ -11,9 +11,9 @@ ABSTRACT_TYPE(/singleton/surgery_step/internal)
 	if(affected.encased)
 		return affected && IS_ORGAN_FULLY_OPEN
 	if(BP_IS_ROBOTIC(affected))
-		return affected.augment_limit && affected.open == ORGAN_ENCASED_RETRACTED
+		return affected.augment_limit && affected.stage == ORGAN_ENCASED_RETRACTED
 	else
-		return affected.augment_limit && affected.open == ORGAN_OPEN_RETRACTED
+		return affected.augment_limit && affected.stage == ORGAN_OPEN_RETRACTED
 
 //////////////////////////////////////////////////////////////////
 //				CHEST INTERNAL ORGAN SURGERY					//
@@ -204,21 +204,21 @@ ABSTRACT_TYPE(/singleton/surgery_step/internal)
 		if(I && (I.status & ORGAN_ZOMBIFIED))
 			continue
 		if(I && !(I.status & ORGAN_CUT_AWAY) && I.parent_organ == target_zone)
-			var/image/radial_button = image(icon = I.icon, icon_state = I.icon_state)
-			radial_button.name = "Detach \the [I.name]"
-			attached_organs[I] = organ
+			var/datum/radial_menu_choice/organ_choice = new
+			organ_choice.image = image(icon = I.icon, icon_state = I.icon_state)
+			organ_choice.name = "Detach \the [I.name]"
+			attached_organs[I] = organ_choice
 
 	if(!LAZYLEN(attached_organs))
 		FEEDBACK_FAILURE(user, "You can't find any organs to seperate.")
-	if(length(attached_organs) == 1)
-		target.op_stage.current_organ = attached_organs[1]
-		return attached_organs[1]
-	else
-		var/organ_to_remove = show_radial_menu(user, tool, attached_organs, radius = 42, require_near = TRUE)
-		if(!organ_to_remove)
-			return FALSE
-		target.op_stage.current_organ = organ_to_remove
+		return FALSE
+//	if(length(attached_organs) == 1)
+//		target.op_stage.current_organ = attached_organs[1]
+//		return attached_organs[1]
+	var/organ_to_remove = show_radial_menu(user, tool, attached_organs, radius = 42, require_near = TRUE, tooltips = TRUE)
+	if(organ_to_remove)
 		return organ_to_remove
+	return FALSE
 
 /singleton/surgery_step/internal/detach_organ/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)

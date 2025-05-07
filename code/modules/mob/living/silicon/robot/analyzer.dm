@@ -94,7 +94,7 @@
 			if(length(H.internal_organs))
 				var/obj/item/organ/external/head = H.get_organ(BP_HEAD)
 				var/show_tag = FALSE
-				if(head?.open == 3) // Hatch open
+				if(head?.stage == 3) // Hatch open
 					show_tag = TRUE
 				for(var/obj/item/organ/O in H.internal_organs)
 					if(!(O.status & ORGAN_ROBOT))

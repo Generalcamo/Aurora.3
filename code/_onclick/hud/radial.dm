@@ -4,6 +4,7 @@ GLOBAL_LIST_EMPTY(radial_menus)
 	icon = 'icons/mob/screen/radial.dmi'
 	plane = HUD_PLANE
 	layer = RADIAL_BASE_LAYER
+	vis_flags = VIS_INHERIT_PLANE
 	var/click_on_hover = FALSE
 	var/datum/radial_menu/parent
 
@@ -105,7 +106,8 @@ GLOBAL_LIST_EMPTY(radial_menus)
 	var/pages = 1
 	var/current_page = 1
 
-	var/hudfix_method = TRUE //TRUE to change anchor to user, FALSE to shift by py_shift
+	///TRUE to change anchor to user, FALSE to shift by py_shift
+	var/hudfix_method = TRUE
 	var/py_shift = 0
 	var/button_animation_flags = BUTTON_SLIDE_IN
 
@@ -181,7 +183,7 @@ GLOBAL_LIST_EMPTY(radial_menus)
 
 	page_data[page] = current
 	pages = page
-	current_page = 1
+	current_page = clamp(set_page, 1, pages)
 	update_screen_objects(button_animation_flags, click_on_hover)
 
 /datum/radial_menu/proc/update_screen_objects(anim_flag = NONE, click_on_hover = FALSE)
@@ -205,7 +207,8 @@ GLOBAL_LIST_EMPTY(radial_menus)
 				E.click_on_hover = TRUE
 
 /datum/radial_menu/proc/HideElement(atom/movable/screen/radial/slice/E)
-	E.overlays.Cut()
+	E.CutOverlays()
+	E.vis_contents.Cut()
 	E.alpha = 0
 	E.name = "None"
 	E.maptext = null
@@ -235,11 +238,12 @@ GLOBAL_LIST_EMPTY(radial_menus)
 
 	//Visuals
 	E.mouse_opacity = MOUSE_OPACITY_ICON
-	E.overlays.Cut()
+	E.CutOverlays()
+	E.vis_contents.Cut()
 	if(choice_id == NEXT_PAGE_ID)
 		E.name = "Next Page"
 		E.next_page = TRUE
-		E.icon_state = "radial_slice"
+		E.icon_state = "radial_slice" // Resets the bg icon state to the default for next page buttons.
 		E.overlays.Add("radial_next")
 	else
 		//This isn't guaranteed to exist, so use the ?. operator for conditionals that use it.
@@ -259,6 +263,11 @@ GLOBAL_LIST_EMPTY(radial_menus)
 		E.next_page = FALSE
 		if(choices_icons[choice_id])
 			E.overlays.Add(choices_icons[choice_id])
+		if(choice_datum?.info)
+			var/obj/effect/abstract/info/info_button = new(E, choice_datum.info)
+			info_button.plane = HUD_PLANE
+			info_button.layer = RADIAL_CONTENT_LAYER
+			E.vis_contents += info_button
 
 /datum/radial_menu/New(display_close_button)
 	if(!display_close_button)
@@ -378,7 +387,7 @@ GLOBAL_LIST_EMPTY(radial_menus)
 	QDEL_NULL(menu_holder)
 	QDEL_NULL(close_button)
 	QDEL_NULL(custom_check_callback)
-	return ..()
+	. = ..()
 
 /**
  * Presents a radial menu to an user, over an anchor point
@@ -405,6 +414,10 @@ GLOBAL_LIST_EMPTY(radial_menus)
 /proc/show_radial_menu(mob/user, atom/anchor, list/choices, uniqueid, radius, datum/callback/custom_check, require_near = FALSE, tooltips = FALSE, no_repeat_close = FALSE, radial_slice_icon = "radial_slice", autopick_single_option = TRUE, button_animation_flags = BUTTON_SLIDE_IN, click_on_hover = FALSE, user_space = FALSE, check_delay = DEFAULT_CHECK_DELAY, display_close_button = TRUE, radial_menu_offset = list(0, 0), use_labels = FALSE)
 	if(!user || !anchor || !length(choices))
 		return
+
+	if(length(choices) == 1 && autopick_single_option)
+		return choices[1]
+
 	if(!uniqueid)
 		uniqueid = "defmenu_[REF(user)]_[REF(anchor)]"
 
@@ -440,8 +453,11 @@ GLOBAL_LIST_EMPTY(radial_menus)
 	var/answer = menu.selected_choice
 	menu.remove_menu()
 	GLOB.radial_menus -= uniqueid
-	if(require_near && in_range(anchor, user))
+	if(require_near && !in_range(anchor, user))
 		return
+	if(istype(custom_check))
+		if(!custom_check.Invoke())
+			return
 	return answer
 
 /// Can be provided to choices in radial menus if you want to provide more information

@@ -24,7 +24,7 @@
 	if(!affected)
 		return
 
-	return affected.open >= ORGAN_OPEN_RETRACTED && (affected.status & ORGAN_ARTERY_CUT)
+	return affected.stage >= ORGAN_OPEN_RETRACTED && (affected.status & ORGAN_ARTERY_CUT)
 
 /singleton/surgery_step/fix_vein/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -198,7 +198,7 @@
 		return FALSE
 
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	return affected && (affected.tendon_status() & TENDON_CUT) && affected.open >= ORGAN_OPEN_RETRACTED
+	return affected && (affected.tendon_status() & TENDON_CUT) && affected.stage >= ORGAN_OPEN_RETRACTED
 
 /singleton/surgery_step/fix_tendon/begin_step(mob/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
@@ -317,7 +317,7 @@
 
 	if(istype(tool, /obj/item/melee/energy))//Code for energy weapons cauterising the cut
 		affected = parent
-		affected.open = ORGAN_CLOSED//Close open wounds
+		affected.stage = ORGAN_CLOSED//Close open wounds
 		for(var/datum/wound/lost_limb/W in affected.wounds)
 			W.disinfected = TRUE//Cleanse the wound of any germs
 			W.autoheal_cutoff = INFINITY//Allow the wound to auto-heal, regardless of damage

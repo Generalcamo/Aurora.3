@@ -551,7 +551,7 @@ By design, d1 is the smallest direction and d2 is the highest
 		var/mob/living/carbon/human/H = target_mob
 		var/obj/item/organ/external/affecting = H.get_organ(user.zone_sel.selecting)
 
-		if(affecting.open != 0)
+		if(affecting.stage != 0)
 			if(can_operate(H))
 				if(do_surgery(H,user,src))
 					return TRUE
@@ -612,7 +612,7 @@ By design, d1 is the smallest direction and d2 is the highest
 			else
 				repair_organ(user, H, S)
 
-		else if(S.open != 2)
+		else if(S.stage != 2)
 			to_chat(user, SPAN_NOTICE("You can't see any external damage to repair."))
 
 	else

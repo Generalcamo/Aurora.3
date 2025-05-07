@@ -1,14 +1,7 @@
 #define SURGERY_FAILURE -1
 
-// organ open flags
-#define ORGAN_CLOSED            0
-#define ORGAN_OPEN     1 // skin incision OR hatch unscrewed
-#define ORGAN_RETRACTED    2 // skin retracted
-#define ORGAN_ENCASED      3 // bones e.g. ribcage sawed open
-
 #define ORGAN_OPEN_INCISION 1
 #define ORGAN_OPEN_RETRACTED 2
-#define ORGAN_ENCASED_OPEN 2.5
 #define ORGAN_ENCASED_RETRACTED 3
 
 // facial surgery
@@ -27,10 +20,11 @@
 #define CAVITY_OPEN             1
 
 //macros
-#define IS_ORGAN_FULLY_OPEN affected.open == ((affected.encased || affected.robotic) ? ORGAN_ENCASED : ORGAN_RETRACTED)
+#define IS_ORGAN_FULLY_OPEN affected.stage == ((affected.encased || affected.robotic) ? ORGAN_ENCASED : ORGAN_RETRACTED)
 
 #define SURGERY_NO_ROBOTIC BITFLAG(1)
 #define SURGERY_NO_STUMP BITFLAG(2)
-#define SURGERY_NEEDS_INCISION BITFLAG(3)
-#define SURGERY_NEEDS_RETRACTED BITFLAG(4)
-#define SURGERY_NEEDS_ENCASEMENT BITFLAG(5)
+#define SURGERY_NO_FLESH BITFLAG(3)
+#define SURGERY_NEEDS_INCISION BITFLAG(4)
+#define SURGERY_NEEDS_RETRACTED BITFLAG(5)
+#define SURGERY_NEEDS_ENCASEMENT BITFLAG(6)
