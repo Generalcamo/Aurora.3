@@ -59,7 +59,7 @@ GLOBAL_LIST_INIT(golem_types, list(
 	cold_level_3 = 0
 
 	breath_type = null
-	poison_type = null
+	poison_types = null
 
 	blood_color = "#5C5B5D"
 	flesh_color = "#5C5B5D"
@@ -787,7 +787,7 @@ GLOBAL_LIST_INIT(golem_types, list(
 
 	breath_pressure = 16
 	breath_type = GAS_OXYGEN
-	poison_type = GAS_PHORON
+	poison_types = list(GAS_PHORON = TRUE, GAS_CHLORINE = TRUE)
 	exhale_type = GAS_CO2
 
 	cold_level_1 = 260

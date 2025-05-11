@@ -35,6 +35,14 @@
 	tile_color = "#ff9940"
 	overlay_limit = 0.7
 	flags = XGM_GAS_FUEL | XGM_GAS_CONTAMINANT
+	breathed_product = /singleton/reagent/toxin/phoron
+
+/singleton/xgm_gas/carbon_monoxide
+	id = GAS_CO
+	name = "Carbon Monoxide"
+	specific_heat = 30	// J/(mol*K)
+	molar_mass = 0.028	// kg/mol
+	breathed_product = /singleton/reagent/toxin
 
 /singleton/xgm_gas/hydrogen
 	id = GAS_HYDROGEN
@@ -98,6 +106,7 @@
 	overlay_limit = 0.5
 	specific_heat = 30	// J/(mol*K)
 	molar_mass = 0.020	// kg/mol
+	breathed_product = /singleton/reagent/water
 
 /singleton/xgm_gas/sulfurdioxide
 	id = GAS_SULFUR
@@ -115,6 +124,7 @@
 	specific_heat = 5	// J/(mol*K)
 	molar_mass = 0.017	// kg/mol
 	flags = XGM_GAS_CONTAMINANT
+	breathed_product = /singleton/reagent/toxin
 
 /singleton/xgm_gas/boron
 	id = GAS_BORON

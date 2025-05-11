@@ -1,22 +1,24 @@
 var/global/datum/xgm_gas_data/gas_data
 
 /datum/xgm_gas_data
-	//Simple list of all the gas IDs.
+	///Simple list of all the gas IDs.
 	var/list/gases = list()
-	//The friendly, human-readable name for the gas.
+	///The friendly, human-readable name for the gas.
 	var/list/name = list()
-	//Specific heat of the gas.  Used for calculating heat capacity.
+	///Specific heat of the gas.  Used for calculating heat capacity.
 	var/list/specific_heat = list()
-	//Molar mass of the gas.  Used for calculating specific entropy.
+	///Molar mass of the gas.  Used for calculating specific entropy.
 	var/list/molar_mass = list()
-	//Tile overlays.  /obj/gas_overlay, created from references to 'icons/effects/tile_effects.dmi'
+	///Tile overlays.  /obj/gas_overlay, created from references to 'icons/effects/tile_effects.dmi'
 	var/list/tile_overlay = list()
-	//Optional color for tile overlay
+	///Optional color for tile overlay
 	var/list/tile_overlay_color = list()
-	//Overlay limits.  There must be at least this many moles for the overlay to appear.
+	///Overlay limits.  There must be at least this many moles for the overlay to appear.
 	var/list/overlay_limit = list()
-	//Flags.
+	///Flags.
 	var/list/flags = list()
+	///Reagent created when inhaled by lungs.
+	var/list/breathed_product = list()
 
 /singleton/xgm_gas
 	var/id = ""
@@ -27,6 +29,7 @@ var/global/datum/xgm_gas_data/gas_data
 	var/tile_overlay = "generic"
 	var/tile_color = null
 	var/overlay_limit = null
+	var/breathed_product
 
 	var/flags = 0
 
@@ -47,6 +50,8 @@ var/global/datum/xgm_gas_data/gas_data
 			gas_data.tile_overlay[gas.id] = gas.tile_overlay
 			gas_data.tile_overlay_color[gas.id] = gas.tile_color
 		gas_data.flags[gas.id] = gas.flags
+
+		gas_data.breathed_product[gas.id] = gas.breathed_product
 
 	return 1
 

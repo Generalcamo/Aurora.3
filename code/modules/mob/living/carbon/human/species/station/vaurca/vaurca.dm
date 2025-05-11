@@ -54,7 +54,8 @@
 	breath_type = GAS_PHORON
 	breath_vol_mul = 1/6 // 0.5 liters * breath_vol_mul = breath volume
 	breath_eff_mul = 6 // 1/6 * breath_eff_mul = fraction of gas consumed
-	poison_type = GAS_NITROGEN //a species that breathes plasma shouldn't be poisoned by it.
+	poison_types = list(GAS_NITROGEN = TRUE)
+	exhale_type = GAS_CO
 	breathing_sound = null //They don't work that way I guess? I'm a coder not a purple man.
 	mob_size = 10 //their half an inch thick exoskeleton and impressive height, plus all of their mechanical organs.
 	natural_climbing = TRUE

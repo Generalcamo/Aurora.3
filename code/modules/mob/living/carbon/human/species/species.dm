@@ -157,7 +157,7 @@
 	/// Non-oxygen gas breathed, if any
 	var/breath_type = GAS_OXYGEN
 	/// Poisonous air
-	var/poison_type = GAS_PHORON
+	var/list/poison_types = list(GAS_PHORON = TRUE, GAS_CHLORINE = TRUE)
 	/// Exhaled gas type.
 	var/exhale_type = GAS_CO2
 	/// The fraction of air used, relative to the default carbon breath volume (1/2 L)

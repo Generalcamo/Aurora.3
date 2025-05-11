@@ -17,6 +17,24 @@
 	to_chat(user, "This mask is too tight to adjust.")
 	return
 
+/obj/item/clothing/mask/gas/vaurca/equipped(mob/user, slot, assisted_equip)
+	. = ..()
+	if(ishuman(user))
+		var/mob/living/carbon/human/equipper = user
+		if(equipper.species in ALL_VAURCA_SPECIES)
+			var/obj/item/organ/internal/lungs/L = equipper.internal_organs_by_name[BP_LUNGS]
+			if(istype(L))
+				L.exhale_type = GAS_CO2
+
+
+/obj/item/clothing/mask/gas/vaurca/dropped(mob/user)
+	. = ..()
+	if(ishuman(user))
+		var/mob/living/carbon/human/unequipper = user
+		var/obj/item/organ/internal/lungs/L = unequipper.internal_organs_by_name[BP_LUNGS]
+		if(istype(L))
+			L.exhale_type = initial(L.exhale_type)
+
 /obj/item/clothing/mask/gas/vaurca/filter
 	desc = "A basic screw on filter attached beneath the mouthparts of the common Vaurca."
 	name = "filter port"

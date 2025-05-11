@@ -31,7 +31,7 @@
 		)
 
 	breath_type = null
-	poison_type = null
+	poison_types = null
 
 	bump_flag = SLIME
 	swap_flags = MONKEY|SLIME|SIMPLE_ANIMAL

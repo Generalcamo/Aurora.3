@@ -58,7 +58,7 @@
 	death_sound = 'sound/effects/falling_bones.ogg'
 
 	breath_type = null
-	poison_type = null
+	poison_types = null
 
 	flags = NO_BLOOD | NO_SCAN | NO_SLIP | NO_POISON | NO_PAIN | NO_BREATHE | NO_EMBED | NO_CHUBBY
 	spawn_flags = IS_RESTRICTED

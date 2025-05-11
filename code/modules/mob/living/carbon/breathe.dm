@@ -2,7 +2,7 @@
 
 //Start of a breath chain, calls breathe()
 /mob/living/carbon/handle_breathing()
-	if(SSair.times_fired%4==2 || failed_last_breath || is_asystole()) 	//First, resolve location and get a breath
+	if(life_tick%2==0 || failed_last_breath || is_asystole()) 	//First, resolve location and get a breath
 		breathe()
 
 /mob/living/carbon/proc/inhale(var/datum/reagents/from, var/datum/reagents/target, var/amount = 1, var/multiplier = 1, var/copy = 0, var/bypass_checks = FALSE)

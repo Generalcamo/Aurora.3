@@ -803,6 +803,8 @@
 	var/adjustable = FALSE
 	var/hanging = 0
 
+	var/list/filtered_gases
+
 	var/has_blood_overlay = TRUE
 
 /obj/item/clothing/mask/Initialize()

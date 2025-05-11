@@ -46,7 +46,7 @@
 	fall_mod = 0
 
 	breath_type = null
-	poison_type = null
+	poison_types = null
 
 	blood_color = "#0084b8"
 	flesh_color = "#0071db"

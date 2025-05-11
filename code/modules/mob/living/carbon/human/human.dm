@@ -2303,3 +2303,7 @@
 		return speech_bubble_type
 	else
 		return ..()
+
+/// Returns whether the human has EVA training or not.
+/mob/living/carbon/human/proc/IsEVATrained()
+	return TRUE // Return TRUE for now, get a skill check here later.

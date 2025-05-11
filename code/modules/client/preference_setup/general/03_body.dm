@@ -977,6 +977,11 @@ GLOBAL_LIST_INIT(valid_bloodtypes, list(
 		dat += "</br><b>Has a variety of eye colours.</b>"
 	if(current_species.flags & IS_PLANT)
 		dat += "</br><b>Has a plantlike physiology.</b>"
+	if(current_species.has_organ[current_species.breathing_organ])
+		dat += "</br><b>They breathe [gas_data.name[current_species.breath_type]].</b>"
+		dat += "</br><b>They exhale [gas_data.name[current_species.exhale_type]].</b>"
+	if(LAZYLEN(current_species.poison_types))
+		dat += "</br><b>[capitalize(english_list(current_species.poison_types))] [LAZYLEN(current_species.poison_types) == 1 ? "is" : "are"] poisonous to them.</b>"
 	dat += "</small></td>"
 	dat += "</tr>"
 	dat += "</table><center><hr/>"
