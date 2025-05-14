@@ -16,6 +16,14 @@ GLOBAL_DATUM(basic_robolimb, /datum/robolimb)
 		if(R.allows_internal)
 			GLOB.internal_robolimbs[R.company] = R
 
+	for(var/company in GLOB.all_robolimbs)
+		var/datum/robolimb/R = GLOB.all_robolimbs[company]
+		if(R.species_alternates)
+			for(var/species in R.species_alternates)
+				var/species_company = R.species_alternates[species]
+				if(species_company in GLOB.all_robolimbs)
+					R.species_alternates[species] = GLOB.all_robolimbs[species]
+
 /datum/robolimb
 	/// Shown when selecting the limb.
 	var/company = PROSTHETIC_UNBRANDED
@@ -80,6 +88,8 @@ GLOBAL_DATUM(basic_robolimb, /datum/robolimb)
 		BP_L_FOOT,
 		BP_R_FOOT
 	)
+	///"Species Name" = "Robolimb Company" , List, when initialized, will become "Species Name" = RobolimbDatum, used for alternate species sprites.
+	var/list/species_alternates = list(SPECIES_TAJARA = "Unbranded - Tajaran", SPECIES_TAJARA_MSAI = "Unbranded - Tajaran", SPECIES_TAJARA_ZHAN = "Unbranded - Tajaran")
 
 /datum/robolimb/proc/malfunctioning_check()
 	return FALSE
@@ -90,6 +100,27 @@ GLOBAL_DATUM(basic_robolimb, /datum/robolimb)
 
 	allowed_internal_organs = list(BP_EYES)
 	allowed_external_organs = list()
+
+/datum/robolimb/unbranded_tajaran
+	company = "Unbranded - Tajaran"
+	desc = "A generic unbranded robotic limb with feline design. Seems rather stiff."
+	icon = 'icons/mob/human_races/ipc/robotic_tajaran.dmi'
+	fabricator_available = FALSE
+	allows_internal = FALSE
+
+/datum/robolimb/nanotrasen
+	company = PROSTHETIC_NT
+	desc = "A simple but efficient robotic limb, created by NanoTrasen."
+	icon = 'icons/mob/human_races/ipc/nanotrasen_main.dmi'
+	fabricator_available = TRUE
+	species_alternates = list(SPECIES_TAJARA = "NanoTrasen Corporation - Tajaran", SPECIES_TAJARA_MSAI = "NanoTrasen Corporation - Tajaran", SPECIES_TAJARA_ZHAN = "NanoTrasen Corporation - Tajaran")
+	allows_internal = FALSE
+
+/datum/robolimb/nanotrasen/tajara
+	company = "NanoTrasen Corporation - Tajaran"
+	desc = "A simple but efficient robotic limb adapted for the tajaran form, created by NanoTrasen."
+	icon = 'icons/mob/human_races/ipc/nanotrasen_tajaran.dmi'
+	fabricator_available = FALSE
 
 /datum/robolimb/bishop
 	company = PROSTHETIC_BC

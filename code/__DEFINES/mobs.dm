@@ -420,6 +420,7 @@
 #define PROSTHETIC_ZH "Zeng-Hu Pharmaceuticals"
 #define PROSTHETIC_HI "Hephaestus Industries"
 #define PROSTHETIC_XMG "Xion Manufacturing Group"
+#define PROSTHETIC_NT "NanoTrasen Corporation"
 #define PROSTHETIC_DIONA "Unknown Model"
 #define PROSTHETIC_AUTAKH "Aut'akh Manufactured"
 #define PROSTHETIC_TESLA "Tesla Powered Prosthetics"
@@ -436,7 +437,7 @@
 #define PROSTHETIC_SISEYO "Siseyo Head"
 
 //Prosthetics that aren't restricted by species
-#define PROSTHETICS_UNRESTRICTED list(PROSTHETIC_BC, PROSTHETIC_HI, PROSTHETIC_XMG, PROSTHETIC_UNBRANDED, PROSTHETIC_ZH)
+#define PROSTHETICS_UNRESTRICTED list(PROSTHETIC_BC, PROSTHETIC_HI, PROSTHETIC_XMG, PROSTHETIC_UNBRANDED, PROSTHETIC_ZH, PROSTHETIC_NT)
 
 //Brain Damage defines
 #define BRAIN_DAMAGE_MILD 10
