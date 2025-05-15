@@ -26,7 +26,7 @@ SUBSYSTEM_DEF(weather)
 	var/obj/abstract/weather_system/weather
 	while(processing_systems.len)
 		weather = processing_systems[processing_systems.len]
-		processing_systems.len--
+		LIST_DEC(processing_systems)
 		weather.tick()
 		if(MC_TICK_CHECK)
 			return

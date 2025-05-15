@@ -22,7 +22,7 @@ SUBSYSTEM_DEF(effects)
 	// Most of the time these only exist for 1 cycle, so optimize for removal-on-first-fire.
 	while (current_effects.len)
 		var/datum/effect_system/E = current_effects[current_effects.len]
-		current_effects.len--
+		LIST_DEC(current_effects)
 
 		if (QDELETED(E) || !(E.datum_flags & DF_ISPROCESSING))
 			if (MC_TICK_CHECK)
@@ -45,7 +45,7 @@ SUBSYSTEM_DEF(effects)
 	// Most often these will be continuing to tick, so assume that we're going to keep poking the effect.
 	while (current_visuals.len)
 		var/obj/effect/visual/V = current_visuals[current_visuals.len]
-		current_visuals.len--
+		LIST_DEC(current_visuals)
 
 		if (QDELETED(V) || !(V.datum_flags & DF_ISPROCESSING))
 			visuals -= V

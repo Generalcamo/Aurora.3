@@ -21,7 +21,7 @@ SUBSYSTEM_DEF(ping)
 
 	while (currentrun.len)
 		var/client/client = currentrun[currentrun.len]
-		currentrun.len--
+		LIST_DEC(currentrun)
 
 		if (client?.tgui_panel?.is_ready())
 			// Send a soft ping

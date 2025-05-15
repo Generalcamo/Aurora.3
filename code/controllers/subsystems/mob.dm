@@ -87,7 +87,7 @@ SUBSYSTEM_DEF(mobs)
 
 	while(length(currentrun))
 		var/datum/thing = currentrun[length(currentrun)]
-		currentrun.len--
+		LIST_DEC(currentrun)
 		if(!ismob(thing))
 			if(!QDELETED(thing))
 				if(thing.process(wait, times_fired) == PROCESS_KILL)

@@ -67,7 +67,7 @@ PROCESSING_SUBSYSTEM_DEF(tgui)
 	var/list/current_run = src.current_run
 	while(current_run.len)
 		var/datum/tgui/ui = current_run[current_run.len]
-		current_run.len--
+		LIST_DEC(current_run)
 		// TODO: Move user/src_object check to process()
 		if(ui?.user && ui.src_object)
 			ui.process(wait * 0.1)

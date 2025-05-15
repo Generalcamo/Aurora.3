@@ -23,7 +23,7 @@ PROCESSING_SUBSYSTEM_DEF(airflow)
 
 	while (curr.len)
 		var/atom/movable/target = curr[curr.len]
-		curr.len--
+		LIST_DEC(curr)
 
 		if (target.airflow_speed <= 0)
 			CLEAR_OBJECT(target)

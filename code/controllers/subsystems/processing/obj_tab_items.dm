@@ -22,4 +22,4 @@ PROCESSING_SUBSYSTEM_DEF(obj_tab_items)
 			STOP_PROCESSING(src, thing)
 		if (MC_TICK_CHECK)
 			return
-		current_run.len--
+		LIST_DEC(current_run)

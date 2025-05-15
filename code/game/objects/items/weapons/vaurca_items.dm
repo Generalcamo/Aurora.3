@@ -511,7 +511,7 @@
 /obj/item/gun/launcher/crossbow/vaurca/proc/unload(mob/user)
 	if(belt.len)
 		var/obj/item/arrow/rod/R = belt[belt.len]
-		belt.len--
+		LIST_DEC(belt)
 		user.put_in_hands(R)
 		user.visible_message("[user] removes \a [R] from [src].", SPAN_NOTICE("You remove \a [R] from [src]."))
 	else

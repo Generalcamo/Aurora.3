@@ -52,7 +52,7 @@ SUBSYSTEM_DEF(sun)
 	//now tell the solar control computers to update their status and linked devices
 	while (updating_solars.len)
 		var/obj/machinery/power/solar_control/SC = updating_solars[updating_solars.len]
-		updating_solars.len--
+		LIST_DEC(updating_solars)
 
 		if (QDELETED(SC) || !SC.powernet)
 			solars -= SC

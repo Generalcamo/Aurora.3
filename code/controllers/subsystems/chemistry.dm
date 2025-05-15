@@ -93,7 +93,7 @@ SUBSYSTEM_DEF(chemistry)
 
 	while (processing_holders.len)
 		var/datum/reagents/holder = processing_holders[processing_holders.len]
-		processing_holders.len--
+		LIST_DEC(processing_holders)
 
 		if (QDELETED(holder))
 			active_holders -= holder

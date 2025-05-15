@@ -50,7 +50,7 @@ SUBSYSTEM_DEF(icon_smooth)
 	var/list/smooth_queue_cache = smooth_queue
 	while(length(smooth_queue_cache))
 		var/atom/smoothing_atom = smooth_queue_cache[length(smooth_queue_cache)]
-		smooth_queue_cache.len--
+		LIST_DEC(smooth_queue_cache)
 
 		if(QDELETED(smoothing_atom) || !(smoothing_atom.smoothing_flags & SMOOTH_QUEUED))
 			continue
@@ -89,7 +89,7 @@ SUBSYSTEM_DEF(icon_smooth)
 
 	while(length(queue))
 		var/atom/smoothing_atom = queue[length(queue)]
-		queue.len--
+		LIST_DEC(queue)
 
 		if(QDELETED(smoothing_atom) || !(smoothing_atom.smoothing_flags & SMOOTH_QUEUED) || !smoothing_atom.z)
 			continue

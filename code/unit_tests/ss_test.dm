@@ -161,7 +161,7 @@ SUBSYSTEM_DEF(unit_tests)
 	var/list/curr = queue
 	while (curr.len)
 		var/datum/unit_test/test = curr[curr.len]
-		curr.len--
+		LIST_DEC(curr)
 
 		TEST_GROUP_OPEN("[test.name]")
 
@@ -213,7 +213,7 @@ SUBSYSTEM_DEF(unit_tests)
 	var/list/async = current_async
 	while (async.len)
 		var/datum/unit_test/test = current_async[current_async.len]
-		current_async.len--
+		LIST_DEC(current_async)
 
 		TEST_GROUP_OPEN("[test.name]")
 		if (test.check_result())

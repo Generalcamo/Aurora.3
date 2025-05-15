@@ -51,7 +51,7 @@ SUBSYSTEM_DEF(statpanels)
 	var/list/currentrun = src.currentrun
 	while(length(currentrun))
 		var/client/target = currentrun[length(currentrun)]
-		currentrun.len--
+		LIST_DEC(currentrun)
 
 		if(!target.stat_panel.is_ready())
 			continue

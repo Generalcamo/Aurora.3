@@ -27,7 +27,7 @@ SUBSYSTEM_DEF(alarm)
 
 	while (current.len)
 		var/datum/alarm_handler/AH = current[current.len]
-		current.len--
+		LIST_DEC(current)
 
 		AH.process()
 

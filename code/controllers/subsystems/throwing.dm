@@ -26,7 +26,7 @@ SUBSYSTEM_DEF(throwing)
 	while(length(currentrun))
 		var/atom/movable/AM = currentrun[currentrun.len]
 		var/datum/thrownthing/TT = currentrun[AM]
-		currentrun.len--
+		LIST_DEC(currentrun)
 		if (QDELETED(AM) || QDELETED(TT))
 			processing -= AM
 			if (MC_TICK_CHECK)

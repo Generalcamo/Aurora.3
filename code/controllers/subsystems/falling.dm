@@ -24,7 +24,7 @@ SUBSYSTEM_DEF(falling)
 
 	while (curr.len)
 		var/atom/movable/victim = curr[curr.len]
-		curr.len--
+		LIST_DEC(curr)
 
 		if (QDELETED(victim))
 			falling -= victim

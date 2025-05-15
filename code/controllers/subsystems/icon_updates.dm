@@ -29,7 +29,7 @@ SUBSYSTEM_DEF(icon_update)
 	while (length(icon_update_queue_cache))
 		var/atom/A = icon_update_queue_cache[length(icon_update_queue_cache)]
 		var/list/argv = icon_update_queue_cache[A]
-		icon_update_queue_cache.len--
+		LIST_DEC(icon_update_queue_cache)
 
 		if(A.flags_1 & INITIALIZED_1)
 			A.icon_update_queued = FALSE

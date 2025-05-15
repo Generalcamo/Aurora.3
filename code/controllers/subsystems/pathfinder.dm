@@ -35,13 +35,13 @@ SUBSYSTEM_DEF(pathfinder)
 		var/datum/pathfind/path = currentrun[length(currentrun)]
 		if(!path.search_step()) // Something's wrong
 			path.early_exit()
-			currentrun.len--
+			LIST_DEC(currentrun)
 			continue
 		if(MC_TICK_CHECK)
 			return
 		path.finished()
 		// Next please
-		currentrun.len--
+		LIST_DEC(currentrun)
 
 	// Go over our existing pathmaps, clear out the ones we aren't using
 	var/list/currentmaps = src.currentmaps
@@ -52,13 +52,13 @@ SUBSYSTEM_DEF(pathfinder)
 		for(var/datum/path_map/map as anything in owned_maps)
 			if(map.creation_time < oldest_time && !map.building)
 				source_to_maps[source] -= map
-			owned_maps.len--
+			LIST_DEC(owned_maps)
 			if(MC_TICK_CHECK)
 				return
 		if(!length(source_to_maps[source]))
 			source_to_maps -= source
 
-		currentmaps.len--
+		LIST_DEC(currentmaps)
 
 /// Initiates a pathfind. Returns true if we're good, FALSE if something's failed
 /datum/controller/subsystem/pathfinder/proc/pathfind(atom/movable/requester, atom/end, max_distance = 30, mintargetdist, access = list(), simulated_only = TRUE, turf/exclude, skip_first = TRUE, diagonal_handling = DIAGONAL_REMOVE_CLUNKY, list/datum/callback/on_finish)

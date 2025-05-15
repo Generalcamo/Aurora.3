@@ -34,7 +34,7 @@ SUBSYSTEM_DEF(mob_ai)
 
 	while(length(currentrun))
 		var/mob/M = currentrun[length(currentrun)]
-		currentrun.len--
+		LIST_DEC(currentrun)
 
 		if(QDELETED(M))
 			processing -= M

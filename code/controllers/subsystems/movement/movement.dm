@@ -51,7 +51,7 @@ SUBSYSTEM_DEF(movement)
 	var/list/processing = bucket_info[MOVEMENT_BUCKET_LIST] // Cache for lookup speed
 	while(processing.len)
 		var/datum/move_loop/loop = processing[processing.len]
-		processing.len--
+		LIST_DEC(processing)
 		// No longer queued since we just got removed from the loop
 		loop.queued_time = null
 		loop.process() //This shouldn't get nulls, if it does, runtime

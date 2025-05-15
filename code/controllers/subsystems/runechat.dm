@@ -10,6 +10,6 @@ TIMER_SUBSYSTEM_DEF(runechat)
 	while(message_queue.len)
 		var/datum/callback/queued_message = message_queue[message_queue.len]
 		queued_message.Invoke()
-		message_queue.len--
+		LIST_DEC(message_queue)
 		if(MC_TICK_CHECK)
 			return

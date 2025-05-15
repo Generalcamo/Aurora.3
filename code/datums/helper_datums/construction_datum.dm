@@ -19,7 +19,7 @@
 	. = ..()
 
 /datum/construction/proc/next_step()
-	steps.len--
+	LIST_DEC(steps)
 	if(!steps.len)
 		spawn_result()
 	else

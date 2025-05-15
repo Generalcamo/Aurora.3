@@ -28,7 +28,7 @@
 		var/list/elements_to_process = verb_listref.Copy()
 		while(length(elements_to_process))
 			var/element_or_list = elements_to_process[length(elements_to_process)] //Last element
-			elements_to_process.len--
+			LIST_DEC(elements_to_process)
 			if(islist(element_or_list))
 				elements_to_process += element_or_list //list/a += list/b adds the contents of b into a, not the reference to the list itself
 			else
@@ -72,7 +72,7 @@
 		var/list/elements_to_process = verb_listref.Copy()
 		while(length(elements_to_process))
 			var/element_or_list = elements_to_process[length(elements_to_process)] //Last element
-			elements_to_process.len--
+			LIST_DEC(elements_to_process)
 			if(islist(element_or_list))
 				elements_to_process += element_or_list //list/a += list/b adds the contents of b into a, not the reference to the list itself
 			else

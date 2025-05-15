@@ -20,7 +20,7 @@ SUBSYSTEM_DEF(ao)
 	var/list/curr = queue
 	while (curr.len)
 		var/turf/target = curr[curr.len]
-		curr.len--
+		LIST_DEC(curr)
 
 		if (!QDELETED(target))
 			if (target.ao_queued == AO_UPDATE_REBUILD)

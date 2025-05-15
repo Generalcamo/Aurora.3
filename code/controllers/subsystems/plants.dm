@@ -100,7 +100,7 @@ SUBSYSTEM_DEF(plants)
 	var/list/queue = current
 	while (queue.len)
 		var/obj/effect/plant/P = queue[queue.len]
-		queue.len--
+		LIST_DEC(queue)
 
 		if (!QDELETED(P))
 			P.process()

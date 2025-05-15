@@ -16,7 +16,7 @@ SUBSYSTEM_DEF(asset_loading)
 
 		if(MC_TICK_CHECK)
 			return
-		generate_queue.len--
+		LIST_DEC(generate_queue)
 
 /datum/controller/subsystem/asset_loading/proc/queue_asset(datum/asset/queue)
 #ifdef DO_NOT_DEFER_ASSETS
