@@ -316,7 +316,7 @@ GLOBAL_DATUM_INIT(_preloader, /dmm_suite/preloader, new)
 				fields = readlist(full_def, ";")
 				if(length(fields))
 					if(!trimtext(fields[length(fields)]))
-						--fields.len
+						LIST_PRE_DEC(fields)
 					for(var/I in fields)
 						var/value = fields[I]
 						if(istext(value))
