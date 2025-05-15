@@ -323,7 +323,7 @@ GLOBAL_DATUM_INIT(_preloader, /dmm_suite/preloader, new)
 							fields[I] = apply_text_macros(value)
 
 			//then fill the members_attributes list with the corresponding variables
-			members_attributes.len++
+			LIST_INC(members_attributes)
 			members_attributes[index++] = fields
 
 			MAPLOADING_CHECK_TICK
