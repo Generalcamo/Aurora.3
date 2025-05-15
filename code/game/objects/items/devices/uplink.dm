@@ -180,10 +180,10 @@ Then check if it's true, if true return. This will stop the normal menu appearin
 		var/list/items = list()
 		for(var/datum/uplink_category/category in GLOB.uplink.categories)
 			if(category.can_view(src))
-				categories[++categories.len] = list("name" = category.name, "ref" = "[REF(category)]")
+				categories[LIST_PRE_INC(categories)] = list("name" = category.name, "ref" = "[REF(category)]")
 				for(var/datum/uplink_item/item in category.items)
 					if(item.can_view(src))
-						items[++items.len] = new_tgui_item_data(item)
+						items[LIST_PRE_INC(items)] = new_tgui_item_data(item)
 
 		tgui_data["categories"] = categories
 		tgui_data["items"] = items
@@ -191,12 +191,12 @@ Then check if it's true, if true return. This will stop the normal menu appearin
 		var/items[0]
 		for(var/datum/uplink_item/item in category?.items)
 			if(item.can_view(src))
-				items[++items.len] = new_tgui_item_data(item)
+				items[LIST_PRE_INC(items)] = new_tgui_item_data(item)
 		tgui_data["items"] = items
 	else if(tgui_menu == 2)
 		var/permanentData[0]
 		for(var/datum/record/general/locked/record in SSrecords.records_locked)
-			permanentData[++permanentData.len] = list("name" = record.name,"id" = record.id, "has_exploitables" = !!record.exploit_record)
+			permanentData[LIST_PRE_INC(permanentData)] = list("name" = record.name,"id" = record.id, "has_exploitables" = !!record.exploit_record)
 		tgui_data["exploit_records"] = permanentData
 	else if(tgui_menu == 21)
 		tgui_data["exploit_exists"] = 0

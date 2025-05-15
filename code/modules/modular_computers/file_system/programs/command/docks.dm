@@ -30,7 +30,7 @@
 		for(var/landmark_tag in connected.tracked_dock_tags)
 			var/obj/effect/shuttle_landmark/landmark = SSshuttle.registered_shuttle_landmarks[landmark_tag]
 			if(landmark && istype(landmark))
-				docks[++docks.len] = list(
+				docks[LIST_PRE_INC(docks)] = list(
 					"name" = landmark.name
 				)
 				for(var/shuttle_key in SSshuttle.shuttles)
@@ -39,7 +39,7 @@
 						docks[docks.len]["shuttle"] = shuttle.name
 						break
 			else
-				docks[++docks.len] = list(
+				docks[LIST_PRE_INC(docks)] = list(
 					"name" = landmark_tag,
 					"shuttle" = "???"
 				)

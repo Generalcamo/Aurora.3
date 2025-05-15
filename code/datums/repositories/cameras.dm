@@ -30,4 +30,4 @@ GLOBAL_DATUM_INIT(camera_repository, /datum/repository/cameras, new())
 			if(!networks[network])
 				networks[network] = list()
 			var/list/netlist = networks[network]
-			netlist[++netlist.len] = cam
+			netlist[LIST_PRE_INC(netlist)] = cam

@@ -152,7 +152,7 @@ SUBSYSTEM_DEF(stickyban)
 			sqlckey["stickyban"] = "'[sanitizeSQL(ckey)]'"
 			sqlckey["matched_ckey"] = "'[sanitizeSQL(ckey(key))]'"
 			sqlckey["exempt"] = FALSE
-			sqlckeys[++sqlckeys.len] = sqlckey
+			sqlckeys[LIST_PRE_INC(sqlckeys)] = sqlckey
 
 	if (ban["whitelist"])
 		var/list/keys = splittext(ban["whitelist"], ",")
@@ -161,7 +161,7 @@ SUBSYSTEM_DEF(stickyban)
 			sqlckey["stickyban"] = "'[sanitizeSQL(ckey)]'"
 			sqlckey["matched_ckey"] = "'[sanitizeSQL(ckey(key))]'"
 			sqlckey["exempt"] = TRUE
-			sqlckeys[++sqlckeys.len] = sqlckey
+			sqlckeys[LIST_PRE_INC(sqlckeys)] = sqlckey
 
 	if (ban["computer_id"])
 		var/list/cids = splittext(ban["computer_id"], ",")
@@ -169,7 +169,7 @@ SUBSYSTEM_DEF(stickyban)
 			var/list/sqlcid = list()
 			sqlcid["stickyban"] = "'[sanitizeSQL(ckey)]'"
 			sqlcid["matched_cid"] = "'[sanitizeSQL(cid)]'"
-			sqlcids[++sqlcids.len] = sqlcid
+			sqlcids[LIST_PRE_INC(sqlcids)] = sqlcid
 
 	if (ban["IP"])
 		var/list/ips = splittext(ban["IP"], ",")
@@ -177,7 +177,7 @@ SUBSYSTEM_DEF(stickyban)
 			var/list/sqlip = list()
 			sqlip["stickyban"] = "'[sanitizeSQL(ckey)]'"
 			sqlip["matched_ip"] = "'[sanitizeSQL(ip)]'"
-			sqlips[++sqlips.len] = sqlip
+			sqlips[LIST_PRE_INC(sqlips)] = sqlip
 
 	if (length(sqlckeys))
 		GLOB.dbcon.MassInsert("ss13_stickyban_matched_ckey", sqlckeys, FALSE, TRUE)

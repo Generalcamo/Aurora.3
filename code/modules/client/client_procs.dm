@@ -1008,7 +1008,7 @@ GLOBAL_LIST_INIT(localhost_addresses, list(
 		if(!istext(verb_to_init.category))
 			continue
 		panel_tabs |= verb_to_init.category
-		verblist[++verblist.len] = list(verb_to_init.category, verb_to_init.name)
+		verblist[LIST_PRE_INC(verblist)] = list(verb_to_init.category, verb_to_init.name)
 	src.stat_panel.send_message("init_verbs", list(panel_tabs = panel_tabs, verblist = verblist))
 
 /client/proc/check_panel_loaded()

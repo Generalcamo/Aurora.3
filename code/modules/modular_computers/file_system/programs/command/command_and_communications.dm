@@ -270,7 +270,7 @@ GLOBAL_VAR_INIT(last_message_id, 0)
 	. = ..()
 
 /datum/comm_message_listener/proc/Add(var/list/message)
-	messages[++messages.len] = message
+	messages[LIST_PRE_INC(messages)] = message
 
 /datum/comm_message_listener/proc/Remove(var/list/message)
 	messages -= list(message)

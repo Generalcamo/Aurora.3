@@ -226,10 +226,10 @@
 		i++
 		var/list/from = list()
 		i = from_item(i, from)
-		node[++node.len] = from
+		node[LIST_PRE_INC(node)] = from
 
 	else
-		node[++node.len] = list("world")
+		node[LIST_PRE_INC(node)] = list("world")
 
 	i = modifier_list(i, node)
 	return i
@@ -242,14 +242,14 @@
 			node += "where"
 			var/list/expr = list()
 			i = bool_expression(i, expr)
-			node[++node.len] = expr
+			node[LIST_PRE_INC(node)] = expr
 
 		else if (tokenl(i) == "map")
 			i++
 			node += "map"
 			var/list/expr = list()
 			i = expression(i, expr)
-			node[++node.len] = expr
+			node[LIST_PRE_INC(node)] = expr
 
 		else
 			return i
@@ -331,7 +331,7 @@
 	var/list/bool = list()
 	i = expression(i, bool)
 
-	node[++node.len] = bool
+	node[LIST_PRE_INC(node)] = bool
 
 	if(tokenl(i) in boolean_operators)
 		i = bool_operator(i, node)
@@ -362,7 +362,7 @@
 //variable: <variable name> | variable '.' variable | variable '[' <list index> ']' | '{' <ref as hex number> '}' | '(' expression ')' | call_function
 /datum/sdql_parser/proc/variable(i, list/node)
 	var/list/L = list(token(i))
-	node[++node.len] = L
+	node[LIST_PRE_INC(node)] = L
 
 	if(token(i) == "{")
 		L += token(i + 1)
@@ -379,7 +379,7 @@
 		if(token(i) != ")")
 			parse_error("Missing ) at end of expression.")
 
-		L[++L.len] = sub_expression
+		L[LIST_PRE_INC(L)] = sub_expression
 
 	if(token(i + 1) == ".")
 		L += "."
@@ -389,7 +389,7 @@
 		var/list/arguments = list()
 		i = call_function(i, null, arguments)
 		L += ":"
-		L[++L.len] = arguments
+		L[LIST_PRE_INC(L)] = arguments
 
 	else if (token(i + 1) == "\[")
 		var/list/expression = list()
@@ -398,7 +398,7 @@
 			parse_error("Missing ] at the end of list access.")
 
 		L += "\["
-		L[++L.len] = expression
+		L[LIST_PRE_INC(L)] = expression
 		i++
 
 	else
@@ -479,7 +479,7 @@
 					parse_error("Found ',' or ':' without expression in an array.")
 					return i + 1
 
-				expression_list[++expression_list.len] = temp_expression_list
+				expression_list[LIST_PRE_INC(expression_list)] = temp_expression_list
 				temp_expression_list = null
 				if (tok == ":")
 					temp_expression_list = list()
@@ -504,9 +504,9 @@
 		while(token(i) && token(i) != "]")
 
 		if (temp_expression_list)
-			expression_list[++expression_list.len] = temp_expression_list
+			expression_list[LIST_PRE_INC(expression_list)] = temp_expression_list
 
-	node[++node.len] = expression_list
+	node[LIST_PRE_INC(node)] = expression_list
 
 	return i + 1
 
@@ -517,7 +517,7 @@
 		if(token(i) != "]")
 			var/list/select = list()
 			i = object_selectors(i, select)
-			node[++node.len] = select
+			node[LIST_PRE_INC(node)] = select
 			if(token(i) != "]")
 				parse_error("Expected ']' to close selector array, but found '[token(i)]'")
 		else
@@ -543,13 +543,13 @@
 			do
 				i = expression(i + 1, temp_expression_list)
 				if(token(i) == ",")
-					arguments[++arguments.len] = temp_expression_list
+					arguments[LIST_PRE_INC(arguments)] = temp_expression_list
 					temp_expression_list = list()
 					continue
 
 			while(token(i) && token(i) != ")")
 
-			arguments[++arguments.len] = temp_expression_list // The code this is copy pasted from won't be executed when it's the last param, this fixes that.
+			arguments[LIST_PRE_INC(arguments)] = temp_expression_list // The code this is copy pasted from won't be executed when it's the last param, this fixes that.
 		else
 			i++
 	else
@@ -576,7 +576,7 @@
 		var/list/rhs = list()
 		i = expression(i, rhs)
 
-		node[++node.len] = rhs
+		node[LIST_PRE_INC(node)] = rhs
 
 
 	return i
@@ -597,7 +597,7 @@
 		else
 			i = value(i, unary_exp)
 
-		node[++node.len] = unary_exp
+		node[LIST_PRE_INC(node)] = unary_exp
 
 
 	else

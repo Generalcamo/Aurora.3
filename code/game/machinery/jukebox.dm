@@ -127,7 +127,7 @@
 
 		var/list/nano_tracks = new
 		for(var/datum/track/T in tracks)
-			nano_tracks[++nano_tracks.len] = list("track" = T.title)
+			nano_tracks[LIST_PRE_INC(nano_tracks)] = list("track" = T.title)
 
 		data["tracks"] = nano_tracks
 

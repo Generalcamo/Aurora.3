@@ -277,7 +277,7 @@ SUBSYSTEM_DEF(garbage)
 		D.gc_destroyed = queue_time
 
 	var/list/queue = queues[level]
-	queue[++queue.len] = list(queue_time, D, D.gc_destroyed) // not += for byond reasons
+	queue[LIST_PRE_INC(queue)] = list(queue_time, D, D.gc_destroyed) // not += for byond reasons
 
 //this is mainly to separate things profile wise.
 /datum/controller/subsystem/garbage/proc/HardDelete(datum/D)

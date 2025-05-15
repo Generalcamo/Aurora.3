@@ -127,7 +127,7 @@ Delayed insert mode was removed in mysql 7 and only works with MyISAM type table
 				sorted_row.len = columns.len
 
 			sorted_row[idx] = row[column]
-		sorted_rows[++sorted_rows.len] = sorted_row
+		sorted_rows[LIST_PRE_INC(sorted_rows)] = sorted_row
 
 	if (duplicate_key == TRUE)
 		var/list/column_list = list()

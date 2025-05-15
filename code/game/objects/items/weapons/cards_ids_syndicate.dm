@@ -56,18 +56,18 @@
 /obj/item/card/id/syndicate/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = 1)
 	var/data[0]
 	var/entries[0]
-	entries[++entries.len] = list("name" = "Age", 				"value" = age)
-	entries[++entries.len] = list("name" = "Appearance",		"value" = "Set")
-	entries[++entries.len] = list("name" = "Assignment",		"value" = assignment)
-	entries[++entries.len] = list("name" = "Blood Type",		"value" = blood_type)
-	entries[++entries.len] = list("name" = "DNA Hash", 			"value" = dna_hash)
-	entries[++entries.len] = list("name" = "Fingerprint Hash",	"value" = fingerprint_hash)
-	entries[++entries.len] = list("name" = "Name", 				"value" = registered_name)
-	entries[++entries.len] = list("name" = "Photo", 			"value" = "Update")
-	entries[++entries.len] = list("name" = "Sex", 				"value" = sex)
-	entries[++entries.len] = list("name" = "Citizenship",		"value" = citizenship)
-	entries[++entries.len] = list("name" = "Faction",			"value" = employer_faction)
-	entries[++entries.len] = list("name" = "Factory Reset",		"value" = "Use With Care")
+	entries[LIST_PRE_INC(entries)] = list("name" = "Age", 				"value" = age)
+	entries[LIST_PRE_INC(entries)] = list("name" = "Appearance",		"value" = "Set")
+	entries[LIST_PRE_INC(entries)] = list("name" = "Assignment",		"value" = assignment)
+	entries[LIST_PRE_INC(entries)] = list("name" = "Blood Type",		"value" = blood_type)
+	entries[LIST_PRE_INC(entries)] = list("name" = "DNA Hash", 			"value" = dna_hash)
+	entries[LIST_PRE_INC(entries)] = list("name" = "Fingerprint Hash",	"value" = fingerprint_hash)
+	entries[LIST_PRE_INC(entries)] = list("name" = "Name", 				"value" = registered_name)
+	entries[LIST_PRE_INC(entries)] = list("name" = "Photo", 			"value" = "Update")
+	entries[LIST_PRE_INC(entries)] = list("name" = "Sex", 				"value" = sex)
+	entries[LIST_PRE_INC(entries)] = list("name" = "Citizenship",		"value" = citizenship)
+	entries[LIST_PRE_INC(entries)] = list("name" = "Faction",			"value" = employer_faction)
+	entries[LIST_PRE_INC(entries)] = list("name" = "Factory Reset",		"value" = "Use With Care")
 	data["electronic_warfare"] = electronic_warfare
 	data["entries"] = entries
 
