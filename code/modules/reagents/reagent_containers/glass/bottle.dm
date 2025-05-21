@@ -12,8 +12,12 @@
 	atom_flags = 0
 	volume = 60
 	storage_slot_sort_by_name = TRUE
+	var/animated_dispenser = FALSE
+	///Stored internal variable to check if we're dispensing something
+	var/is_dispensing = FALSE
 
 /obj/item/reagent_containers/glass/bottle/on_reagent_change()
+	is_dispensing = TRUE
 	update_icon()
 
 /obj/item/reagent_containers/glass/bottle/pickup(mob/user)
@@ -46,7 +50,13 @@
 	if(!is_open_container())
 		var/lid_icon = "lid_[icon_state]"
 		var/mutable_appearance/lid = mutable_appearance(icon, lid_icon)
-		AddOverlays(lid)
+		if(!animated_dispenser || !is_dispensing)
+			AddOverlays(lid)
+		else
+			var/lid_icon_anim = "lid_[icon_state]_anim"
+			flick_overlay_view(mutable_appearance(icon, lid_icon_anim), 0.4 SECONDS)
+			is_dispensing = FALSE
+			//addtimer(CALLBACK(src, PROC_REF(update_icon)), 0.4 SECONDS, TIMER_OVERRIDE)
 
 	if(label_text)
 		var/label_icon = "label_[icon_state]"
@@ -254,6 +264,7 @@
 	filling_states = "20;40;60;80;100"
 	atom_flags = ATOM_FLAG_POUR_CONTAINER | ATOM_FLAG_DISPENSER
 	volume = 50
+	animated_dispenser = TRUE
 
 /obj/item/reagent_containers/glass/bottle/syrup/chocolate
 	name = "chocolate syrup dispenser"

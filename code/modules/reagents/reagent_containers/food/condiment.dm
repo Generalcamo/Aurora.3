@@ -306,69 +306,94 @@
 //MRE condiments and drinks.
 
 /obj/item/reagent_containers/food/condiment/small/packet
-	icon_state = "packet_small"
-	fixed_state = TRUE
+	name = "condiment pack"
+	desc = "A small plastic pack with condiments to put on your food."
+	icon_state = "condi_empty"
+	fixed_state = TRUE // These don't have a fixed state, but we want to use our own handling
 	w_class = WEIGHT_CLASS_TINY
 	possible_transfer_amounts = list(1,5,10)
-	amount_per_transfer_from_this = 1
+	amount_per_transfer_from_this = 10
 	volume = 10
 
 /obj/item/reagent_containers/food/condiment/small/packet/Initialize()
 	. = ..(FALSE)
 
+/obj/item/reagent_containers/food/condiment/small/packet/update_icon()
+	SHOULD_CALL_PARENT(FALSE)
+	return
+
+/obj/item/reagent_containers/food/condiment/small/packet/on_reagent_change(force = FALSE)
+	if(isemptylist(reagents.reagent_volumes))
+		name = "condiment pack"
+		desc = "A small plastic pack. It is empty."
+		icon_state = pick("condi_empty", "condi_empty2")
+		return
+
 /obj/item/reagent_containers/food/condiment/small/packet/salt
 	name = "salt packet"
 	desc = "Contains 5u of table salt."
-	icon_state = "packet_small_white"
+	icon_state = "condi_salt"
 	reagents_to_add = list(/singleton/reagent/sodiumchloride = 5)
 
 /obj/item/reagent_containers/food/condiment/small/packet/pepper
 	name = "pepper packet"
 	desc = "Contains 5u of black pepper."
-	icon_state = "packet_small_black"
+	icon_state = "condi_pepper"
 	reagents_to_add = list(/singleton/reagent/blackpepper = 5)
 
 /obj/item/reagent_containers/food/condiment/small/packet/sugar
 	name = "sugar packet"
 	desc = "Contains 5u of refined sugar."
-	icon_state = "packet_small_white"
+	icon_state = "condi_sugar"
 	reagents_to_add = list(/singleton/reagent/sugar = 5)
+
+/obj/item/reagent_containers/food/condiment/small/packet/phenyltame
+	name = "phenyltame packet"
+	desc = "Contains 5u of artificial sweetener."
+	icon_state = "condi_phenyltame"
+	reagents_to_add = list(/singleton/reagent/phenyltame = 5)
 
 /obj/item/reagent_containers/food/condiment/small/packet/jelly
 	name = "jelly packet"
 	desc = "Contains 10u of cherry jelly. Best used for spreading on crackers."
 	reagents_to_add = list(/singleton/reagent/nutriment/cherryjelly = 10)
-	icon_state = "packet_medium"
+	icon_state = "condi_cherryjelly"
 
 /obj/item/reagent_containers/food/condiment/small/packet/honey
 	name = "honey packet"
 	desc = "Contains 10u of honey."
 	reagents_to_add = list(/singleton/reagent/sugar = 10)
-	icon_state = "packet_medium"
+	icon_state = "condi_honey"
 
 /obj/item/reagent_containers/food/condiment/small/packet/capsaicin
 	name = "hot sauce packet"
 	desc = "Contains 5u of hot sauce. Enjoy in moderation."
-	icon_state = "packet_small_red"
+	icon_state = "condi_hotsauce"
 	reagents_to_add = list(/singleton/reagent/capsaicin = 5)
 
 /obj/item/reagent_containers/food/condiment/small/packet/ketchup
 	name = "ketchup packet"
 	desc = "Contains 5u of ketchup."
-	icon_state = "packet_small_red"
+	icon_state = "condi_hotsauce"
 	reagents_to_add = list(/singleton/reagent/nutriment/ketchup = 5)
 
 /obj/item/reagent_containers/food/condiment/small/packet/mayo
 	name = "mayonnaise packet"
 	desc = "Contains 5u of mayonnaise."
-	icon_state = "packet_small_white"
+	icon_state = "condi_mayo"
 	reagents_to_add = list(/singleton/reagent/nutriment/mayonnaise = 5)
 
 /obj/item/reagent_containers/food/condiment/small/packet/soy
 	name = "soy sauce packet"
 	desc = "Contains 5u of soy sauce."
-	icon_state = "packet_small_black"
+	icon_state = "condi_soysauce"
 	reagents_to_add = list(/singleton/reagent/nutriment/soysauce = 5)
+
+/obj/item/reagent_containers/food/condiment/small/packet/cream
+	name = "creamer packet"
+	desc = "Contains 5u of cream."
+	icon_state = "condi_creamer"
+	reagents_to_add = list(/singleton/reagent/drink/milk/cream = 5)
 
 /obj/item/reagent_containers/food/condiment/small/packet/coffee
 	name = "instant coffee powder packet"

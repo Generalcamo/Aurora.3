@@ -3631,7 +3631,7 @@
 	dir = 1
 	},
 /obj/structure/table/stone/marble,
-/obj/item/reagent_containers/food/drinks/takeaway_cup_idris,
+/obj/item/reagent_containers/food/drinks/takeaway_cup/idris,
 /turf/simulated/floor/lino{
 	initial_gas = null
 	},

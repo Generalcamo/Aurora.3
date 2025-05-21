@@ -238,7 +238,7 @@
 
 /obj/item/reagent_containers/glass/beaker/pitcher
 	name = "pitcher"
-	desc = "Everyone's best friend in the morning."
+	desc = "Everyone's best friend in the morning. Contains six standard cups of coffee."
 	icon_state = "coffeepot"
 	unacidable = TRUE
 	amount_per_transfer_from_this = 10
@@ -248,6 +248,13 @@
 /obj/item/reagent_containers/glass/beaker/pitcher/coffee
 	name = "coffee pitcher"
 	reagents_to_add = list(/singleton/reagent/drink/coffee = 120)
+
+/obj/item/reagent_containers/glass/beaker/pitcher/bluespace
+	name = "bluespace pitcher"
+	desc = "The results of years of work including the best figures in NanoTrasen's design, research, and engineering teams. All to deliver you twelve standard cups of coffee."
+	icon_state = "coffeepot_bluespace"
+	volume = 240
+	filling_states = null
 
 // buckets
 

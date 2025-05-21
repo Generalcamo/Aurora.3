@@ -8347,12 +8347,12 @@
 /obj/item/flag/idris/l,
 /obj/item/flag/idris/l,
 /obj/item/flag/idris/l,
-/obj/item/reagent_containers/food/drinks/takeaway_cup_idris,
-/obj/item/reagent_containers/food/drinks/takeaway_cup_idris,
-/obj/item/reagent_containers/food/drinks/takeaway_cup_idris,
-/obj/item/reagent_containers/food/drinks/takeaway_cup_idris,
-/obj/item/reagent_containers/food/drinks/takeaway_cup_idris,
-/obj/item/reagent_containers/food/drinks/takeaway_cup_idris,
+/obj/item/reagent_containers/food/drinks/takeaway_cup/idris,
+/obj/item/reagent_containers/food/drinks/takeaway_cup/idris,
+/obj/item/reagent_containers/food/drinks/takeaway_cup/idris,
+/obj/item/reagent_containers/food/drinks/takeaway_cup/idris,
+/obj/item/reagent_containers/food/drinks/takeaway_cup/idris,
+/obj/item/reagent_containers/food/drinks/takeaway_cup/idris,
 /turf/simulated/floor/tiled/full,
 /area/ship/idris_cruiser/cargo_bay)
 "DW" = (

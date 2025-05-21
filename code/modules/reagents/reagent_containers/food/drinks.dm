@@ -317,10 +317,12 @@ If you add a drink with an empty icon sprite, ensure it is in the same folder, e
 	else
 		icon_state = "water_cup_e"
 
-/obj/item/reagent_containers/food/drinks/takeaway_cup_idris
+ABSTRACT_TYPE(/obj/item/reagent_containers/food/drinks/takeaway_cup)
 	name = "takeaway cup"
-	desc = "A takeaway cup, sporting the Idris logo."
-	icon_state = "takeaway_cup_idris"
+	desc = DESC_PARENT
+	item_state = "coffee"
+	contained_sprite = TRUE
+	icon = 'icons/obj/coffee_cups.dmi'
 	drop_sound = 'sound/items/drop/papercup.ogg'
 	pickup_sound = 'sound/items/pickup/papercup.ogg'
 	possible_transfer_amounts = null
@@ -329,13 +331,15 @@ If you add a drink with an empty icon sprite, ensure it is in the same folder, e
 	 * Details written on the cup, a la IRL coffee places
 	 */
 	var/list/details = list("Customer" = null, "Order" = null)
+	///Whether the lid is open or not
+	var/lid_open = FALSE
 
-/obj/item/reagent_containers/food/drinks/takeaway_cup_idris/feedback_hints(mob/user, distance, is_adjacent)
+/obj/item/reagent_containers/food/drinks/takeaway_cup/feedback_hints(mob/user, distance, is_adjacent)
 	. += ..()
 	. += "Order: [details["Order"]]"
 	. += "For: [details["Customer"]]"
 
-/obj/item/reagent_containers/food/drinks/takeaway_cup_idris/attackby(obj/item/attacking_item, mob/user)
+/obj/item/reagent_containers/food/drinks/takeaway_cup/attackby(obj/item/attacking_item, mob/user)
 	if(attacking_item.ispen() && !use_check_and_message(user))
 		var/choice = tgui_input_list(user, "Which detail do you want to edit?", "Detail Editor", list("Customer", "Order"))
 		switch(choice)
@@ -345,6 +349,33 @@ If you add a drink with an empty icon sprite, ensure it is in the same folder, e
 				details["Order"] = tgui_input_text(user, "What is the ordered drink?", "Enter Ordered Drink")
 		return
 	return ..()
+
+/obj/item/reagent_containers/food/drinks/takeaway_cup/update_icon()
+	//if(lid_open)
+	//	icon_state = reagents.total_volume ? "[icon_state]_full" : "[icon_state]_empty"
+	//else
+	icon_state = initial(icon_state)
+	return
+
+/obj/item/reagent_containers/food/drinks/takeaway_cup/AltClick(mob/user)
+	. = ..()
+	lid_open = !lid_open
+	update_icon()
+	return TRUE
+
+/obj/item/reagent_containers/food/drinks/takeaway_cup/idris
+	desc = "A takeaway cup, sporting the Idris logo."
+	icon_state = "coffee_idris"
+
+/obj/item/reagent_containers/food/drinks/takeaway_cup/idris/open
+	lid_open = TRUE
+
+/obj/item/reagent_containers/food/drinks/takeaway_cup/nanotrasen
+	desc = "A takeaway cup, sporting the NanoTrasen logo."
+	icon_state = "coffee_nt"
+
+/obj/item/reagent_containers/food/drinks/takeaway_cup/nanotrasen/open
+	lid_open = TRUE
 
 //////////////////////////drinkingglass and shaker//
 //Note by Darem: This code handles the mixing of drinks. New drinks go in three places: In Chemistry-Reagents.dm (for the drink

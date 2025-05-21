@@ -235,6 +235,16 @@
 	if(prob(5))
 		to_chat(M, SPAN_WARNING(pick("You're beginning to lose your appetite.","Your mouth is so incredibly dry.","You feel really confused.","What was I just thinking of?","Where am I?","Your muscles are tingling.")))
 
+/singleton/reagent/phenyltame
+	name = "\improper Phenyltame"
+	description = "An advanced artificial sweetener, developed and distributed by Getmore Corporation."
+	reagent_state = SOLID
+	color = COLOR_WHITE
+	taste_description = "sweetness"
+	value = 0.2
+	overdose = 17
+	metabolism = REM * 2
+
 /singleton/reagent/blackpepper
 	name = "Black Pepper"
 	description = "A powder ground from peppercorns. *AAAACHOOO*"
