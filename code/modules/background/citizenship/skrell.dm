@@ -1,11 +1,10 @@
 /datum/citizenship/nralakk
 	name = CITIZENSHIP_NRALAKK
-	description = "Home of the Skrell, a centralized union of solar systems run by councilors of different ranks and positions. The capital of the Federation is located at the city of \
-	Kal'lo on the core planet Nralakk IV, also known as Qerrbalak, within the Nralakk system. While the majority of Skrell live within the Nralakk Federation, a sizable portion live \
-	abroad. The quality of life within Federation is considered to be the best in the galaxy due to their technological advances, allowing Federation Citizens access to a quality of \
-	life almost unmatched anywhere else in the Spur. \
-	A rogue artificial intelligence, Glorsh-Omega, has traumatized this nation for centuries to come. The Federation is very wary of humanity, who has acquired AI technology \
-	after a Federation tech leak provided them with the research required to create their own AI, as well as allowing them to create IPCs."
+	description = "The Nralakk Federation is the sole nation of the skrell species, spanning multiple systems and governing them under a federalist parliamentary republic. The capital of the Nralakk Federation is the city of \
+	Kal'lo on Qerrbalak, located in the Nralakk system. The majority of skrell live within the Federation, with some expatriates located \
+	abroad. Life within the Federation is considered luxurious and technologically advanced, with the nation viewed as the technological giant of the Orion Spur. \
+	Despite this, the Nralakk Federation and the species at large still reels from the period of AI-led despotism under Glorsh-Omega, which led to the blanket ban of all artificial intelligence within it. \
+	The Nralakk Federation is extremely guarded towards all uses of artificial intelligence outside of its borders, particularly against humanity's positronics and the proliferation of IPCs within their societies."
 	consular_outfit = /obj/outfit/job/representative/consular/nralakk
 	assistant_outfit = /obj/outfit/job/diplomatic_aide/nralakk
 
