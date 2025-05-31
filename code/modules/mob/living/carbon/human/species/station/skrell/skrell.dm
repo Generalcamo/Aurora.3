@@ -16,6 +16,7 @@
 	deform = 'icons/mob/human_races/skrell/r_def_skrell.dmi'
 	preview_icon = 'icons/mob/human_races/skrell/skrell_preview.dmi'
 	bandages_icon = 'icons/mob/bandage.dmi'
+	splint_icon = 'icons/mob/splint.dmi'
 	tail = "No Tail"
 	tail_animation = 'icons/mob/species/skrell/tail.dmi'
 	selectable_tails = list("No Tail", "Short Tail", "Short Fish Tail", "Short Fringed Tail")

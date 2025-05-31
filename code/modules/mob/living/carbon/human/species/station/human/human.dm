@@ -11,6 +11,7 @@
 	age_max = 125
 	economic_modifier = 12
 	bandages_icon = 'icons/mob/bandage.dmi'
+	splint_icon = 'icons/mob/splint.dmi'
 
 	primitive_form = SPECIES_MONKEY
 	unarmed_types = list(

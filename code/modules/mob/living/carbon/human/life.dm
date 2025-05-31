@@ -949,11 +949,15 @@
 					if(O.is_stump())
 						continue
 					var/bandage_icon = species.bandages_icon
-					if(!bandage_icon)
-						continue
-					var/bandage_level = O.bandage_level
-					if(bandage_level)
-						health_images += image(bandage_icon, "[O.icon_name][bandage_level]")
+					if(bandage_icon)
+						var/bandage_level = O.bandage_level
+						if(bandage_level)
+							health_images += image(bandage_icon, "[O.icon_name][bandage_level]")
+					var/splint_icon = species.splint_icon
+					if(splint_icon)
+						var/is_splinted = O.status & ORGAN_SPLINTED
+						if(is_splinted)
+							health_images += image(splint_icon, "[O.icon_name]")
 
 				// Apply a fire overlay if we're burning.
 				if(on_fire)

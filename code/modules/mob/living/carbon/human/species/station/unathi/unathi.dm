@@ -12,6 +12,7 @@
 	preview_icon = 'icons/mob/human_races/unathi/unathi_preview.dmi'
 	skeleton_icon = 'icons/mob/human_races/unathi/unathi_skeleton.dmi'
 	bandages_icon = 'icons/mob/bandage.dmi'
+	splint_icon = 'icons/mob/splint.dmi'
 	tail = "Tail"
 	tail_animation = 'icons/mob/species/unathi/tail.dmi'
 	selectable_tails = list("Tail", "Damaged Tail", "Stubby Tail")

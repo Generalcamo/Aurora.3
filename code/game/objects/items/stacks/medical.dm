@@ -419,6 +419,7 @@ Contains:
 					user.visible_message(SPAN_DANGER("[user] fumbles \the [src]."), SPAN_DANGER("You fumble \the [src]."), SPAN_DANGER("You hear something being wrapped."))
 					return
 			affecting.status |= ORGAN_SPLINTED
+			H.update_splints(TRUE)
 			use(1)
 		return
 

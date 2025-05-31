@@ -22,12 +22,20 @@
 	var/list/selectable_pronouns = list(MALE, FEMALE, PLURAL)
 
 	// Icon/appearance vars.
-	var/canvas_icon = 'icons/mob/base_32.dmi'                  // Used to blend parts and icons onto this, to avoid clipping issues.
-	var/icobase = 'icons/mob/human_races/human/r_human.dmi'    // Normal icon set.
-	var/deform = 'icons/mob/human_races/human/r_def_human.dmi' // Mutated icon set.
+	/// Used to blend parts and icons onto this, to avoid clipping issues.
+	var/canvas_icon = 'icons/mob/base_32.dmi'
+	/// Normal icon set.
+	var/icobase = 'icons/mob/human_races/human/r_human.dmi'
+	/// Mutated icon set.
+	var/deform = 'icons/mob/human_races/human/r_def_human.dmi'
+	/// Skeletal icon set
 	var/skeleton_icon = 'icons/mob/human_races/r_skeleton.dmi'
+	/// Preview icon set (for character previews)
 	var/preview_icon = 'icons/mob/human_races/human/human_preview.dmi'
+	/// Overlay icon set for bandages
 	var/bandages_icon
+	/// Overlay icon set for splints
+	var/splint_icon
 
 	// Damage overlay and masks.
 	var/damage_overlays = 'icons/mob/human_races/masks/dam_human.dmi'

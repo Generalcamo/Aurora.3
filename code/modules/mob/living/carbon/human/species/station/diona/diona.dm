@@ -17,6 +17,7 @@
 	deform = 'icons/mob/human_races/diona/r_def_plant.dmi'
 	preview_icon = 'icons/mob/human_races/diona/diona_preview.dmi'
 	bandages_icon = 'icons/mob/bandage.dmi'
+	splint_icon = 'icons/mob/splint.dmi'
 	language = LANGUAGE_ROOTSONG
 	secondary_langs = list(LANGUAGE_SKRELLIAN, LANGUAGE_AZAZIBA, LANGUAGE_UNATHI)
 	unarmed_types = list(

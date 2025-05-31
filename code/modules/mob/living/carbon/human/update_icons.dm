@@ -243,6 +243,7 @@ There are several things that need to be remembered:
 
 	overlays_raw[MOB_DAMAGE_LAYER] = ovr
 	update_bandages(update_icons)
+	update_splints(update_icons)
 	if(update_icons)
 		update_icon()
 
@@ -274,6 +275,24 @@ There are several things that need to be remembered:
 		remove_verb(src, /mob/living/carbon/human/proc/remove_bandages)
 
 	overlays_raw[BANDAGE_LAYER] = ovr
+	if(update_icons)
+		update_icon()
+
+/// Handles displaying splints on the mob icon
+/mob/living/carbon/human/proc/update_splints(var/update_icons = TRUE)
+	var/splint_icon = species.splint_icon
+	if(!splint_icon)
+		return
+
+	var/list/ovr
+	for(var/obj/item/organ/external/O in organs)
+		if(O.is_stump())
+			continue
+		var/is_splinted = O.status & ORGAN_SPLINTED
+		if(is_splinted)
+			LAZYADD(ovr, image(splint_icon, "[O.icon_name]"))
+
+	overlays_raw[SPLINT_LAYER] = ovr
 	if(update_icons)
 		update_icon()
 
