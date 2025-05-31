@@ -250,6 +250,7 @@
 	allowed = list(/obj/item/stack/medical, /obj/item/reagent_containers/dropper, /obj/item/reagent_containers/hypospray, /obj/item/reagent_containers/syringe, \
 	/obj/item/device/healthanalyzer, /obj/item/device/flashlight, /obj/item/device/radio, /obj/item/tank/emergency_oxygen, /obj/item/device/breath_analyzer, /obj/item/reagent_containers/blood, /obj/item/clothing/head/hardhat/paramedic)
 	body_parts_covered = UPPER_TORSO|ARMS
+	initial_emissive_state = "emt_jacket_emis"
 
 /obj/item/clothing/suit/storage/toggle/para_jacket/zeng
 	desc = "A paramedic jacket in the classic white and purple of Zeng-Hu Pharmaceuticals."

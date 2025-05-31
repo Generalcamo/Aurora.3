@@ -1,4 +1,4 @@
-/obj/item/clothing
+ABSTRACT_TYPE(/obj/item/clothing)
 	name = "clothing"
 	siemens_coefficient = 0.9
 	drop_sound = 'sound/items/drop/cloth.ogg'
@@ -43,6 +43,11 @@
 
 	///Species to refit the item for on initialize so that we can map in specific items for specific species easier. This should be set to the BODYTYPE of the species in question, not the species name or type itself.
 	var/refit_initialize = null
+
+	///Initial name of the clothing's emissive overlay. Can be null. Will be changed based on [icon_supported_species_tags] and the bodypart, using the same naming scheme as contained sprites
+	var/initial_emissive_state
+	///Special variable to handle the clothing's emissive overlay
+	var/emissive_state
 
 /obj/item/clothing/Initialize(var/mapload, var/material_key)
 	. = ..(mapload)
@@ -163,6 +168,21 @@
 		our_image = image(item_icons[slot_head_str], icon_state)
 	our_image.color = color
 	return our_image
+
+/obj/item/clothing/get_mob_overlay(mob/living/carbon/human/H, mob_icon, mob_state, slot, main_call)
+	var/image/I = ..()
+	if(!initial_emissive_state)
+		return I
+	if(icon_auto_adapt)
+		if(H && length(icon_supported_species_tags))
+			emissive_state = "[initial_emissive_state][contained_sprite ? slot_str_to_contained_flag(slot) : ""]"
+			if(H.species.short_name in icon_supported_species_tags)
+				emissive_state = "[H.species.short_name]_[initial_emissive_state][contained_sprite ? slot_str_to_contained_flag(slot) : ""]"
+	else
+		emissive_state = "[initial_emissive_state][contained_sprite ? slot_str_to_contained_flag(slot) : ""]"
+	var/image/emissive_overlay = emissive_appearance(mob_icon, emissive_state, alpha = src.alpha)
+	I.AddOverlays(emissive_overlay)
+	return I
 
 /obj/item/clothing/proc/refit_for_species(var/target_species)
 	if(!species_restricted)

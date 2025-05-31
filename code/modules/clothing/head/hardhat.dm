@@ -66,9 +66,7 @@
 	heat_protection = HEAD
 
 	///Initial name of the fire helmet's emissive overlay. Will be changed based on [icon_supported_species_tags], above
-	var/initial_emissive_state = "atmos_fire_emissive"
-	///Special variable to handle the fire helmet's emissive overlay
-	var/emissive_state
+	initial_emissive_state = "atmos_fire_emissive"
 
 /obj/item/clothing/head/hardhat/atmos/get_mob_overlay(mob/living/carbon/human/H, mob_icon, mob_state, slot)
 	var/image/I = ..()

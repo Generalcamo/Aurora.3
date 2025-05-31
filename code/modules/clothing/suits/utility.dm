@@ -36,9 +36,7 @@
 	cold_protection = UPPER_TORSO | LOWER_TORSO | LEGS | FEET | ARMS | HANDS
 
 	///Initial name of the firesuit's emissive overlay. Will be changed based on [icon_supported_species_tags], above
-	var/initial_emissive_state = "firesuit_emissive"
-	///Special variable to handle the firesuit's emissive overlay
-	var/emissive_state
+	initial_emissive_state = "firesuit_emissive"
 
 /obj/item/clothing/suit/fire/get_mob_overlay(mob/living/carbon/human/H, mob_icon, mob_state, slot)
 	var/image/I = ..()
