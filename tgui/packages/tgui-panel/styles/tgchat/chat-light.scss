@@ -631,6 +631,20 @@ h2.alert {
   font-weight: bold;
 }
 
+.scan_notice {
+  color: #5f94af;
+}
+
+.scan_warning {
+  color: #ee0000;
+  font-style: italic;
+}
+
+.scan_danger {
+  color: #ee0000;
+  font-weight: bold;
+}
+
 .examine_block {
   background: #f2f7fa;
   border: 1px solid #111a27;

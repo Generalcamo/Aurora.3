@@ -122,6 +122,11 @@ h1.alert, h2.alert		{color: #000000;}
 .freespeak				{color: #FF4500; font-family: "Trebuchet MS", cursive, sans-serif;}
 .tradeband				{color: #5C16C6; font-family: Georgia, Verdana, sans-serif;}
 
+/* Scan Results */
+.scan_notice {color: #5f94af;}
+.scan_warning {color: #ff0000; font-style: italic;}
+.scan_danger {color: #ff0000; font-weight: bold;}
+
 .interface				{color: #330033;}
 
 .good                   {color: #4f7529; font-weight: bold;}

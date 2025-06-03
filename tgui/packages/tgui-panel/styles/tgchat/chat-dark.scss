@@ -613,6 +613,20 @@ em {
   font-weight: bold;
 }
 
+.scan_notice {
+  color: #5f94af;
+}
+
+.scan_warning {
+  color: #ee0000;
+  font-style: italic;
+}
+
+.scan_danger {
+  color: #ee0000;
+  font-weight: bold;
+}
+
 .examine_block {
   background: #1b1c1e;
   border: 1px solid #a4bad6;

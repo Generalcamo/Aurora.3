@@ -26,6 +26,10 @@
 	///The connected surgery computer
 	var/obj/machinery/computer/operating/computer = null
 
+	///The connected vitals monitor
+	var/obj/machinery/vitals_monitor/connected_monitor = null
+
+
 /obj/machinery/optable/mechanics_hints(mob/user, distance, is_adjacent)
 	. += ..()
 	. += "Click your target with Grab intent, then click on the table with an empty hand, to place them on it."
@@ -69,6 +73,11 @@
 		release_view(occupant_resolved)
 	occupant = null
 
+	//If we have a vitals monitor, update their patient and optable
+	if(connected_monitor)
+		connected_monitor.update_connected_person()
+		connected_monitor.update_optable()
+
 	. = ..()
 
 /// Any mob that enters our tile will awaken our processing as it's a potential patient
@@ -76,6 +85,8 @@
 	SIGNAL_HANDLER
 	if(!istype(potential_patient))
 		return
+	if(connected_monitor)
+		connected_monitor.update_connected_person(potential_patient)
 	START_PROCESSING_MACHINE(src, MACHINERY_PROCESS_SELF)
 	refresh_icon_state()
 
@@ -84,6 +95,9 @@
 	SIGNAL_HANDLER
 	if(!istype(potential_patient))
 		return
+
+	if(connected_monitor)
+		connected_monitor.update_connected_person()
 
 	//Stop processing only if it's not the occupant, or the occupant doesn't exist
 	var/occupant_resolved = occupant?.resolve()

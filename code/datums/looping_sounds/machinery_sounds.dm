@@ -118,3 +118,10 @@
 	mid_sounds = list('sound/machines/clanking.ogg' = 1)
 	mid_length = 5 SECONDS
 	volume = 75
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/datum/looping_sound/flatline
+	mid_sounds = list('sound/machines/flatline.ogg' = 1)
+	mid_length = 1 SECOND
+	volume = 20

@@ -10,6 +10,8 @@ SUBSYSTEM_DEF(records)
 	var/list/shuttle_assignments
 	var/list/shuttle_manifests
 
+	var/list/body_scans
+
 	var/list/excluded_fields
 	var/list/localized_fields
 
@@ -41,6 +43,7 @@ SUBSYSTEM_DEF(records)
 	viruses = list()
 	shuttle_assignments = list()
 	shuttle_manifests = list()
+	body_scans = list()
 	excluded_fields = list()
 	localized_fields = list()
 	manifest = list()
