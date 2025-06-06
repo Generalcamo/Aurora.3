@@ -987,6 +987,8 @@
 #include "code\game\machinery\wall_frames.dm"
 #include "code\game\machinery\washing_machine.dm"
 #include "code\game\machinery\_machines_base\machinery.dm"
+#include "code\game\machinery\_machines_base\machinery_components.dm"
+#include "code\game\machinery\_machines_base\machinery_stat.dm"
 #include "code\game\machinery\abstract\abstract.dm"
 #include "code\game\machinery\abstract\intercom_listener.dm"
 #include "code\game\machinery\atmoalter\area_atmos_computer.dm"

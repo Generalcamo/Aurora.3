@@ -25,7 +25,7 @@
 	var/last_print_time
 
 /obj/machinery/computer/telecomms/server/attack_hand(mob/user)
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 	user.set_machine(src)
 	var/dat = "<center><b>Telecommunications Server Monitor</b></center>"
@@ -150,7 +150,7 @@
 /obj/machinery/computer/telecomms/server/attackby(obj/item/attacking_item, mob/user)
 	if(attacking_item.isscrewdriver())
 		if(attacking_item.use_tool(src, user, 20, volume = 50))
-			if (src.stat & BROKEN)
+			if (is_broken())
 				to_chat(user, SPAN_NOTICE("The broken glass falls out."))
 				var/obj/structure/computerframe/A = new /obj/structure/computerframe( src.loc )
 				new /obj/item/material/shard( src.loc )

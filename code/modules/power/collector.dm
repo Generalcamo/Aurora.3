@@ -95,7 +95,7 @@ GLOBAL_LIST_INIT_TYPED(rad_collectors, /obj/machinery/power/rad_collector, list(
 	if(!CanInteract(user, GLOB.physical_state))
 		return FALSE
 	. = TRUE
-	if((stat & BROKEN) || melted)
+	if((is_broken()) || melted)
 		USE_FEEDBACK_FAILURE("The [src] is completely destroyed!")
 	if(!src.locked)
 		toggle_power()
@@ -141,7 +141,7 @@ GLOBAL_LIST_INIT_TYPED(rad_collectors, /obj/machinery/power/rad_collector, list(
 		user.visible_message("[user.name] [anchored? "secures":"unsecures"] the [src.name].", \
 			"You [anchored? "secure":"undo"] the external bolts.", \
 			"You hear a ratchet")
-		if(anchored && !(stat & BROKEN))
+		if(anchored && !(is_broken()))
 			connect_to_network()
 		else
 			disconnect_from_network()
@@ -171,7 +171,7 @@ GLOBAL_LIST_INIT_TYPED(rad_collectors, /obj/machinery/power/rad_collector, list(
 			explosion(T, -1, -1, 0)
 			QDEL_NULL(loaded_tank)
 	disconnect_from_network()
-	stat |= BROKEN
+	set_broken(TRUE)
 	melted = TRUE
 	anchored = FALSE
 	active = FALSE

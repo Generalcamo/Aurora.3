@@ -37,7 +37,7 @@
 
 /obj/machinery/atm/update_icon()
 	ClearOverlays()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		set_light(FALSE)
 		return
 
@@ -50,7 +50,7 @@
 		AddOverlays(card_overlay)
 
 /obj/machinery/atm/process()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		ClearOverlays()
 		set_light(FALSE)
 		return

@@ -51,7 +51,7 @@
 		last_stasis_sound = _running
 
 /obj/machinery/stasis_bed/AltClick(mob/user)
-	if((world.time >= stasis_can_toggle) && !use_check_and_message(user) && !(stat & (NOPOWER|BROKEN)))
+	if((world.time >= stasis_can_toggle) && !use_check_and_message(user) && operable())
 		stasis_enabled = !stasis_enabled
 		stasis_can_toggle = world.time + 5 SECONDS
 		playsound(src, 'sound/machines/click.ogg', 60, TRUE)
@@ -68,11 +68,11 @@
 	. = ..()
 
 /obj/machinery/stasis_bed/proc/stasis_running()
-	return stasis_enabled && !(stat & (NOPOWER|BROKEN))
+	return stasis_enabled && operable()
 
 /obj/machinery/stasis_bed/update_icon()
 	ClearOverlays()
-	if(stat & BROKEN)
+	if(is_broken())
 		icon_state = "[initial(icon_state)]_broken"
 		return ..()
 	icon_state = initial(icon_state)
@@ -114,7 +114,7 @@
 	update_icon()
 
 /obj/machinery/stasis_bed/process()
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 	if(!occupant)
 		update_use_power(POWER_USE_IDLE)

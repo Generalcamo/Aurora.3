@@ -32,7 +32,7 @@
 
 	var/does_flick = TRUE
 
-	var/datum/wires/autolathe/wires
+	wires = /datum/wires/autolathe
 
 	var/list/print_queue = list()
 
@@ -56,7 +56,6 @@
 /obj/machinery/autolathe/Destroy()
 	print_loc = null
 	QDEL_NULL(currently_printing)
-	QDEL_NULL(wires)
 
 	QDEL_LIST(print_queue)
 
@@ -180,8 +179,6 @@
 	return TRUE
 
 /obj/machinery/autolathe/attack_hand(mob/user)
-	if(panel_open)
-		wires.interact(user)
 	user.set_machine(src)
 	ui_interact(user)
 
@@ -301,7 +298,7 @@
 	CutOverlays("[icon_state]_lights")
 	if(panel_open)
 		AddOverlays("[icon_state]_panel")
-	if(!(stat & (NOPOWER|BROKEN)))
+	if(operable())
 		AddOverlays(emissive_appearance(icon, "[icon_state]_lights"))
 		AddOverlays("[icon_state]_lights")
 

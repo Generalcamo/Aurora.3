@@ -60,7 +60,7 @@
 		broadcast_status()
 		broadcast_status_next_process = FALSE
 
-	if((stat & (NOPOWER|BROKEN)) || !use_power)
+	if(inoperable() || !use_power)
 		return
 
 	var/power_draw = -1
@@ -81,7 +81,7 @@
 	return 1
 
 /obj/machinery/atmospherics/unary/outlet_injector/proc/inject()
-	if(injecting || (stat & NOPOWER) || !loc)
+	if(injecting || (!is_powered()) || !loc)
 		return 0
 
 	var/datum/gas_mixture/environment = loc.return_air()

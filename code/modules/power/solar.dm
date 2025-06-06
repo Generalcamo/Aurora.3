@@ -79,7 +79,7 @@
 
 /obj/machinery/power/solar/proc/healthcheck()
 	if (src.health <= 0)
-		if(!(stat & BROKEN))
+		if(!(is_broken()))
 			broken()
 		else
 			new /obj/item/material/shard(src.loc)
@@ -92,7 +92,7 @@
 /obj/machinery/power/solar/update_icon()
 	..()
 	ClearOverlays()
-	if(stat & BROKEN)
+	if(is_broken())
 		AddOverlays("solar_panel-b")
 	else
 		AddOverlays("solar_panel")
@@ -118,7 +118,7 @@
 	//isn't the power received from the incoming light proportionnal to cos(p_angle) (Lambert's cosine law) rather than cos(p_angle)^2 ?
 
 /obj/machinery/power/solar/process()
-	if(stat & BROKEN || !control || !SSsun)
+	if(is_broken() || !control || !SSsun)
 		return PROCESS_KILL
 
 	if(powernet && powernet == control.powernet)
@@ -131,7 +131,7 @@
 		unset_control()
 
 /obj/machinery/power/solar/proc/broken()
-	stat |= BROKEN
+	set_broken(TRUE)
 	unset_control()
 	update_icon()
 	return
@@ -383,7 +383,7 @@
 	if(attacking_item.isscrewdriver())
 		playsound(src.loc, 'sound/items/Screwdriver.ogg', 50, 1)
 		if(do_after(user, 2 SECONDS, src, DO_REPAIR_CONSTRUCT))
-			if (src.stat & BROKEN)
+			if (src.is_broken())
 				to_chat(user, SPAN_NOTICE("The broken glass falls out."))
 				var/obj/structure/computerframe/A = new /obj/structure/computerframe( src.loc )
 				new /obj/item/material/shard( src.loc )
@@ -484,14 +484,14 @@
 /obj/machinery/power/solar_control/power_change()
 	..()
 	update_icon()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		set_light(0)
 	else
 		set_light(2, 1.3, light_color)
 
 
 /obj/machinery/power/solar_control/proc/broken()
-	stat |= BROKEN
+	set_broken(TRUE)
 	update_icon()
 
 
@@ -527,7 +527,7 @@
 
 /obj/machinery/power/solar_control/update_icon()
 	ClearOverlays()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		set_light(0)
 		return
 	else
@@ -535,7 +535,7 @@
 
 	icon_state = initial(icon_state)
 
-	if(stat & BROKEN)
+	if(is_broken())
 		icon_state = "[initial(icon_state)]-broken"
 		var/mutable_appearance/image_overlay = overlay_image(src.icon, "broken")
 		AddOverlays(image_overlay)

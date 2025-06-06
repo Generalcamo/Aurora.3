@@ -215,7 +215,7 @@ Deployable Kits
 /obj/machinery/deployable/barrier/emp_act(severity)
 	. = ..()
 
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 	if(prob(50/severity))
 		locked = !locked

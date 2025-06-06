@@ -58,7 +58,7 @@
 	ClearOverlays()
 	if (dirty)
 		AddOverlays("grbloody")
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 	if (!occupant)
 		AddOverlays("grjam")
@@ -74,7 +74,7 @@
 	return
 
 /obj/machinery/gibber/attack_hand(mob/user as mob)
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 	if(operating)
 		to_chat(user, SPAN_DANGER("[src] is locked and running, wait for it to finish."))

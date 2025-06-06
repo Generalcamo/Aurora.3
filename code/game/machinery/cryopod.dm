@@ -59,7 +59,7 @@
 	src.attack_hand(user)
 
 /obj/machinery/computer/cryopod/attack_hand(mob/user)
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 
 	user.set_machine(src)
@@ -529,16 +529,16 @@
 	flick("[initial(icon_state)]-anim", src)
 	if(occupant)
 		name = "[name] ([occupant])"
-		if(stat & BROKEN)
+		if(is_broken())
 			icon_state = "[initial(icon_state)]-broken-closed"
-		if(stat & NOPOWER)
+		if(!is_powered())
 			icon_state = "[initial(icon_state)]-closed"
 		else
 			icon_state = "[initial(icon_state)]-working"
 		return
 	else
 		name = initial(name)
-		if(stat & BROKEN)
+		if(is_broken())
 			icon_state = "[initial(icon_state)]-broken"
 		else
 			icon_state = initial(icon_state)

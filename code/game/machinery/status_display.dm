@@ -76,7 +76,7 @@
 
 // timed process
 /obj/machinery/status_display/process()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		remove_display()
 		update_lighting()
 		return
@@ -85,7 +85,7 @@
 /obj/machinery/status_display/emp_act(severity)
 	. = ..()
 
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	set_picture("ai_bsod")
@@ -230,7 +230,7 @@
 
 /obj/machinery/status_display/proc/update_lighting()
 	if( \
-		(stat & (NOPOWER|BROKEN)) || \
+		inoperable() || \
 		(mode == STATUS_DISPLAY_BLANK) || \
 		(mode != STATUS_DISPLAY_ALERT && message1 == "" && message2 == "") \
 	)

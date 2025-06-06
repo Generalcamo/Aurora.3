@@ -152,7 +152,7 @@
 			phase = "filling"
 
 /obj/machinery/atmospherics/binary/oxyregenerator/update_icon()
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		icon_state = "off"
 	else
 		icon_state = "[use_power ? "on" : "off"]"

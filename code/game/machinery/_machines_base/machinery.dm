@@ -44,7 +44,7 @@ Class Variables:
 			NOPOWER:2 -- No power is being supplied to machine.
 			POWEROFF:4 -- tbd
 			MAINT:8 -- machine is currently under going maintenance.
-			EMPED:16 -- temporary broken by EMP pulse
+			MACHINE_STAT_EMPED:16 -- temporary broken by EMP pulse
 
 Class Procs:
 	New()                     'game/machinery/machine.dm'
@@ -85,17 +85,24 @@ Class Procs:
 	icon = 'icons/obj/stationobjs.dmi'
 	w_class = WEIGHT_CLASS_GIGANTIC
 	layer = STRUCTURE_LAYER
-	init_flags = INIT_MACHINERY_PROCESS_SELF
+	init_flags = INIT_MACHINERY_START_PROCESSING
 	pass_flags_self = PASSMACHINE | LETPASSCLICKS
 
-	var/stat = 0
-	var/emagged = 0
-	var/use_power = POWER_USE_IDLE // See code/__defines/machinery.dm
+	/// Boolean. Whether or not the machine has been emagged.
+	var/emagged = FALSE
+	/// Wire datum, if any. If you place a type path, it will be autoinitialized.
+	var/datum/wires/wires
+	/// One of `POWER_USE_*`. The power usage state of the machine. Use `update_use_power()` to modify this during runtime. See code/__defines/machinery.dm
+	var/use_power = POWER_USE_IDLE
 	var/internal = FALSE
+	/// Power usage for idle machinery. Used if `use_power` is set to `POWER_USE_IDLE`.
 	var/idle_power_usage = 0
+	/// Power usage for active machinery. Used if `use_power` is set to `POWER_USE_ACTIVE`.
 	var/active_power_usage = 0
+	/// Helps with bookkeeping when initializing atoms. Don't modify.
 	var/power_init_complete = FALSE
-	var/power_channel = AREA_USAGE_EQUIP //AREA_USAGE_EQUIP, AREA_USAGE_ENVIRON or AREA_USAGE_LIGHT
+	/// Power channel the machine draws from in APCs. `AREA_USAGE_EQUIP`, `AREA_USAGE_ENVIRON`, or `AREA_USAGE_LIGHT`. Use `update_power_channel()` to modify this during runtime.
+	var/power_channel = AREA_USAGE_EQUIP
 	/* List of types that should be spawned as component_parts for this machine.
 		Structure:
 			type -> num_objects
@@ -109,21 +116,38 @@ Class Procs:
 		)
 	*/
 	var/list/component_types
-	var/list/component_parts = null //list of all the parts used to build it, if made from certain kinds of frames.
+	/// List of component instances. Expected type: `/obj/item/stock_parts.`
+	var/list/component_parts = null
+	/// Numeric unique ID number. Set to the value of `gl_uid++` when used.
 	var/uid
-	var/panel_open = 0
+	/// Boolean. Whether or not the maintenance panel is open.
+	var/panel_open = FALSE
+	/// Numeric unique ID number tracker. Used for ensuring `uid` is unique.
 	var/global/gl_uid = 1
-	var/interact_offline = 0 // Can the machine be interacted with while de-powered.
-	var/printing = 0 // Is this machine currently printing anything?
-	var/list/processing_parts // Component parts queued for processing by the machine. Expected type: `/obj/item/stock_parts` Unused currently
+	/// Boolean. Can the machine be interacted with while de-powered.
+	var/interact_offline = FALSE
+	/// Boolean. Is this machine currently printing anything?
+	var/printing = FALSE
+	/// Component parts queued for processing by the machine. Expected type: `/obj/item/stock_parts` Unused currently
+	var/list/processing_parts
 
 	/// Bitflag. What is being processed. One of `MACHINERY_PROCESS_*`.
 	var/processing_flags
 
-	var/clicksound //played sound on usage
-	var/clickvol = 40 //volume
+	/// Sound played on successful interface use. Can be a list.
+	var/clicksound
+	/// Volume of [clicksound]
+	var/clickvol = 40
 	var/obj/item/device/assembly/signaler/signaler // signaller attached to the machine
 	var/obj/effect/overmap/visitable/linked // overmap sector the machine is linked to
+
+	/// Whether or not the machine is allowed to be dismantled/modified. Used for snowflake consoles that would break permanently if dismantled. Also prevents damage, since the machine would be irreparable in this state. Has to be defined here because machinery datums.
+	var/can_use_tools = TRUE
+
+	/// The human-readable name of this machine, shown when examining circuit boards.
+	var/machine_name = null
+	/// A simple description of what this machine does, shown on examine for circuit boards.
+	var/machine_desc = null
 
 	/// Manufacturer of this machine. Used for TGUI themes, when you have a base type and subtypes with different themes (like the coffee machine).
 	/// Pass the manufacturer in ui_data and then use it in the UI.
@@ -137,9 +161,10 @@ Class Procs:
 	if(d)
 		set_dir(d)
 
-	if(init_flags & INIT_MACHINERY_PROCESS_ALL)
-		START_PROCESSING_MACHINE(src, init_flags & INIT_MACHINERY_PROCESS_ALL)
+	if(init_flags & INIT_MACHINERY_START_PROCESSING)
+		START_PROCESSING_MACHINE(src, init_flags & INIT_MACHINERY_START_PROCESSING)
 	SSmachinery.machinery += src // All machines should be in machinery.
+	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_NEW_MACHINE)
 
 	if (populate_components && component_types)
 		component_parts = list()
@@ -159,7 +184,9 @@ Class Procs:
 		if(component_parts.len)
 			RefreshParts()
 
-/obj/machinery/Destroy()
+	power_change()
+
+/obj/machinery/Destroy(force)
 	//Stupid macro used in power usage
 	CAN_BE_REDEFINED(TRUE)
 
@@ -227,22 +254,6 @@ Class Procs:
 				return
 	return
 
-/**
- * Check to see if the machine is operable
- *
- * * `additional_flags` - Additional flags to check for, that could have been added to the `stat` variable
- *
- * Returns `TRUE` if the machine is operable, `FALSE` otherwise
- */
-/obj/machinery/proc/operable(additional_flags = 0)
-	SHOULD_NOT_SLEEP(TRUE)
-	SHOULD_BE_PURE(TRUE)
-
-	if(stat & (NOPOWER|BROKEN|additional_flags))
-		return FALSE
-	else
-		return TRUE
-
 /obj/machinery/proc/toggle_power(power_set = -1, additional_flags = 0)
 	if(power_set >= 0)
 		update_use_power(power_set)
@@ -254,10 +265,10 @@ Class Procs:
 	update_icon()
 
 /obj/machinery/CanUseTopic(var/mob/user)
-	if(stat & BROKEN)
+	if(is_broken())
 		return STATUS_CLOSE
 
-	if(!interact_offline && (stat & NOPOWER))
+	if(!interact_offline && (!is_powered()))
 		return STATUS_CLOSE
 
 	return ..()
@@ -273,7 +284,7 @@ Class Procs:
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-/obj/machinery/attack_ai(mob/user as mob)
+/obj/machinery/attack_ai(mob/user)
 	if(!ai_can_interact(user))
 		return
 	if(isrobot(user))
@@ -284,32 +295,32 @@ Class Procs:
 	else
 		return src.attack_hand(user)
 
-/obj/machinery/attack_hand(mob/user as mob)
-	if(!operable(MAINT))
-		return 1
-	if(user.lying || user.stat)
-		return 1
-	if ( ! (istype(usr, /mob/living/carbon/human) || \
-			istype(usr, /mob/living/silicon)))
-		to_chat(usr, SPAN_WARNING("You don't have the dexterity to do this!"))
-		return 1
-/*
-	//distance checks are made by atom/proc/DblClick
-	if ((get_dist(src, user) > 1 || !istype(src.loc, /turf)) && !istype(user, /mob/living/silicon))
-		return 1
-*/
+// If you don't call parent in this proc, you must make all appropriate checks yourself.
+// If you do, you must respect the return value.
+/obj/machinery/attack_hand(mob/user)
+	//SHOULD_CALL_PARENT(TRUE) //Soon...
+	if((. = ..())) // Buckling; unlikely to return true.
+		return
+	if(!use_check_and_message(user))
+		return FALSE // The interactions below all assume physical access to the machine. If this is not the case, we let the machine take further action.
+	//if(!operable(MACHINE_STAT_MAINT))
+	//	return 1
 	if (ishuman(user))
 		var/mob/living/carbon/human/H = user
 		if(H.getBrainLoss() >= 60)
-			visible_message(SPAN_WARNING("[H] stares cluelessly at [src] and drools."))
-			return 1
+			visible_message(SPAN_WARNING("\The [H] stares cluelessly at \the [src]."))
+			return TRUE
 		else if(prob(H.getBrainLoss()))
-			to_chat(user, SPAN_WARNING("You momentarily forget how to use [src]."))
-			return 1
+			to_chat(user, SPAN_WARNING("You momentarily forget how to use \the [src]."))
+			return TRUE
 
 	src.add_fingerprint(user)
+	if(wires && (. = wires.interact(user)))
+		return TRUE
 
-	return ..()
+
+/obj/machinery/CanOpen(mob/user)
+
 
 /obj/machinery/attackby(obj/item/attacking_item, mob/user)
 	if(obj_flags & OBJ_FLAG_SIGNALER)
@@ -513,7 +524,7 @@ Class Procs:
 		bullet_ping(hitting_projectile)
 
 /obj/machinery/proc/do_hair_pull(mob/living/carbon/human/H)
-	if(stat & (NOPOWER|BROKEN))
+	if(inoperable())
 		return
 
 	if(!istype(H))

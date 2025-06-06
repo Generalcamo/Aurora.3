@@ -208,7 +208,7 @@
 	else if(!occupant_resolved.isSynthetic())
 		//If the table is on and suppressing
 		if(suppressing)
-			if(stat & NOPOWER)
+			if(!is_powered())
 				return FALSE
 
 			src.use_power_oneoff(2 KILO WATTS)

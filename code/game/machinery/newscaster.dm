@@ -251,7 +251,7 @@ GLOBAL_LIST_INIT_TYPED(allCasters, /obj/machinery/newscaster, list())
 	if(isbroken) //Broken shit can't be powered.
 		return
 	..()
-	if( !(stat & NOPOWER) )
+	if( !(!is_powered()) )
 		src.ispowered = 1
 		src.update_icon()
 	else

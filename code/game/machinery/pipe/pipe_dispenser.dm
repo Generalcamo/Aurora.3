@@ -129,7 +129,7 @@
 			if(attacking_item.use_tool(src, user, 40, volume = 50))
 				user.visible_message("<b>[user]</b> unfastens \the [src].", SPAN_NOTICE("You have unfastened \the [src]. Now it can be pulled somewhere else."), SPAN_NOTICE("You hear a ratcheting noise."))
 				anchored = FALSE
-				stat |= MAINT
+				set_stat(MACHINE_STAT_MAINT, TRUE)
 				if(usr.machine == src)
 					usr << browse(null, "window=[window_id]")
 		else
@@ -137,7 +137,7 @@
 			if(attacking_item.use_tool(src, user, 20, volume = 50))
 				user.visible_message("<b>[user]</b> fastens \the [src].", SPAN_NOTICE("You have fastened \the [src]. Now it can dispense pipes."), SPAN_NOTICE("You hear a ratcheting noise."))
 				anchored = TRUE
-				stat &= ~MAINT
+				set_stat(MACHINE_STAT_MAINT, FALSE)
 				power_change()
 		return TRUE
 	else

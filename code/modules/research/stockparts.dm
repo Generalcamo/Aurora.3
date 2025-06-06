@@ -82,6 +82,22 @@
 	. = ..()
 	randpixel_xy()
 
+// Use to process on the machine it's installed on.
+
+/obj/item/stock_parts/proc/start_processing(obj/machinery/machine)
+	LAZYDISTINCTADD(machine.processing_parts, src)
+	START_PROCESSING_MACHINE(machine, MACHINERY_PROCESS_COMPONENTS)
+	//set_status(machine, PART_STAT_PROCESSING)
+
+/obj/item/stock_parts/proc/stop_processing(obj/machinery/machine)
+	LAZYREMOVE(machine.processing_parts, src)
+	if(!LAZYLEN(machine.processing_parts))
+		STOP_PROCESSING_MACHINE(machine, MACHINERY_PROCESS_COMPONENTS)
+	//unset_status(machine, PART_STAT_PROCESSING)
+
+/obj/item/stock_parts/proc/machine_process(obj/machinery/machine)
+	return PROCESS_KILL
+
 //Rank 1
 
 /obj/item/stock_parts/console_screen

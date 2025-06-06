@@ -43,16 +43,16 @@
 /obj/machinery/media/jukebox/power_change()
 	..()
 	if(!anchored)
-		stat &= ~NOPOWER
+		set_stat(MACHINE_STAT_NOPOWER, TRUE)
 
-	if(stat & (NOPOWER|BROKEN) && playing)
+	if(is_broken() && playing)
 		StopPlaying()
 	update_icon()
 
 /obj/machinery/media/jukebox/update_icon()
 	ClearOverlays()
-	if(stat & (NOPOWER|BROKEN) || !anchored)
-		if(stat & BROKEN)
+	if(is_broken() || !anchored)
+		if(is_broken())
 			icon_state = "[state_base]-broken"
 		else
 			icon_state = "[state_base]-nopower"
@@ -72,7 +72,7 @@
 		to_chat(usr, SPAN_WARNING("You must secure \the [src] first."))
 		return
 
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		to_chat(usr, "\The [src] doesn't appear to function.")
 		return
 
@@ -111,7 +111,7 @@
 	return 1
 
 /obj/machinery/media/jukebox/interact(mob/user)
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		to_chat(usr, "\The [src] doesn't appear to function.")
 		return
 
@@ -121,7 +121,7 @@
 	var/title = "Music Player"
 	var/data[0]
 
-	if(!(stat & (NOPOWER|BROKEN)))
+	if(operable())
 		data["current_track"] = current_track != null ? current_track.title : ""
 		data["playing"] = playing
 

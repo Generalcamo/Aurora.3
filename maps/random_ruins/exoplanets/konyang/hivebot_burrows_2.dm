@@ -33,7 +33,7 @@
 	opacity = 0
 	density = 0
 	update_icon(AIRLOCK_OPEN)
-	src.stat |= BROKEN
+	src.stat |= MACHINE_STAT_BROKEN
 
 /obj/effect/landmark/corpse/scientist/hivebot_burrows
 	name = "unidentifiable corpse"

@@ -112,7 +112,7 @@
 	user.set_machine(src)
 	add_fingerprint(user)
 
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	updatemodules()

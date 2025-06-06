@@ -186,7 +186,7 @@ Frequency:
 
 	var/turf/teleport_turf
 	if(linked_pad)
-		if(linked_pad.stat & (NOPOWER|BROKEN))
+		if(linked_pad.is_broken())
 			to_chat(user, SPAN_WARNING("The pad \the [src] is connected doesn't seem to be responding!"))
 			return
 		if(!AreConnectedZLevels(current_location.z, linked_pad.z))

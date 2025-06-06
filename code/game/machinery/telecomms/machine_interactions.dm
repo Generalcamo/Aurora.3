@@ -54,7 +54,7 @@
 				construct_op ++
 				var/obj/item/stack/cable_coil/A = new /obj/item/stack/cable_coil( user.loc )
 				A.amount = 5
-				stat |= BROKEN // the machine's been borked!
+				set_broken(TRUE) // the machine's been borked!
 				. = TRUE
 		if(3)
 			if(attacking_item.iscoil())
@@ -62,7 +62,7 @@
 				if (A.use(5))
 					to_chat(user, SPAN_NOTICE("You insert the cables."))
 					construct_op--
-					stat &= ~BROKEN // the machine's not borked anymore!
+					set_stat(MACHINE_STAT_BROKEN, FALSE)
 				else
 					to_chat(user, SPAN_WARNING("You need five coils of wire for this."))
 				. = TRUE
@@ -215,7 +215,7 @@
 	if(!isliving(usr))
 		return
 
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	var/obj/item/device/multitool/P = usr.get_multitool()

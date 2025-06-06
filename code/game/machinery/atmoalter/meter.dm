@@ -30,7 +30,7 @@
 		AddOverlays("buttons-x")
 		return FALSE
 
-	if(stat & (BROKEN|NOPOWER))
+	if(inoperable())
 		AddOverlays("pressure_off")
 		return FALSE
 
@@ -122,7 +122,7 @@
 	if(distance > 3 && !isAI(user))
 		t += SPAN_WARNING("You are too far away to read it.")
 
-	else if(stat & (NOPOWER|BROKEN))
+	else if(inoperable())
 		t += SPAN_WARNING("The display is off.")
 
 	else if(src.target)

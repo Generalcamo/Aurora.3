@@ -186,7 +186,7 @@
 	queue_icon_update()
 
 /obj/machinery/atmospherics/unary/vent_pump/proc/can_pump()
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return 0
 	if(!use_power)
 		return 0
@@ -297,7 +297,7 @@
 	return 1
 
 /obj/machinery/atmospherics/unary/vent_pump/receive_signal(datum/signal/signal)
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 
 	hibernate = 0
@@ -425,7 +425,7 @@
 
 	else if(attacking_item.iswrench())
 
-		if(!(stat & NOPOWER) && use_power)
+		if(!(!is_powered()) && use_power)
 			to_chat(user, SPAN_WARNING("You cannot unwrench \the [src], turn it off first."))
 
 		else

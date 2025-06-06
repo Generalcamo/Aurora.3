@@ -48,7 +48,7 @@
 	update_icon()
 
 /obj/machinery/from_beyond/update_icon()
-	if(!(stat & NOPOWER))
+	if(!(!is_powered()))
 		icon_state = "ano60"
 
 	if(active)

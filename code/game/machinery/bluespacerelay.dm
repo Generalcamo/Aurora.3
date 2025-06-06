@@ -32,10 +32,10 @@
 
 /obj/machinery/bluespacerelay/proc/update_power()
 
-	if(stat & (BROKEN|NOPOWER|EMPED))
-		on = 0
+	if(inoperable(MACHINE_STAT_EMPED))
+		on = FALSE
 	else
-		on = 1
+		on = TRUE
 
 /obj/machinery/bluespacerelay/attackby(obj/item/attacking_item, mob/user)
 	if(default_deconstruction_screwdriver(user, attacking_item))

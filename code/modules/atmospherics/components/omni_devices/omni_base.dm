@@ -48,7 +48,7 @@
 /obj/machinery/atmospherics/omni/update_icon()
 	ClearOverlays()
 	var/list/to_add = list(base_icon)
-	if(stat & NOPOWER)
+	if(!is_powered())
 		to_add += off_states
 	else if(error_check())
 		to_add += "error"
@@ -72,7 +72,7 @@
 	if(error_check())
 		update_use_power(POWER_USE_OFF)
 
-	if((stat & (NOPOWER|BROKEN)) || !use_power)
+	if(inoperable() || !use_power)
 		return 0
 	return 1
 

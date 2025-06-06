@@ -51,7 +51,7 @@
 /obj/machinery/portable_atmospherics/powered/pump/emp_act(severity)
 	. = ..()
 
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	if(prob(50/severity))

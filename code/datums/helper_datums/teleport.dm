@@ -50,7 +50,7 @@
 		var/turf/T = get_turf(adestination)
 		for(var/found_inhibitor in GLOB.bluespace_inhibitors)
 			var/obj/machinery/anti_bluespace/AB = found_inhibitor
-			if(T.z != AB.z || get_dist(adestination, AB) > 8 || (AB.stat & (NOPOWER | BROKEN)))
+			if(T.z != AB.z || get_dist(adestination, AB) > 8 || AB.inoperable())
 				continue
 			AB.use_power_oneoff(AB.active_power_usage)
 			bad_turfs += circle_range_turfs(get_turf(AB),8)
@@ -65,7 +65,7 @@
 //Check if we're in range of a bluespace inhibitor. We can't be teleported if we are.
 /datum/teleport/proc/checkLocalInhibitors(atom/movable/teleportee)
 	for(var/obj/machinery/anti_bluespace/AB in range(8, teleportee))
-		if(AB.stat & (NOPOWER | BROKEN))
+		if(AB.inoperable())
 			continue
 		else
 			AB.use_power_oneoff(AB.active_power_usage)

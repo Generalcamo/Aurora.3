@@ -30,7 +30,7 @@
 /obj/machinery/portable_atmospherics/powered/scrubber/emp_act(severity)
 	. = ..()
 
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	if(prob(50/severity))
@@ -179,7 +179,7 @@
 /obj/machinery/portable_atmospherics/powered/scrubber/huge/update_icon()
 	src.overlays = 0
 
-	if(on && !(stat & (NOPOWER|BROKEN)))
+	if(on && operable())
 		icon_state = "scrubber:1"
 	else
 		icon_state = "scrubber:0"
@@ -191,7 +191,7 @@
 		update_icon()
 
 /obj/machinery/portable_atmospherics/powered/scrubber/huge/process()
-	if(!on || (stat & (NOPOWER|BROKEN)))
+	if(!on || inoperable())
 		update_use_power(POWER_USE_OFF)
 		last_flow_rate = 0
 		last_power_draw = 0

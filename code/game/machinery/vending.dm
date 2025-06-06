@@ -550,7 +550,7 @@
 	return attack_hand(user)
 
 /obj/machinery/vending/attack_hand(mob/user as mob)
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	if(src.seconds_electrified != 0)
@@ -790,7 +790,7 @@
 	SStgui.update_uis(src)
 
 /obj/machinery/vending/process()
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	if(!src.active)
@@ -811,7 +811,7 @@
 	return
 
 /obj/machinery/vending/proc/speak(var/message)
-	if(stat & NOPOWER)
+	if(!is_powered())
 		return FALSE
 
 	if (!message)
@@ -824,12 +824,12 @@
 /obj/machinery/vending/power_change()
 	..()
 	if(!anchored)
-		stat |= NOPOWER
-	if(stat & BROKEN)
+		set_stat(MACHINE_STAT_NOPOWER, TRUE)
+	if(is_broken())
 		icon_state = "[initial(icon_state)]-broken"
 		ClearOverlays()
 		set_light(0)
-	else if(!(stat & NOPOWER))
+	else if(!(!is_powered()))
 		icon_state = initial(icon_state)
 		update_icon()
 	else
@@ -852,7 +852,7 @@
 			SStgui.update_uis(src)
 		break
 
-	stat |= BROKEN
+	set_broken(TRUE)
 	src.icon_state = "[initial(icon_state)]-broken"
 	return
 

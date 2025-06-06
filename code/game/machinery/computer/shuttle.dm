@@ -14,7 +14,7 @@
 	if(!istype(W))
 		return
 
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	var/datum/evacuation_controller/shuttle/evac_control = GLOB.evacuation_controller

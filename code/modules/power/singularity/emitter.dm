@@ -118,7 +118,7 @@
 	return TRUE
 
 /obj/machinery/power/emitter/process(seconds_per_tick)
-	if(stat & (BROKEN))
+	if(is_broken())
 		return
 	if(state != EMITTER_WELDED || (!powernet && active_power_usage))
 		active = FALSE

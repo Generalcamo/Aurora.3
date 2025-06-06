@@ -58,7 +58,7 @@
 /obj/machinery/power/crystal_agitator/process()
 	if(!active)
 		return
-	if(stat & (BROKEN) || !powernet)
+	if(is_broken() || !powernet)
 		return
 	if(last_agitation + agitation_rate > world.time)
 		return

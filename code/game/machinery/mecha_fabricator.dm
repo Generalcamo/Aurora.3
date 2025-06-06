@@ -55,7 +55,7 @@
 	ClearOverlays()
 	if(panel_open)
 		AddOverlays("[icon_state]_panel")
-	if(!(stat & (NOPOWER|BROKEN)))
+	if(operable())
 		AddOverlays(emissive_appearance(icon, "[icon_state]_lights"))
 		AddOverlays("[icon_state]_lights")
 	if(build_callback_timer)
@@ -317,7 +317,7 @@
 		return
 
 	//If there's no power, there's no building
-	if(stat & NOPOWER)
+	if(!is_powered())
 		queue = list()
 		return
 

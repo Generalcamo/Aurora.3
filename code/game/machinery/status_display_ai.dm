@@ -105,7 +105,7 @@ GLOBAL_LIST_INIT(ai_status_emotions, list(
 
 /obj/machinery/ai_status_display/power_change()
 	..()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		ClearOverlays()
 	else
 		update()

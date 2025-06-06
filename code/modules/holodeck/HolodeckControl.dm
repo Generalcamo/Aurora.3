@@ -218,7 +218,7 @@ GLOBAL_LIST_EMPTY_TYPED(holodeck_controls, /obj/machinery/computer/holodeck_cont
 /obj/machinery/computer/holodeck_control/power_change()
 	var/oldstat
 	..()
-	if (stat != oldstat && active && (stat & NOPOWER))
+	if (stat != oldstat && active && (!is_powered()))
 		emergencyShutdown()
 
 /obj/machinery/computer/holodeck_control/process(seconds_per_tick)

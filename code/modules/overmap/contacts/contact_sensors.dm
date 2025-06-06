@@ -39,9 +39,9 @@
 	self_record.show()
 
 	// Update our 'sensor range' (ie. overmap lighting)
-	if(!sensors || !sensors.use_power || (stat & (NOPOWER|BROKEN)))
+	if(!sensors || !sensors.use_power || inoperable())
 		if(length(datalink_contacts))
-			var/remove_link = !sensors || (stat & BROKEN)
+			var/remove_link = !sensors || (is_broken())
 			datalink_remove_all_ships_datalink(remove_link)
 		for(var/key in contact_datums)
 			var/datum/overmap_contact/record = contact_datums[key]

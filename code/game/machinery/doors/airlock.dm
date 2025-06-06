@@ -263,7 +263,7 @@
 	. = ..()
 
 /obj/machinery/door/airlock/attack_generic(var/mob/user, var/damage)
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		if(damage >= 10)
 			if(src.density)
 				visible_message(SPAN_DANGER("\The [user] forces \the [src] open!"))
@@ -848,7 +848,7 @@ About the new airlock wires panel:
 	return ((src.ai_control_disabled==1) && (!hack_proof) && (!src.isAllPowerLoss()));
 
 /obj/machinery/door/airlock/proc/arePowerSystemsOn()
-	if (stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return FALSE
 	return (src.main_power_lost_until==0 || src.backup_power_lost_until==0)
 
@@ -856,7 +856,7 @@ About the new airlock wires panel:
 	return !(src.isWireCut(WIRE_IDSCAN) || ai_disabled_id_scanner)
 
 /obj/machinery/door/airlock/proc/isAllPowerLoss()
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return TRUE
 	if(mainPowerCablesCut() && backupPowerCablesCut())
 		return TRUE
@@ -1092,9 +1092,9 @@ About the new airlock wires panel:
 					lights_overlay = overlay_image(lights_file, plane = EFFECTS_ABOVE_LIGHTING_PLANE)
 					set_light(1, 2, COLOR_LIME)
 
-		if(stat & BROKEN)
+		if(is_broken())
 			damage_overlay = overlay_image(sparks_broken_file, plane = EFFECTS_ABOVE_LIGHTING_PLANE)
-		else if (health < maxhealth * 3/4 && !(stat & NOPOWER))
+		else if (health < maxhealth * 3/4 && !(!is_powered()))
 			damage_overlay = overlay_image(sparks_damaged_file, plane = EFFECTS_ABOVE_LIGHTING_PLANE)
 
 	if(welded)
@@ -1385,7 +1385,7 @@ About the new airlock wires panel:
 
 		if(H.a_intent == I_HURT)
 			var/shredding = H.species.can_shred(H)
-			var/can_crowbar = H.default_attack?.crowbar_door && (stat & (BROKEN|NOPOWER))
+			var/can_crowbar = H.default_attack?.crowbar_door && inoperable()
 			if(shredding || can_crowbar)
 				if(!density)
 					return
@@ -1399,10 +1399,10 @@ About the new airlock wires panel:
 
 				if(shredding)
 					src.do_animate("spark")
-					src.stat |= BROKEN
+					src.set_broken(TRUE)
 					H.visible_message("<b>[H]</b> slices \the [src]'s controls, [check ? "ripping it open" : "breaking it"]!", SPAN_NOTICE("You slice \the [src]'s controls, [check ? "ripping it open" : "breaking it"]!"), SPAN_WARNING("You hear something sparking."))
 				return
-			if(H.default_attack?.attack_door && !(stat & (BROKEN|NOPOWER)))
+			if(H.default_attack?.attack_door && operable())
 				user.visible_message(SPAN_DANGER("\The [user] forcefully strikes \the [src] with their [H.default_attack.attack_name]!"))
 				user.do_attack_animation(src, null)
 				playsound(loc, hitsound, 60, TRUE)
@@ -1657,7 +1657,7 @@ About the new airlock wires panel:
 	da.state = 1
 	da.created_name = src.name
 	da.update_state()
-	if((stat & BROKEN))
+	if((is_broken()))
 		new /obj/item/trash/broken_electronics(src.loc)
 		operating = FALSE
 	else
@@ -1679,7 +1679,7 @@ About the new airlock wires panel:
 		return
 	if(!istype(attacking_item, /obj/item/forensics))
 		src.add_fingerprint(user)
-	if (!repairing && (stat & BROKEN) && src.locked) //bolted and broken
+	if (!repairing && (is_broken()) && src.locked) //bolted and broken
 		if (!cut_bolts(attacking_item,user))
 			return ..()
 		return TRUE
@@ -1710,7 +1710,7 @@ About the new airlock wires panel:
 		return TRUE
 	else if(attacking_item.isscrewdriver())
 		if (src.p_open)
-			if (stat & BROKEN)
+			if (is_broken())
 				to_chat(user, SPAN_WARNING("The panel is broken and cannot be closed."))
 			else
 				src.p_open = FALSE
@@ -1734,7 +1734,7 @@ About the new airlock wires panel:
 		return TRUE
 	else if(!repairing && attacking_item.iscrowbar())
 		if(istype(attacking_item, /obj/item/melee/arm_blade))
-			if(arePowerSystemsOn() &&!(stat & BROKEN))
+			if(arePowerSystemsOn() &&!(is_broken()))
 				..()
 				return
 		if(p_open && !operating && welded)
@@ -1872,7 +1872,7 @@ About the new airlock wires panel:
 
 /obj/machinery/door/airlock/set_broken()
 	src.p_open = TRUE
-	stat |= BROKEN
+	set_broken(TRUE)
 	if (secured_wires)
 		lock()
 	for (var/mob/O in viewers(src, null))
@@ -2081,7 +2081,7 @@ About the new airlock wires panel:
 
 /obj/machinery/door/airlock/power_change() //putting this is obj/machinery/door itself makes non-airlock doors turn invisible for some reason
 	..()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		// If we lost power, disable electrification
 		// Keeping door lights on, runs on internal battery or something.
 		electrified_until = 0

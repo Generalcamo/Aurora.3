@@ -123,7 +123,7 @@
 		if(!F.wielded)
 			return TRUE
 
-		if(((stat & NOPOWER) || (stat & BROKEN)) && !src.operating)
+		if((inoperable()) && !operating)
 			force_toggle()
 		else
 			to_chat(usr, SPAN_NOTICE("[src]'s motors resist your effort."))
@@ -132,7 +132,7 @@
 
 
 	if(attacking_item.ishammer() || istype(attacking_item, /obj/item/crowbar/hydraulic_rescue_tool))
-		if(((stat & NOPOWER) || (stat & BROKEN)) && !src.operating)
+		if((inoperable()) && !operating)
 			force_toggle()
 		else
 			to_chat(usr, SPAN_NOTICE("[src]'s motors resist your effort."))
@@ -163,7 +163,7 @@
 // Parameters: None
 // Description: Opens the door. Does necessary checks. Automatically closes if autoclose is true
 /obj/machinery/door/blast/open()
-	if (src.operating || (stat & BROKEN || stat & NOPOWER))
+	if (operating || (inoperable()))
 		return
 	force_open()
 	if(autoclose)
@@ -174,7 +174,7 @@
 // Parameters: None
 // Description: Closes the door. Does necessary checks.
 /obj/machinery/door/blast/close()
-	if (src.operating || (stat & BROKEN || stat & NOPOWER))
+	if (operating || (inoperable()))
 		return
 	force_close()
 	for(var/turf/turf in locs)
@@ -188,8 +188,8 @@
 // Description: Fully repairs the blast door.
 /obj/machinery/door/blast/proc/repair()
 	health = maxhealth
-	if(stat & BROKEN)
-		stat &= ~BROKEN
+	if(is_broken())
+		set_broken(FALSE)
 
 /obj/machinery/door/blast/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)
 	if(air_group) return 1
@@ -198,9 +198,9 @@
 // Controls how blast doors and shutters should act when power is lost or gained.
 /obj/machinery/door/blast/power_change()
 	..()
-	if(src.operating || (stat & BROKEN))
+	if(src.operating || (is_broken()))
 		return
-	if((stat & NOPOWER) && fail_secure)
+	if((!is_powered()) && fail_secure)
 		securitylock = !density // Blast doors will only re-open when power is restored if they were open originally.
 		INVOKE_ASYNC(src, PROC_REF(force_close))
 	else if(securitylock && fail_secure)

@@ -67,7 +67,7 @@
 	return attack_hand(user)
 
 /obj/machinery/clonepod/attack_hand(var/mob/user)
-	if((stat & NOPOWER) || !occupant || occupant.stat == DEAD)
+	if((!is_powered()) || !occupant || occupant.stat == DEAD)
 		return
 	to_chat(user, "Current clone cycle is [round(GetCloneReadiness())]% complete.")
 
@@ -167,7 +167,7 @@
 //Grow clones to maturity then kick them out.  FREELOADERS
 /obj/machinery/clonepod/process()
 
-	if(stat & NOPOWER) //Autoeject if power is lost
+	if(!is_powered()) //Autoeject if power is lost
 		if(occupant)
 			locked = 0
 			go_out()
@@ -374,7 +374,7 @@
 /obj/machinery/clonepod/update_icon()
 	..()
 	icon_state = "pod_0"
-	if (occupant && !(stat & NOPOWER))
+	if (occupant && !(!is_powered()))
 		icon_state = "pod_1"
 	else if (mess)
 		icon_state = "pod_g"

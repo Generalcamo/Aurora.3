@@ -109,7 +109,7 @@ Thus, the two variables affect pump operation are set in New():
 	last_power_draw = 0
 	last_flow_rate = 0
 
-	if((stat & (NOPOWER|BROKEN)) || !use_power)
+	if(inoperable() || !use_power)
 		return
 
 	if (broadcast_status_next_process)
@@ -272,7 +272,7 @@ Thus, the two variables affect pump operation are set in New():
 /obj/machinery/atmospherics/binary/pump/attackby(obj/item/attacking_item, mob/user)
 	if (!attacking_item.iswrench() && !istype(attacking_item, /obj/item/pipewrench))
 		return ..()
-	if (!(stat & NOPOWER) && use_power)
+	if (!(!is_powered()) && use_power)
 		to_chat(user, SPAN_WARNING("You cannot unwrench this [src], turn it off first."))
 		return TRUE
 	var/datum/gas_mixture/int_air = return_air()

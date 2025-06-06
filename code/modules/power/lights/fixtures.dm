@@ -164,27 +164,27 @@
 
 /obj/machinery/light/built/Initialize()
 	status = LIGHT_EMPTY
-	stat |= MAINT
+	set_stat(MACHINE_STAT_MAINT, TRUE)
 	. = ..()
 
 /obj/machinery/light/floor/built/Initialize()
 	status = LIGHT_EMPTY
-	stat |= MAINT
+	set_stat(MACHINE_STAT_MAINT, TRUE)
 	. = ..()
 
 /obj/machinery/light/small/built/Initialize()
 	status = LIGHT_EMPTY
-	stat |= MAINT
+	set_stat(MACHINE_STAT_MAINT, TRUE)
 	. = ..()
 
 /obj/machinery/light/small/floor/built/Initialize()
 	status = LIGHT_EMPTY
-	stat |= MAINT
+	set_stat(MACHINE_STAT_MAINT, TRUE)
 	. = ..()
 
 /obj/machinery/light/spot/built/Initialize()
 	status = LIGHT_EMPTY
-	stat |= MAINT
+	set_stat(MACHINE_STAT_MAINT, TRUE)
 	. = ..()
 
 // create a new lighting fixture
@@ -192,7 +192,7 @@
 	. = ..()
 
 	if (!has_power())
-		stat |= NOPOWER
+		set_stat(MACHINE_STAT_NOPOWER, TRUE)
 	if (start_with_cell && !no_emergency)
 		cell = new /obj/item/cell/device/emergency_light(src)
 
@@ -261,13 +261,13 @@
 
 		if(LIGHT_BURNED)
 			AddOverlays(LIGHT_FIXTURE_CACHE(icon, "[base_state]_burned", brightness_color))
-			stat |= BROKEN
-			stat &= ~MAINT
+			set_broken(TRUE)
+			set_stat(MACHINE_STAT_MAINT, FALSE)
 
 		if(LIGHT_BROKEN)
 			AddOverlays(LIGHT_FIXTURE_CACHE(icon, "[base_state]_broken", brightness_color))
-			stat |= BROKEN
-			stat &= ~MAINT
+			set_broken(TRUE)
+			set_stat(MACHINE_STAT_MAINT, FALSE)
 
 // update the icon_state and luminosity of the light depending on its state
 /obj/machinery/light/proc/update(var/trigger = 1)
@@ -275,19 +275,20 @@
 
 	switch (status)
 		if(LIGHT_OK)
-			stat &= ~(MAINT|BROKEN)
+			set_broken(FALSE)
+			set_stat(MACHINE_STAT_MAINT, FALSE)
 
 		if(LIGHT_EMPTY)
-			stat |= MAINT
-			stat &= ~BROKEN
+			set_broken(FALSE)
+			set_stat(MACHINE_STAT_MAINT, TRUE)
 
 		if (LIGHT_BURNED)
-			stat |= BROKEN
-			stat &= ~MAINT
+			set_broken(TRUE)
+			set_stat(MACHINE_STAT_MAINT, FALSE)
 
 		if (LIGHT_BROKEN)
-			stat |= BROKEN
-			stat &= ~MAINT
+			set_broken(TRUE)
+			set_stat(MACHINE_STAT_MAINT, FALSE)
 
 	if (previous_stat != stat && !stat && bulb_is_noisy)
 		playsound(loc, 'sound/effects/lighton.ogg', 65, 1)
@@ -304,7 +305,7 @@
 		else if( prob( min(60, switchcount*switchcount*0.01) ) )
 			if(status == LIGHT_OK && trigger)
 				status = LIGHT_BURNED
-				stat |= BROKEN
+				set_broken(TRUE)
 				set_light(0)
 		else
 			update_use_power(POWER_USE_ACTIVE)
@@ -313,7 +314,7 @@
 				set_light(night_brightness_range, night_brightness_power, brightness_color)
 			else
 				set_light(brightness_range, brightness_power, brightness_color)
-	else if (has_emergency_power(LIGHT_EMERGENCY_POWER_USE) && !(stat & POWEROFF))
+	else if (has_emergency_power(LIGHT_EMERGENCY_POWER_USE) && !(is_powered()))
 		update_use_power(POWER_USE_IDLE)
 		emergency_mode = TRUE
 		var/new_power = round(max(0.5, 0.75 * (cell.charge / cell.maxcharge)), 0.1)
@@ -332,7 +333,7 @@
 		STOP_PROCESSING_MACHINE(src, MACHINERY_PROCESS_SELF)
 
 /obj/machinery/light/proc/broken_sparks()
-	if(world.time > next_spark && !(stat & POWEROFF) && has_power())
+	if(world.time > next_spark && !(is_powered()) && has_power())
 		spark(src, 3, GLOB.alldirs)
 		next_spark = world.time + 1 MINUTE + (rand(-15, 15) SECONDS)
 
@@ -398,7 +399,7 @@
 	. = ..()
 	switch(status)
 		if(LIGHT_OK)
-			. += "It is turned [!(stat & POWEROFF) ? "on" : "off"]."
+			. += "It is turned [!(is_powered()) ? "on" : "off"]."
 		if(LIGHT_EMPTY)
 			. += "\The [fitting] has been removed."
 		if(LIGHT_BURNED)
@@ -437,9 +438,9 @@
 				brightness_color = L.brightness_color
 				inserted_light = L.type
 				if (!has_power())
-					stat |= NOPOWER
+					set_stat(MACHINE_STAT_NOPOWER, TRUE)
 				else
-					stat &= ~NOPOWER
+					set_stat(MACHINE_STAT_NOPOWER, TRUE)
 
 				update()
 
@@ -542,13 +543,13 @@
 
 /obj/machinery/light/proc/handle_flicker()
 	if (status == LIGHT_OK)
-		stat ^= POWEROFF
+		toggle_stat(MACHINE_STAT_NOPOWER)
 		update(FALSE)
 		if (prob(50))
 			playsound(src.loc, 'sound/effects/light_flicker.ogg', 75, 1)
 
 /obj/machinery/light/proc/end_flicker()
-	stat &= ~POWEROFF
+	set_stat(MACHINE_STAT_NOPOWER, TRUE)
 	update(FALSE)
 	flickering = FALSE
 
@@ -607,7 +608,7 @@
 		inserted_light = null
 
 		status = LIGHT_EMPTY
-		stat |= MAINT
+		set_stat(MACHINE_STAT_MAINT, TRUE)
 		update()
 
 /obj/machinery/light/do_simple_ranged_interaction(var/mob/user)
@@ -655,14 +656,14 @@
 		if(!stat)
 			spark(src, 3)
 	status = LIGHT_BROKEN
-	stat |= BROKEN
+	set_broken(TRUE)
 	update()
 
 /obj/machinery/light/proc/shatter()
 	if(status == LIGHT_EMPTY)
 		return
 	status = LIGHT_EMPTY
-	stat |= BROKEN
+	set_broken(TRUE)
 	update()
 	playsound(get_turf(src), 'sound/effects/glass_hit.ogg', 75, TRUE)
 	new /obj/item/material/shard(get_turf(src))
@@ -696,9 +697,9 @@
 
 /obj/machinery/light/proc/handle_power_change()
 	if (has_power())
-		stat &= ~NOPOWER
+		set_stat(MACHINE_STAT_NOPOWER, TRUE)
 	else
-		stat |= NOPOWER
+		set_stat(MACHINE_STAT_NOPOWER, TRUE)
 
 	update()
 

@@ -311,7 +311,7 @@
 	if(attacking_item.ishammer() && user.a_intent != I_HURT)
 		var/obj/item/stack/stack = usr.get_inactive_hand()
 		if(istype(stack) && stack.get_material_name() == get_material_name())
-			if(stat & BROKEN)
+			if(is_broken())
 				to_chat(user, SPAN_NOTICE("It looks like \the [src] is pretty busted. It's going to need more than just patching up now."))
 				return TRUE
 			if(health >= maxhealth)
@@ -396,7 +396,7 @@
 		do_animate("emag")
 		emagged = 1
 		sleep(6)
-		stat |= BROKEN
+		set_broken(TRUE)
 		open(1)
 		return 1
 
@@ -404,7 +404,7 @@
 	var/initialhealth = src.health
 	src.health = max(0, src.health - damage)
 	if(src.health <= 0 && initialhealth > 0)
-		src.set_broken()
+		set_broken(TRUE)
 	else if(message)
 		if(src.health < src.maxhealth / 4 && initialhealth >= src.maxhealth / 4)
 			visible_message(SPAN_WARNING("\The [src] looks like it's about to break!"))
@@ -423,12 +423,6 @@
 		. += SPAN_WARNING("\The [src] looks seriously damaged!")
 	else if(src.health < src.maxhealth * 3/4)
 		. += SPAN_WARNING("\The [src] shows signs of damage!")
-
-/obj/machinery/door/proc/set_broken()
-	stat |= BROKEN
-	visible_message(SPAN_WARNING("[src] breaks!"))
-	update_icon()
-	return
 
 /obj/machinery/door/emp_act(severity)
 	. = ..()
@@ -495,7 +489,7 @@
 			if(density)
 				flick("door_spark", src)
 		if("deny")
-			if(density && !(stat & (NOPOWER|BROKEN)))
+			if(density && operable())
 				flick("door_deny", src)
 				playsound(src.loc, 'sound/machines/buzz-two.ogg', 50, FALSE, extrarange = SILENCED_SOUND_EXTRARANGE)
 	return

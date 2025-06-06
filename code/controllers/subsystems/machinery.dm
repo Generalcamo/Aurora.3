@@ -187,11 +187,16 @@ SUBSYSTEM_DEF(machinery)
 				machine.datum_flags &= ~DF_ISPROCESSING
 			processing -= machine
 			continue
-		//process_all was moved here because of calls overhead for no benefits
-		if((machine.processing_flags & MACHINERY_PROCESS_SELF))
-			if(machine.process(wait * 0.1) == PROCESS_KILL)
-				STOP_PROCESSING_MACHINE(machine, MACHINERY_PROCESS_SELF)
-				processing -= machine
+
+		if (machine.processing_flags & MACHINERY_PROCESS_COMPONENTS)
+			for (var/thing in machine.processing_parts)
+				var/obj/item/stock_parts/part = thing
+				if(part.machine_process(machine) == PROCESS_KILL)
+					part.stop_processing()
+
+		if (machine.processing_flags & MACHINERY_PROCESS_SELF && machine.process(wait * 0.1) == PROCESS_KILL)
+			STOP_PROCESSING_MACHINE(machine, MACHINERY_PROCESS_SELF)
+
 		if (no_mc_tick)
 			CHECK_TICK
 		else if (MC_TICK_CHECK)

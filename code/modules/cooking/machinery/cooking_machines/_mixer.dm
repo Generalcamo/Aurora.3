@@ -105,7 +105,7 @@ fundamental differences
 
 /obj/machinery/appliance/mixer/finish_cooking(var/datum/cooking_item/CI)
 	..()
-	stat |= POWEROFF
+	set_stat(MACHINE_STAT_NOPOWER, FALSE)
 	playsound(src, 'sound/machines/click.ogg', 40, 1)
 	update_use_power(POWER_USE_OFF)
 	CI.reset()

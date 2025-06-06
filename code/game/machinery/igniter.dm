@@ -138,7 +138,7 @@
 /obj/machinery/sparker/emp_act(severity)
 	. = ..()
 
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	ignite()

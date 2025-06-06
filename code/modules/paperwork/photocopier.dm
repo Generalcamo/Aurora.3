@@ -54,7 +54,7 @@
 
 	switch(action)
 		if("copy")
-			if(stat & (BROKEN|NOPOWER))
+			if (inoperable())
 				return
 
 			for(var/i = 0, i < num_copies, i++)
@@ -79,7 +79,7 @@
 
 		if("aipic")
 			if(!istype(usr,/mob/living/silicon)) return
-			if(stat & (BROKEN|NOPOWER)) return
+			if (inoperable()) return
 
 			if(toner >= 5)
 				var/mob/living/silicon/tempAI = usr

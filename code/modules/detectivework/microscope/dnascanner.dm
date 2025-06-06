@@ -150,7 +150,7 @@
 
 /obj/machinery/dnaforensics/update_icon()
 	..()
-	if(!(stat & NOPOWER) && scanning)
+	if(!(!is_powered()) && scanning)
 		icon_state = "dnaworking"
 	else if(closed)
 		icon_state = "dnaclosed"

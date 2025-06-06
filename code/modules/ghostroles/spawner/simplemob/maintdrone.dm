@@ -29,7 +29,7 @@
 		return "The maximum number of active drones has been reached"
 	var/has_active_fabricator = FALSE
 	for(var/obj/machinery/drone_fabricator/DF in SSmachinery.machinery)
-		if((DF.stat & NOPOWER) || !DF.produce_drones || DF.drone_progress < 100)
+		if(!(DF.is_powered()) || !DF.produce_drones || DF.drone_progress < 100)
 			continue
 		has_active_fabricator = TRUE
 	if(!has_active_fabricator)
@@ -41,7 +41,7 @@
 	var/obj/machinery/drone_fabricator/fabricator
 	var/list/all_fabricators = list()
 	for(var/obj/machinery/drone_fabricator/DF in SSmachinery.machinery)
-		if((DF.stat & NOPOWER) || !DF.produce_drones || DF.drone_progress < 100)
+		if(!(DF.is_powered()) || !DF.produce_drones || DF.drone_progress < 100)
 			continue
 		all_fabricators[DF.fabricator_tag] = DF
 
@@ -76,7 +76,7 @@
 		to_chat(user, SPAN_WARNING("The fabricator's drone production has been disabled, try again."))
 		return FALSE
 
-	if(fabricator.stat & NOPOWER)
+	if(!fabricator.is_powered())
 		to_chat(user, SPAN_WARNING("The fabricator has lost power, try again."))
 		return FALSE
 

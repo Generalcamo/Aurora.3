@@ -22,7 +22,7 @@ GLOBAL_VAR(bomb_set)
 	use_power = POWER_USE_OFF
 	unacidable = 1
 	var/previous_level = ""
-	var/datum/wires/nuclearbomb/wires = null
+	wires = /datum/wires/nuclearbomb
 
 /obj/machinery/nuclearbomb/Initialize()
 	. = ..()

@@ -92,7 +92,7 @@
 	return attack_hand(user)
 
 /obj/machinery/shield_gen/attack_hand(mob/user)
-	if(stat & BROKEN)
+	if(is_broken())
 		return
 	interact(user)
 
@@ -124,7 +124,7 @@
 	if(active)
 		if(!anchored)
 			toggle()
-		if(stat & BROKEN)
+		if(is_broken())
 			toggle()
 			return PROCESS_KILL
 
@@ -196,7 +196,7 @@
 			to_chat(M, "[icon2html(src, M)] You hear heavy droning fade out.")
 
 /obj/machinery/shield_gen/update_icon()
-	if(stat & BROKEN)
+	if(is_broken())
 		icon_state = "broke"
 	else
 		if (active)

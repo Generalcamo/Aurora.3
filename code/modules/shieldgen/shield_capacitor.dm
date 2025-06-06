@@ -66,7 +66,7 @@
 		..()
 
 /obj/machinery/shield_capacitor/attack_hand(mob/user)
-	if(stat & (BROKEN))
+	if(is_broken())
 		return
 	ui_interact(user)
 
@@ -131,7 +131,7 @@
 	last_stored_charge = stored_charge
 
 /obj/machinery/shield_capacitor/power_change()
-	if(stat & BROKEN)
+	if(is_broken())
 		icon_state = "broke"
 	else
 		..()

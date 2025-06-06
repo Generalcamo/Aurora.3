@@ -18,17 +18,17 @@
 	var/diffuser_range = 0 // 1x1 tiles, including the tile its on.
 
 /obj/machinery/shield_diffuser/process()
-	if(stat & BROKEN)
+	if(is_broken())
 		return PROCESS_KILL
 
-	if(!diffuser_enabled || stat & NOPOWER)
+	if(!diffuser_enabled || !is_powered())
 		return
 
 	for(var/obj/effect/energy_field/S in range(diffuser_range, src))
 		S.diffuse(5)
 
 /obj/machinery/shield_diffuser/update_icon()
-	if(stat & NOPOWER || stat & BROKEN || !diffuser_enabled)
+	if(inoperable() || !diffuser_enabled)
 		icon_state = "fdiffuser_off"
 	else
 		icon_state = "fdiffuser_on"
@@ -39,7 +39,7 @@
 	return attack_hand(user)
 
 /obj/machinery/shield_diffuser/attack_hand(mob/user)
-	if(stat & BROKEN)
+	if(is_broken())
 		return
 	interact(user)
 

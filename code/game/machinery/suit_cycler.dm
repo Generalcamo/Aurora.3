@@ -277,7 +277,7 @@
 		wires.interact(user)
 		return
 
-	if(..() || stat & (BROKEN|NOPOWER))
+	if(..() || inoperable())
 		return
 
 	if(electrified != 0)
@@ -459,7 +459,7 @@
 	if(!active)
 		return
 
-	if(active && stat & (BROKEN|NOPOWER))
+	if(active && inoperable())
 		active = FALSE
 		irradiating = 0
 		electrified = 0

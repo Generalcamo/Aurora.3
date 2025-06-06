@@ -173,7 +173,7 @@
 	ClearOverlays()
 	underlays.Cut()
 
-	if(stat & BROKEN)
+	if(is_broken())
 		icon_state = "turret_[sprite_set]_broken"
 		underlays += "cover_open_[cover_set]"
 		set_light(0)
@@ -191,7 +191,7 @@
 	else
 		icon_state = "cover_[cover_set]"
 
-	if(stat & NOPOWER)
+	if(!is_powered())
 		set_light(0)
 	else
 		set_light(light_range, light_power)
@@ -314,11 +314,11 @@
 		addtimer(CALLBACK(src, PROC_REF(lose_power)), rand(1, 15))
 
 /obj/machinery/porta_turret/proc/lose_power()
-	stat |= NOPOWER
+	set_stat(MACHINE_STAT_NOPOWER, TRUE)
 	queue_icon_update()
 
 /obj/machinery/porta_turret/attackby(obj/item/attacking_item, mob/user)
-	if(stat & BROKEN)
+	if(is_broken())
 		if(attacking_item.iscrowbar())
 			//If the turret is destroyed, you can remove it with a crowbar to
 			//try and salvage its components
@@ -496,13 +496,13 @@
 
 /obj/machinery/porta_turret/proc/die()	//called when the turret dies, ie, health <= 0
 	health = 0
-	stat |= BROKEN	//enables the BROKEN bit
+	set_broken(TRUE)	//enables the BROKEN bit
 	spark_system.queue()	//creates some sparks because they look cool
 	update_icon()
 
 /obj/machinery/porta_turret/process()
 	//the main machinery process
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		//if the turret has no power or is broken, make the turret pop down if it hasn't already
 		popDown()
 		return
@@ -680,7 +680,7 @@
 		return
 	if(raising || raised)
 		return
-	if(stat & BROKEN)
+	if(is_broken())
 		return
 	set_raised_raising(raised, 1)
 	update_icon()
@@ -703,7 +703,7 @@
 		return
 	if(raising || !raised)
 		return
-	if(stat & BROKEN)
+	if(is_broken())
 		return
 	set_raised_raising(raised, 1)
 

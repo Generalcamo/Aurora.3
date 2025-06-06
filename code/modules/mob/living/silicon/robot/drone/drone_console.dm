@@ -49,7 +49,7 @@
 	dat += "<BR><BR><B>Request drone presence in area:</B> <A href='byond://?src=[REF(src)];setarea=1'>[drone_call_area]</A> (<A href='byond://?src=[REF(src)];ping=1'>Send ping</A>)"
 
 	dat += "<BR><BR><B>Drone fabricator</B>: "
-	dat += "[dronefab ? "<A href='byond://?src=[REF(src)];toggle_fab=1'>[(dronefab.produce_drones && !(dronefab.stat & NOPOWER)) ? "ACTIVE" : "INACTIVE"]</A>" : "<font color='red'><b>FABRICATOR NOT DETECTED.</b></font> (<A href='byond://?src=[REF(src)];search_fab=1'>search</a>)"]"
+	dat += "[dronefab ? "<A href='byond://?src=[REF(src)];toggle_fab=1'>[(dronefab.produce_drones && (dronefab.is_powered())) ? "ACTIVE" : "INACTIVE"]</A>" : "<font color='red'><b>FABRICATOR NOT DETECTED.</b></font> (<A href='byond://?src=[REF(src)];search_fab=1'>search</a>)"]"
 
 	var/datum/browser/drone_win = new(user, "computer", capitalize_first_letters(name), 400, 500)
 	drone_win.set_content(dat)
@@ -107,7 +107,7 @@
 		if(dronefab)
 			return
 		for(var/obj/machinery/drone_fabricator/fab in oview(3,src))
-			if(fab.stat & NOPOWER)
+			if(!fab.is_powered())
 				continue
 			dronefab = fab
 			to_chat(usr, SPAN_NOTICE("Drone fabricator located."))

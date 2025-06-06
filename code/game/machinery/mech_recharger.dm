@@ -66,7 +66,7 @@
 		stop_charging()
 		return
 
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		stop_charging()
 		return
 
@@ -96,7 +96,7 @@
 
 /obj/machinery/mech_recharger/power_change()
 	..()
-	if(!(stat & NOPOWER) && !(stat & BROKEN) && !charging)
+	if(operable() && !charging)
 		var/mob/living/heavy_vehicle/HV = locate() in get_turf(src)
 		if(HV)
 			start_charging(HV)
@@ -108,7 +108,7 @@
 /obj/machinery/mech_recharger/proc/start_charging(var/mob/living/heavy_vehicle/M)
 	var/no_power = FALSE
 	var/obj/item/cell/C = M.get_cell()
-	if(stat & (NOPOWER | BROKEN))
+	if(inoperable())
 		no_power = TRUE
 	if(!no_power && C)
 		charging = M

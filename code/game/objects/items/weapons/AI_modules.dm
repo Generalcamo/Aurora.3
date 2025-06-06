@@ -24,10 +24,10 @@ AI MODULES
 /obj/item/aiModule/proc/install(var/obj/machinery/computer/C)
 	if (istype(C, /obj/machinery/computer/aiupload))
 		var/obj/machinery/computer/aiupload/comp = C
-		if(comp.stat & NOPOWER)
+		if(!comp.is_powered())
 			to_chat(usr, "The upload computer has no power!")
 			return
-		if(comp.stat & BROKEN)
+		if(comp.is_broken())
 			to_chat(usr, "The upload computer is broken!")
 			return
 		if (!comp.current)
@@ -57,10 +57,10 @@ AI MODULES
 
 	else if (istype(C, /obj/machinery/computer/borgupload))
 		var/obj/machinery/computer/borgupload/comp = C
-		if(comp.stat & NOPOWER)
+		if(!comp.is_powered())
 			to_chat(usr, "The upload computer has no power!")
 			return
-		if(comp.stat & BROKEN)
+		if(comp.is_broken())
 			to_chat(usr, "The upload computer is broken!")
 			return
 		if (!comp.current)

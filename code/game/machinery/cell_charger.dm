@@ -29,10 +29,10 @@
 		charging.update_icon()
 		AddOverlays(charging.icon_state)
 		AddOverlays("ccharger-on")
-		if(stat & (NOPOWER|BROKEN))
+		if (inoperable())
 			AddOverlays(charging.overlays)
 
-	if(INOPERABLE(src) || !charging)
+	if(inoperable() || !charging)
 		return
 
 	update_charge_level()
@@ -50,7 +50,7 @@
 		. += SPAN_WARNING("The charger is empty.")
 
 /obj/machinery/cell_charger/attackby(obj/item/attacking_item, mob/user)
-	if(stat & BROKEN)
+	if(is_broken())
 		return TRUE
 
 	if(attacking_item.iswrench())
@@ -105,20 +105,20 @@
 /obj/machinery/cell_charger/emp_act(severity)
 	. = ..()
 
-	if(INOPERABLE(src))
+	if(inoperable())
 		return
 	if(charging)
 		charging.emp_act(severity)
 
 /obj/machinery/cell_charger/power_change()
 	if(..() && charging && anchored)
-		if(INOPERABLE(src))
+		if(inoperable())
 			STOP_PROCESSING_MACHINE(src, MACHINERY_PROCESS_SELF)
 		else
 			START_PROCESSING_MACHINE(src, MACHINERY_PROCESS_SELF)
 
 /obj/machinery/cell_charger/process()
-	if(INOPERABLE(src) || !anchored)
+	if(inoperable() || !anchored)
 		update_use_power(POWER_USE_OFF)
 		update_icon()
 		return PROCESS_KILL

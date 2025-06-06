@@ -96,7 +96,7 @@
 		return
 
 	//No power, no work
-	if(stat & NOPOWER)
+	if(!is_powered())
 		return FALSE
 
 	//Wikipedia says this is the upper limit for a medium non directional beacon, deal with it

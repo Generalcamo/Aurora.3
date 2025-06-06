@@ -58,12 +58,12 @@
 	return cell && cell.percent() > 0
 
 /obj/machinery/recharge_station/process(seconds_per_tick)
-	if(stat & (BROKEN))
+	if(is_broken())
 		return
 	if(!cell) // Shouldn't be possible, but sanity check
 		return
 
-	if((stat & NOPOWER) && !has_cell_power()) // No power and cell is dead.
+	if((!is_powered()) && !has_cell_power()) // No power and cell is dead.
 		if(icon_update_tick)
 			icon_update_tick = 0 //just rebuild the overlay once more only
 			update_icon()
@@ -75,7 +75,7 @@
 
 	//Then, if external power is available, recharge the internal cell
 	var/recharge_amount = 0
-	if(!(stat & NOPOWER))
+	if(!(!is_powered()))
 		// Calculating amount of power to draw
 		recharge_amount = (occupant ? restore_power_active : restore_power_passive) * CELLRATE * seconds_per_tick
 
@@ -224,12 +224,12 @@
 
 /obj/machinery/recharge_station/update_icon()
 	..()
-	if(stat & BROKEN)
+	if(is_broken())
 		icon_state = "borgcharger0"
 		return
 
 	if(occupant)
-		if((stat & NOPOWER) && !has_cell_power())
+		if((!is_powered()) && !has_cell_power())
 			icon_state = "borgcharger2"
 		else
 			icon_state = "borgcharger1"

@@ -51,7 +51,7 @@
 
 /obj/machinery/firealarm/get_examine_text(mob/user, distance, is_adjacent, infix, suffix)
 	. = ..()
-	if((stat & (NOPOWER|BROKEN)) || buildstage != 2)
+	if(inoperable() || buildstage != 2)
 		return
 
 	. += "The current alert level is [get_security_level()]."
@@ -69,10 +69,10 @@
 				AddOverlays("fire_b0")
 		return
 
-	if(stat & BROKEN)
+	if(is_broken())
 		AddOverlays("firex")
 		set_light(0)
-	else if(stat & NOPOWER)
+	else if(!is_powered())
 		AddOverlays("firep")
 		set_light(0)
 	else
@@ -176,7 +176,7 @@
 	src.alarm()
 
 /obj/machinery/firealarm/process(seconds_per_tick)//Note: this processing was mostly phased out due to other code, and only runs when needed
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 
 	if(!timing)
@@ -203,7 +203,7 @@
 		ui.open()
 
 /obj/machinery/firealarm/attack_hand(mob/user as mob)
-	if (buildstage != 2 || stat & (NOPOWER|BROKEN))
+	if (buildstage != 2 || is_broken())
 		return
 
 	if(user.a_intent != I_HURT)

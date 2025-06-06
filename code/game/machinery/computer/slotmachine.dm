@@ -68,7 +68,7 @@
 
 /obj/machinery/computer/slot_machine/attack_hand(mob/user)
 	add_fingerprint(user)
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 	ui_interact(user)
 
@@ -177,7 +177,7 @@
 /obj/machinery/computer/slot_machine/emp_act(severity)
 	. = ..()
 
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 
 	if(prob(15 * severity))
@@ -232,10 +232,10 @@
 	updateUsrDialog()
 
 /obj/machinery/computer/slot_machine/proc/can_spin(mob/user)
-	if(stat & NOPOWER)
+	if(!is_powered())
 		to_chat(user, SPAN_WARNING("The slot machine has no power!"))
 		return FALSE
-	if(stat & BROKEN)
+	if(is_broken())
 		to_chat(user, SPAN_WARNING("The slot machine is broken!"))
 		return FALSE
 	if(working)

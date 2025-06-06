@@ -155,7 +155,7 @@ GLOBAL_LIST_INIT_TYPED(allConsoles, /obj/machinery/requests_console, list())
 	))
 	screen_hologram.blend_mode = BLEND_MULTIPLY
 	screen.blend_mode = BLEND_ADD
-	if(stat & NOPOWER)
+	if(!is_powered())
 		icon_state = initial(icon_state)
 		set_light(FALSE)
 	else

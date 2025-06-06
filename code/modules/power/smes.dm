@@ -113,7 +113,7 @@
 					terminal = term
 					break dir_loop
 	if(!terminal)
-		stat |= BROKEN
+		set_broken(TRUE)
 		return
 	terminal.master = src
 	if(!terminal.powernet)
@@ -138,7 +138,7 @@
 /obj/machinery/power/smes/proc/can_function()
 	if(is_badly_damaged())
 		return FALSE
-	if(stat & BROKEN)
+	if(is_broken())
 		return FALSE
 	return TRUE
 

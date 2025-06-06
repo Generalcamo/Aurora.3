@@ -57,26 +57,26 @@
 	update()
 
 /obj/machinery/conveyor/proc/update()
-	if(stat & BROKEN)
+	if(is_broken())
 		icon_state = "conveyor-broken"
 		operating = 0
 		return
 	if(!operable)
 		operating = 0
-	if(stat & NOPOWER)
+	if(!is_powered())
 		operating = 0
 	icon_state = "conveyor[operating]"
 
 	// machine process
 	// move items to the target location
 /obj/machinery/conveyor/process()
-	if(stat & (BROKEN | NOPOWER))
+	if(is_broken())
 		return
 	if(!operating || conveying)
 		return
 
 	if (!loc)
-		stat |= BROKEN
+		set_broken(TRUE)
 		return
 
 	use_power_oneoff(100)
@@ -124,7 +124,7 @@
 // attack with item, place item on conveyor
 /obj/machinery/conveyor/attackby(obj/item/attacking_item, mob/user)
 	if(attacking_item.iscrowbar())
-		if(!(stat & BROKEN))
+		if(!(is_broken()))
 			var/obj/item/conveyor_construct/C = new/obj/item/conveyor_construct(src.loc)
 			C.id = id
 			transfer_fingerprints_to(C)
@@ -160,7 +160,7 @@
 // make the conveyor broken
 // also propagate inoperability to any connected conveyor with the same ID
 /obj/machinery/conveyor/proc/broken()
-	stat |= BROKEN
+	set_broken(TRUE)
 	update()
 
 	var/obj/machinery/conveyor/C = locate() in get_step(src, dir)

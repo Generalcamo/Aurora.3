@@ -73,7 +73,7 @@
 
 /obj/machinery/ship_weapon/leviathan/power_change()
 	. = ..()
-	if((stat & NOPOWER) && .)
+	if((!is_powered()) && .)
 		disable()
 
 /obj/machinery/ship_weapon/leviathan/update_use_power(new_use_power)

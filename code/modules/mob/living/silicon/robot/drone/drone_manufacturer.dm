@@ -40,14 +40,14 @@
 
 /obj/machinery/drone_fabricator/power_change()
 	..()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		icon_state = "drone_fab_nopower"
 
 /obj/machinery/drone_fabricator/process()
 	if(!ROUND_IS_STARTED)
 		return
 
-	if(stat & NOPOWER || !produce_drones)
+	if(!is_powered() || !produce_drones)
 		if(icon_state != "drone_fab_nopower")
 			icon_state = "drone_fab_nopower"
 		return
@@ -69,7 +69,7 @@
 		. += SPAN_NOTICE("<B>A drone is prepared. use 'Ghost Spawner' from the Ghost tab to spawn as a maintenance drone.</B>")
 
 /obj/machinery/drone_fabricator/proc/create_drone(var/client/player, var/drone_tag)
-	if(stat & NOPOWER)
+	if(!is_powered())
 		return
 	if(!produce_drones || !GLOB.config.allow_drone_spawn || count_drones() >= GLOB.config.max_maint_drones)
 		return

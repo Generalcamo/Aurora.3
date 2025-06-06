@@ -112,7 +112,7 @@
 	if (!(src.z in GetConnectedZlevels(starting_z_level)))
 		to_chat(user, "Unable to establish a connection.")
 		return
-	if(stat & (NOPOWER|BROKEN))	return
+	if (inoperable())	return
 
 	if(!isAI(user))
 		user.set_machine(src)

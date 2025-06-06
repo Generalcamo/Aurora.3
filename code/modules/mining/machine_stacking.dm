@@ -176,9 +176,9 @@
 /obj/machinery/mineral/stacking_machine/process()
 	if(!console)
 		return
-	if(stat & BROKEN)
+	if(is_broken())
 		return
-	if(stat & NOPOWER)
+	if(!is_powered())
 		return
 
 	if(output && input)

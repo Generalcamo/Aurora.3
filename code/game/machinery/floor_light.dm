@@ -28,7 +28,7 @@
 		visible_message(SPAN_NOTICE("\The [user] has [anchored ? "attached" : "detached"] \the [src]."))
 		playsound(src.loc, 'sound/items/Screwdriver.ogg', 100, 1)
 		return TRUE
-	else if(attacking_item.iswelder() && (damaged || (stat & BROKEN)))
+	else if(attacking_item.iswelder() && (damaged || (is_broken())))
 		var/obj/item/weldingtool/WT = attacking_item
 		if(!WT.use(0, user))
 			to_chat(user, SPAN_WARNING("\The [src] must be on to complete this task."))
@@ -39,7 +39,7 @@
 			return TRUE
 		visible_message(SPAN_NOTICE("\The [user] has repaired \the [src]."))
 		update_icon()
-		stat &= ~BROKEN
+		set_broken(FALSE)
 		damaged = null
 		update_brightness()
 		return TRUE
@@ -52,7 +52,7 @@
 		else
 			to_chat(user, SPAN_NOTICE("You lever off the [name]."))
 			playsound(src.loc, 'sound/items/crowbar_tile.ogg', 100, TRUE)
-			if(stat & BROKEN)
+			if(is_broken())
 				qdel(src)
 				return TRUE
 			else
@@ -63,11 +63,11 @@
 /obj/machinery/floor_light/attack_hand(var/mob/user)
 
 	if(user.a_intent == I_HURT && !issmall(user))
-		if(!isnull(damaged) && !(stat & BROKEN))
+		if(!isnull(damaged) && !(is_broken()))
 			visible_message(SPAN_DANGER("\The [user] smashes \the [src]!"))
 			playsound(src, /singleton/sound_category/glass_break_sound, 70, 1)
 			update_icon()
-			stat |= BROKEN
+			set_broken(TRUE)
 		else
 			visible_message(SPAN_DANGER("\The [user] attacks \the [src]!"))
 			playsound(src.loc, 'sound/effects/glass_hit.ogg', 75, 1)
@@ -80,11 +80,11 @@
 			to_chat(user, SPAN_WARNING("\The [src] must be screwed down first."))
 			return
 
-		if(stat & BROKEN)
+		if(is_broken())
 			to_chat(user, SPAN_WARNING("\The [src] is too damaged to be functional."))
 			return
 
-		if(stat & NOPOWER)
+		if(!is_powered())
 			to_chat(user, SPAN_WARNING("\The [src] is unpowered."))
 			return
 
@@ -146,13 +146,13 @@
 			AddOverlays(floor_light_cache[cache_key])
 			var/mutable_appearance/I_emis = emissive_appearance(icon, "flicker[damaged]")
 			AddOverlays(I_emis)
-	if(stat & BROKEN)
+	if(is_broken())
 		icon_state = "broken"
 	else
 		icon_state = "base"
 
 /obj/machinery/floor_light/proc/broken()
-	return (stat & (BROKEN|NOPOWER))
+	return inoperable()
 
 /obj/machinery/floor_light/ex_act(severity)
 	switch(severity)
@@ -162,7 +162,7 @@
 			if (prob(50))
 				qdel(src)
 			else if(prob(20))
-				stat |= BROKEN
+				set_broken(TRUE)
 			else
 				if(isnull(damaged))
 					damaged = 0

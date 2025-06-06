@@ -31,7 +31,7 @@
 
 /obj/machinery/light_switch/update_icon()
 	ClearOverlays()
-	if(!(stat & NOPOWER))
+	if(!(!is_powered()))
 		var/switch_overlay = image(icon, "light[on]-overlay")
 		var/emissive_overlay = emissive_appearance(icon, "light[on]-overlay")
 		AddOverlays(switch_overlay)
@@ -65,9 +65,9 @@
 
 	for (var/obj/machinery/light/L in area)
 		if (on)
-			L.stat &= ~POWEROFF
+			L.set_stat(MACHINE_STAT_NOPOWER, TRUE)
 		else
-			L.stat |= POWEROFF
+			L.set_stat(MACHINE_STAT_NOPOWER, FALSE)
 		L.update()
 
 /obj/machinery/light_switch/power_change()
@@ -79,7 +79,7 @@
 /obj/machinery/light_switch/emp_act(severity)
 	. = ..()
 
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	power_change()

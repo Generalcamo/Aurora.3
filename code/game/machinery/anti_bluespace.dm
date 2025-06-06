@@ -20,11 +20,11 @@ GLOBAL_LIST_INIT_TYPED(bluespace_inhibitors, /obj/machinery/anti_bluespace, null
 
 /obj/machinery/anti_bluespace/update_icon()
 	. = ..()
-	if(stat & BROKEN)
+	if(is_broken())
 		name = "modern art"
 		desc = "What used to be a useful machine that prevented intrusion into secure areas is now a modern art piece."
 		icon_state = "[initial(icon_state)]-broken"
-	else if(stat & NOPOWER)
+	else if(!is_powered())
 		name = initial(name)
 		desc = "[initial(desc)] Well, only if it was powered."
 		icon_state = "[initial(icon_state)]"
@@ -56,11 +56,11 @@ GLOBAL_LIST_INIT_TYPED(bluespace_inhibitors, /obj/machinery/anti_bluespace, null
 	return 0
 
 /obj/machinery/anti_bluespace/proc/do_break()
-	if(stat & BROKEN)
+	if(is_broken())
 		return
 	playsound(src.loc, 'sound/effects/grillehit.ogg', 100, 1)
 	visible_message(SPAN_WARNING("\The [src] breaks!"))
-	stat |= BROKEN
+	set_broken(TRUE)
 	anchored = 0
 	update_icon()
 
@@ -106,7 +106,7 @@ GLOBAL_LIST_INIT_TYPED(bluespace_inhibitors, /obj/machinery/anti_bluespace, null
 	. = ..()
 
 	//THIS WILL BE FUN.
-	if(stat & BROKEN)
+	if(is_broken())
 		return
 
 	var/area/temp_area = get_area(src)

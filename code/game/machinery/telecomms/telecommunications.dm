@@ -118,8 +118,8 @@
 /obj/machinery/telecomms/process()
 	update_icon()
 	if(!use_power) return PROCESS_KILL
-	if(!operable(EMPED))
-		toggle_power(additional_flags = EMPED)
+	if(!operable(MACHINE_STAT_EMPED))
+		toggle_power(additional_flags = MACHINE_STAT_EMPED)
 		return PROCESS_KILL
 
 	// Check heat and generate some
@@ -141,14 +141,14 @@
 /obj/machinery/telecomms/emp_act(severity)
 	. = ..()
 
-	if(stat & EMPED || !prob(100/severity))
+	if(stat & MACHINE_STAT_EMPED || !prob(100/severity))
 		return
 
-	stat |= EMPED
+	set_stat(MACHINE_STAT_EMPED, TRUE)
 	addtimer(CALLBACK(src, PROC_REF(post_emp_act)), (300 SECONDS) / severity)
 
 /obj/machinery/telecomms/proc/post_emp_act()
-	stat &= ~EMPED
+	set_stat(MACHINE_STAT_EMPED, FALSE)
 	toggle_power(POWER_USE_IDLE)
 
 /obj/machinery/telecomms/proc/check_heat()
@@ -175,7 +175,7 @@
 		delay = initial(delay)
 
 /obj/machinery/telecomms/proc/produce_heat()
-	if (!produces_heat || !use_power || !operable(EMPED))
+	if (!produces_heat || !use_power || !operable(MACHINE_STAT_EMPED))
 		return
 
 	var/turf/simulated/L = loc

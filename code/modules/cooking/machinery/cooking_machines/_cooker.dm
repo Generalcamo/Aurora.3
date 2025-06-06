@@ -95,7 +95,7 @@
 	queue_icon_update()
 
 /obj/machinery/appliance/cooker/attempt_toggle_power(mob/user)
-	var/wasoff = stat & POWEROFF
+	var/wasoff = is_powered()
 	if (use_check_and_message(user, issilicon(user) ? USE_ALLOW_NON_ADJACENT : 0))
 		return
 
@@ -104,13 +104,13 @@
 		return
 
 	if(desired_temp == "OFF")
-		stat |= POWEROFF
+		set_stat(MACHINE_STAT_NOPOWER, FALSE)
 	else
 		set_temp = text2num(desired_temp) + T0C
 		to_chat(user, SPAN_NOTICE("You set [src] to [round(set_temp-T0C)]C."))
-		stat &= ~POWEROFF
-	update_use_power(stat & POWEROFF ? POWER_USE_OFF : POWER_USE_IDLE)
-	if(wasoff != (stat & POWEROFF))
+		set_stat(MACHINE_STAT_NOPOWER, TRUE)
+	update_use_power(is_powered() ? POWER_USE_OFF : POWER_USE_IDLE)
+	if(wasoff != (is_powered()))
 		activation_message(user)
 	playsound(src, 'sound/machines/click.ogg', 40, 1)
 	cooking = use_power

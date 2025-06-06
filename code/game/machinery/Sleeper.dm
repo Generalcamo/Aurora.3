@@ -55,7 +55,7 @@
 	parts_power_usage = active_power_usage
 
 /obj/machinery/sleeper/process()
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 
 	if(filtering)
@@ -120,7 +120,7 @@
 
 /obj/machinery/sleeper/ui_data(mob/user)
 	var/list/data = list()
-	data["power"] = stat & (NOPOWER|BROKEN) ? FALSE : TRUE
+	data["power"] = is_broken() ? FALSE : TRUE
 
 	if(occupant)
 		data["occupant"] = TRUE
@@ -306,7 +306,7 @@
 	if(filtering)
 		toggle_filter()
 
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	if(occupant)
@@ -332,7 +332,7 @@
 /obj/machinery/sleeper/proc/go_in(var/mob/M, var/mob/user)
 	if(!M)
 		return
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 	if(occupant)
 		to_chat(user, SPAN_WARNING("\The [src] is already occupied."))
@@ -386,7 +386,7 @@
 		toggle_pump()
 
 /obj/machinery/sleeper/proc/inject_chemical(var/mob/living/user, var/chemical, var/add_amount)
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	if(occupant?.reagents)

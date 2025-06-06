@@ -58,7 +58,7 @@
 	update_icon()
 
 /obj/machinery/r_n_d/tech_processor/proc/produce_heat()
-	if(!(stat & (NOPOWER|BROKEN)))
+	if(operable())
 		var/turf/simulated/L = loc
 		if(istype(L))
 			var/datum/gas_mixture/env = L.return_air()
@@ -75,7 +75,7 @@
 
 /obj/machinery/r_n_d/tech_processor/update_icon()
 	ClearOverlays()
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		icon_state = "[initial(icon_state)]-off"
 	else if(!linked_server)
 		icon_state = "[initial(icon_state)]-halt"

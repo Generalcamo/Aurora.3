@@ -20,9 +20,6 @@
 
 	var/toughness = 5 //sorta fragile
 
-	// WIRES
-	var/datum/wires/camera/wires = null // Wires datum
-
 	//OTHER
 
 	var/view_range = 7
@@ -96,8 +93,8 @@
 	pixel_y = dir & (NORTH|SOUTH) ? (dir == NORTH ? -3 : DEFAULT_WALL_OFFSET) : 0
 
 /obj/machinery/camera/process()
-	if((stat & EMPED) && world.time >= affected_by_emp_until)
-		stat &= ~EMPED
+	if((stat & MACHINE_STAT_EMPED) && world.time >= affected_by_emp_until)
+		set_stat(MACHINE_STAT_EMPED, FALSE)
 		cancelCameraAlarm()
 		update_icon()
 		update_coverage()
@@ -105,7 +102,7 @@
 
 /obj/machinery/camera/proc/internal_process()
 	// motion camera event loop
-	if (stat & (EMPED|NOPOWER))
+	if (!is_powered(MACHINE_STAT_EMPED))
 		return
 	if(!isMotion())
 		. = PROCESS_KILL
@@ -131,7 +128,7 @@
 		if(!affected_by_emp_until || (world.time < affected_by_emp_until))
 			affected_by_emp_until = max(affected_by_emp_until, world.time + (90 SECONDS / severity))
 		else
-			stat |= EMPED
+			set_stat(MACHINE_STAT_EMPED, TRUE)
 			set_light(0)
 			triggerCameraAlarm()
 			kick_viewers()
@@ -182,6 +179,7 @@
 
 /obj/machinery/camera/attackby(obj/item/attacking_item, mob/user)
 	update_coverage()
+	var/datum/wires/camera/camera_wires = wires
 	// DECONSTRUCTION
 	if(attacking_item.isscrewdriver())
 		//to_chat(user, SPAN_NOTICE("You start to [panel_open ? "close" : "open"] the camera's panel."))
@@ -196,7 +194,7 @@
 		interact(user)
 		return TRUE
 
-	else if(attacking_item.iswelder() && (wires.CanDeconstruct() || (stat & BROKEN)))
+	else if(attacking_item.iswelder() && (camera_wires.CanDeconstruct() || (is_broken())))
 		if(weld(attacking_item, user))
 			if(assembly)
 				assembly.forceMove(src.loc)
@@ -205,7 +203,7 @@
 				assembly.camera_network = english_list(network, "Station", ",", ",")
 				assembly.update_icon()
 				assembly.dir = src.dir
-				if(stat & BROKEN)
+				if(is_broken())
 					assembly.state = 2
 					to_chat(user, SPAN_NOTICE("You repaired \the [src] frame."))
 				else
@@ -310,7 +308,7 @@
 
 //Used when someone breaks a camera
 /obj/machinery/camera/proc/destroy()
-	stat |= BROKEN
+	set_broken(TRUE)
 	wires.cut_all()
 
 	kick_viewers()
@@ -350,9 +348,9 @@
 				to_chat(O, "The screen bursts into static.")
 
 /obj/machinery/camera/update_icon()
-	if (!status || (stat & BROKEN))
+	if (!status || (is_broken()))
 		icon_state = "[initial(icon_state)]1"
-	else if (stat & EMPED)
+	else if (stat & MACHINE_STAT_EMPED)
 		icon_state = "[initial(icon_state)]emp"
 	else
 		icon_state = initial(icon_state)
@@ -371,10 +369,10 @@
 //if false, then the camera is listed as DEACTIVATED and cannot be used
 /obj/machinery/camera/proc/can_use()
 	if(!status)
-		return 0
-	if(stat & (EMPED|BROKEN))
-		return 0
-	return 1
+		return FALSE
+	if(is_broken(MACHINE_STAT_EMPED))
+		return FALSE
+	return TRUE
 
 /obj/machinery/camera/proc/can_see()
 	var/list/see = null
@@ -444,7 +442,7 @@
 	if(!panel_open || istype(user, /mob/living/silicon/ai))
 		return
 
-	if(stat & BROKEN)
+	if(is_broken())
 		to_chat(user, SPAN_WARNING("\The [src] is broken."))
 		return
 
@@ -510,8 +508,8 @@
 /obj/machinery/camera/proc/reset_wires()
 	if(!wires)
 		return
-	if (stat & BROKEN) // Fix the camera
-		stat &= ~BROKEN
+	if (is_broken()) // Fix the camera
+		set_broken(FALSE)
 	wires.cut_all(src)
 	wires.repair()
 	update_icon()

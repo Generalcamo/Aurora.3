@@ -553,8 +553,6 @@ EMAG/ILLEGAL
 	update_icon()
 
 /obj/machinery/biogenerator/interact(mob/user as mob)
-	if(stat & BROKEN)
-		return
 	user.set_machine(src)
 	var/dat ="<html>"
 	dat += "<head><TITLE>Biogenerator MKII</TITLE><style>body{font-family:Garamond}</style></head>"
@@ -612,7 +610,8 @@ EMAG/ILLEGAL
 	biogen_win.add_stylesheet("misc", 'html/browser/misc.css')
 	biogen_win.open()
 
-/obj/machinery/biogenerator/attack_hand(mob/user as mob)
+/obj/machinery/biogenerator/attack_hand(mob/user)
+	. = ..()
 	interact(user)
 
 /obj/machinery/biogenerator/proc/activate()
@@ -709,7 +708,7 @@ EMAG/ILLEGAL
 	return 1
 
 /obj/machinery/biogenerator/Topic(href, href_list)
-	if(stat & BROKEN) return
+	if(is_broken()) return
 	if(usr.stat || usr.restrained()) return
 	if(!in_range(src, usr)) return
 

@@ -181,7 +181,7 @@
 		broadcast_status()
 		broadcast_status_next_process = FALSE
 
-	if(!use_power || (stat & (NOPOWER|BROKEN)) || !loc)
+	if(!use_power || inoperable() || !loc)
 		return 0
 	if(welded)
 		return 0
@@ -218,7 +218,7 @@
 	update_underlays()
 
 /obj/machinery/atmospherics/unary/vent_scrubber/receive_signal(datum/signal/signal)
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 	if(!signal.data["tag"] || (signal.data["tag"] != id_tag) || (signal.data["sigtype"]!="command"))
 		return 0
@@ -346,7 +346,7 @@
 
 /obj/machinery/atmospherics/unary/vent_scrubber/attackby(obj/item/attacking_item, mob/user)
 	if (attacking_item.iswrench())
-		if (!(stat & NOPOWER) && use_power)
+		if (!(!is_powered()) && use_power)
 			to_chat(user, SPAN_WARNING("You cannot unwrench \the [src], turn it off first."))
 			return TRUE
 		var/turf/T = src.loc

@@ -5,7 +5,7 @@
 	power_channel = AREA_USAGE_ENVIRON
 	var/desiredstate = 0
 	var/exposedwires = 0
-	var/wires = 3
+	//var/wires = 3
 	/*
 	Bitflag,	1=checkID
 				2=Network Access
@@ -40,7 +40,7 @@
 		return
 
 	src.add_fingerprint(user)
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 
 	if(!allowed(user) && (wires & 1))
@@ -62,7 +62,7 @@
 	update_icon()
 
 /obj/machinery/button/remote/update_icon()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		icon_state = "doorctrl-p"
 	else
 		icon_state = "doorctrl0"
@@ -209,7 +209,7 @@
 	return
 
 /obj/machinery/button/remote/driver/update_icon()
-	if(!active || (stat & NOPOWER))
+	if(!active || (!is_powered()))
 		icon_state = "launcherbtt"
 	else
 		icon_state = "launcheract"

@@ -236,7 +236,7 @@
 		AddOverlays("drying_rack_filled")
 
 /obj/machinery/smartfridge/process()
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		seconds_electrified = 0
 		return
 	if(seconds_electrified > 0)
@@ -265,11 +265,11 @@
 /obj/machinery/smartfridge/power_change()
 	..()
 	if(!anchored)
-		stat |= NOPOWER
+		set_stat(MACHINE_STAT_NOPOWER, TRUE)
 	update_icon()
 
 /obj/machinery/smartfridge/update_icon()
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		icon_state = "[initial(icon_state)]-off"
 	else
 		icon_state = "[initial(icon_state)]"
@@ -290,7 +290,7 @@
 			if(50 to INFINITY)
 				contents_icon_state = "-3"
 		AddOverlays("[initial(icon_state)][contents_path][contents_icon_state]")
-	AddOverlays("[initial(icon_state)]-glass[(stat & BROKEN) ? "-broken" : ""]")
+	AddOverlays("[initial(icon_state)]-glass[(is_broken()) ? "-broken" : ""]")
 
 /*******************
 *   Item Adding
@@ -347,7 +347,7 @@
 			attack_hand(user)
 		return
 
-	if(stat & NOPOWER)
+	if(!is_powered())
 		to_chat(user, SPAN_NOTICE("[src] is unpowered and useless."))
 		return
 
@@ -395,7 +395,7 @@
 	attack_hand(user)
 
 /obj/machinery/smartfridge/attack_hand(mob/user)
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 	if(panel_open)
 		wires.interact(user)
@@ -441,7 +441,7 @@
 
 	add_fingerprint(user)
 
-	if(stat & (NOPOWER|BROKEN) || !anchored)
+	if(is_broken() || !anchored)
 		return
 
 	if(!allowed(user) && !emagged && locked != -1 && is_secure)
@@ -503,7 +503,7 @@
 *************************/
 
 /obj/machinery/smartfridge/secure/Topic(href, href_list)
-	if(stat & (NOPOWER|BROKEN) || !anchored) return FALSE
+	if(is_broken() || !anchored) return FALSE
 	if(usr.contents.Find(src) || (in_range(src, usr) && isturf(loc)))
 		if(!allowed(usr) && !emagged && locked != -1 && href_list["vendItem"])
 			to_chat(usr, SPAN_WARNING("Access denied."))
@@ -523,7 +523,7 @@
 	contents_path = "[rand(1, 4)]" // overriding the update icon anyway, so this var is free.
 
 /obj/machinery/smartfridge/foodheater/buffet/update_icon()
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		icon_state = "[initial(icon_state)]"
 	else
 		icon_state = "[initial(icon_state)][contents_path]"

@@ -22,7 +22,7 @@
 	var/obj/machinery/alarm/A = holder
 	. = ..()
 	. += A.locked ? "The air alarm is locked." : "The air alarm is unlocked."
-	. += (A.shorted || (A.stat & (NOPOWER|BROKEN))) ? "The Air Alarm is offline." : "The Air Alarm is working properly!"
+	. += (A.shorted || (A.inoperable())) ? "The Air Alarm is offline." : "The Air Alarm is working properly!"
 	. += A.aidisabled ? "The 'AI control allowed' light is off." : "The 'AI control allowed' light is on."
 
 /datum/wires/alarm/on_cut(wire, mend, source)

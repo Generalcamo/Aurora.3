@@ -248,7 +248,7 @@
 
 /obj/machinery/door/window/brigdoor/power_change()
 	..()
-	if((stat & NOPOWER) && !density)
+	if((!is_powered()) && !density)
 		close(TRUE)
 
 /obj/machinery/door/window/northleft

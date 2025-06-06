@@ -309,7 +309,7 @@
 
 	if(!telepad)
 		return
-	if(telepad.stat & NOPOWER)
+	if(!telepad.is_powered())
 		return
 	teleporting = 0
 	teleport_cooldown = world.time + (power * 2)
@@ -541,7 +541,7 @@
 	updateDialog()
 
 /obj/machinery/computer/telescience/process(seconds_per_tick)
-	if((stat & NOPOWER) || (telepad?.stat & NOPOWER))
+	if((!is_powered()) || (!telepad?.is_powered()))
 		QDEL_NULL(origin_portal)
 
 /**

@@ -86,7 +86,7 @@
 		if(WEST)
 			layer = ABOVE_HUMAN_LAYER
 	ClearOverlays()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		set_light(0)
 		return
 	else
@@ -109,7 +109,7 @@
 			append_string += "_R"
 		icon_state = "computer[append_string]"
 
-	if(stat & BROKEN)
+	if(is_broken())
 		icon_state = "[icon_state]-broken"
 		if (overlay_layer != layer)
 			AddOverlays(image(icon, icon_broken, overlay_layer))
@@ -140,7 +140,7 @@
 		if (icon_scanline)
 			AddOverlays(icon_scanline)
 		if (icon_keyboard)
-			if((stat & NOPOWER) && has_off_keyboards)
+			if((!is_powered()) && has_off_keyboards)
 				AddOverlays("[icon_keyboard]_off")
 			else
 				AddOverlays(icon_keyboard)
@@ -155,15 +155,10 @@
 /obj/machinery/computer/power_change()
 	..()
 	update_icon()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		set_light(0)
 	else
 		set_light(light_range_on, light_power_on, light_color)
-
-
-/obj/machinery/computer/proc/set_broken()
-	stat |= BROKEN
-	update_icon()
 
 /obj/machinery/computer/proc/decode(text)
 	// Adds line breaks
@@ -180,7 +175,7 @@
 				A.anchored = TRUE
 				for(var/obj/C in src)
 					C.forceMove(src.loc)
-				if(src.stat & BROKEN)
+				if(src.is_broken())
 					to_chat(user, SPAN_NOTICE("The broken glass falls out."))
 					new /obj/item/material/shard( src.loc )
 					A.state = 3
@@ -191,11 +186,11 @@
 					A.icon_state = "4"
 				M.deconstruct(src)
 				qdel(src)
-		else if(stat & BROKEN)
+		else if(is_broken())
 			to_chat(user, SPAN_NOTICE("You start fixing \the [src]..."))
 			if(attacking_item.use_tool(src, user, 5 SECONDS, volume = 50))
 				to_chat(user, SPAN_NOTICE("You fix the console's screen and tie up a few loose cables."))
-				stat &= ~BROKEN
+				set_broken(FALSE)
 				update_icon()
 		return TRUE
 	else

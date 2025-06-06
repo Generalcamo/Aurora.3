@@ -51,7 +51,7 @@
 			desc = "A colorful [typeofcandy] machine. It's empty!"
 
 /obj/machinery/gumballmachine/proc/update_power()
-	if(stat & (BROKEN|NOPOWER|EMPED))
+	if(inoperable(MACHINE_STAT_EMPED))
 		on = 0
 	else
 		on = 1
@@ -102,7 +102,7 @@
 		for(var/i = 1;i<=amountleftinside,i++)
 			new vendingtype(src.loc)
 		src.visible_message("\The [src] shatters and [typeofcandy] fall out on the floor.", "You hear glass shatter!")
-	stat |= BROKEN
+	set_broken(TRUE)
 	anchored = FALSE
 	broken = TRUE
 	amountleft = FALSE

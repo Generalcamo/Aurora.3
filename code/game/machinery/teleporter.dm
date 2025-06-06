@@ -28,7 +28,7 @@
 /obj/machinery/teleport/pad/process()
 	var/old_engaged = engaged
 	if(locked_obj)
-		if(stat & (NOPOWER|BROKEN) || !within_range(locked_obj))
+		if(is_broken() || !within_range(locked_obj))
 			engaged = FALSE
 		else
 			engaged = TRUE
@@ -88,7 +88,7 @@
 					return TRUE
 
 /obj/machinery/teleport/pad/proc/engage()
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	use_power_oneoff(5000)
@@ -99,7 +99,7 @@
 	queue_icon_update()
 
 /obj/machinery/teleport/pad/proc/disengage()
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	update_use_power(POWER_USE_IDLE)

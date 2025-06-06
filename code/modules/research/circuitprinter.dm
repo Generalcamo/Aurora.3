@@ -195,7 +195,7 @@ using metal and glass, it uses glass and reagents (usually sulphuric acid).
 		return
 
 	//If there's no power, there's no building
-	if(stat & NOPOWER)
+	if(!is_powered())
 		queue = list()
 		return
 

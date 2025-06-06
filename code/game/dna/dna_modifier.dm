@@ -320,7 +320,7 @@
 
 /*
 /obj/machinery/computer/scan_consolenew/process() //not really used right now
-	if(stat & (NOPOWER|BROKEN))
+	if(stat.inoperable())
 		return
 	if (!( src.status )) //remove this
 		return

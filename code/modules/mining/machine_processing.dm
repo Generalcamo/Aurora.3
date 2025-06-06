@@ -425,7 +425,7 @@ GLOBAL_LIST_EMPTY_TYPED(alloy_data, /datum/alloy)
 	//Process our stored ores and spit out sheets.
 	var/sheets = 0
 	for(var/metal in ores_stored)
-		if(src.stat & NOPOWER)
+		if(!is_powered())
 			return
 
 		if(TICK_CHECK)

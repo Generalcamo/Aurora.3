@@ -161,7 +161,7 @@
 		return
 
 	var/was_on = on
-	stat |= EMPED
+	set_stat(MACHINE_STAT_EMPED, TRUE)
 	var/obj/effect/overlay/pulse2 = new /obj/effect/overlay(src.loc)
 	pulse2.icon = 'icons/effects/effects.dmi'
 	pulse2.icon_state = "empdisable"
@@ -178,7 +178,7 @@
 /obj/vehicle/proc/post_emp(was_on)
 	if(organic)
 		return
-	stat &= ~EMPED
+	set_stat(MACHINE_STAT_EMPED, FALSE)
 	if(was_on)
 		turn_on()
 

@@ -38,7 +38,7 @@
 		update_use_power(covered + 1) //Update the power usage
 		. = TRUE
 	else
-		if(covered && (stat & NOPOWER)) //Only bounce off if its powered (i.e. shield active)
+		if(covered && (!is_powered())) //Only bounce off if its powered (i.e. shield active)
 			. = ..()
 		else
 			user.visible_message(SPAN_DANGER("[src] has been hit by [user] with [attacking_item], but it bounces off the forcefield."),
@@ -80,7 +80,7 @@
 
 /obj/machinery/case_button/update_icon()
 	ClearOverlays()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		update_use_power(POWER_USE_OFF)
 		AddOverlays("b[button]d") //Add the deactivated button overlay
 		AddOverlays("g[cover]d") //Add the deactivated cover overlay

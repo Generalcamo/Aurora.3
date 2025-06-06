@@ -134,7 +134,7 @@
 	. = ..()
 
 /obj/machinery/door/firedoor/attack_generic(var/mob/user, var/damage)
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		if(damage >= 10)
 			if(src.density)
 				visible_message(SPAN_DANGER("\The [user] forces \the [src] open!"))
@@ -220,7 +220,7 @@
 				close(1)
 			return
 
-	if(density && (stat & (BROKEN|NOPOWER))) //can still close without power
+	if(density && inoperable()) //can still close without power
 		to_chat(user, "\The [src] is not functioning, you'll have to force it open manually.")
 		return
 
@@ -299,7 +299,7 @@
 					user.visible_message(SPAN_DANGER("[user] has removed the electronics from \the [src]."),
 										"You have removed the electronics from [src].")
 
-					if (stat & BROKEN)
+					if (is_broken())
 						new /obj/item/trash/broken_electronics(src.loc)
 					else
 						new/obj/item/airalarm_electronics(src.loc)
@@ -336,7 +336,7 @@
 				"You hear metal strain.")
 		if(attacking_item.use_tool(src, user, 30, volume = 50))
 			if(attacking_item.iscrowbar() || attacking_item.ishammer())
-				if(stat & (BROKEN|NOPOWER) || !density)
+				if(inoperable() || !density)
 					user.visible_message(SPAN_DANGER("\The [user] forces \the [src] [density ? "open" : "closed"] with \a [attacking_item]!"),\
 					"You force \the [src] [density ? "open" : "closed"] with \the [attacking_item]!",\
 					"You hear metal strain, and a door [density ? "open" : "close"].")
@@ -435,7 +435,7 @@
 		update_icon()
 
 	if(!forced)
-		if(stat & (BROKEN|NOPOWER))
+		if (inoperable())
 			return //needs power to open unless it was forced
 		else
 			use_power_oneoff(360)

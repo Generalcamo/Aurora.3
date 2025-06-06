@@ -417,7 +417,7 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 		if(isAI(M))
 			var/mob/living/silicon/ai/master = M
 			is_inactive_ai = !(master && !master.incapacitated() && master.client && master.eyeobj) //If there is an AI with an eye attached, it's not incapacitated, and it has a client
-		if((stat & NOPOWER) || is_inactive_ai)
+		if((!is_powered()) || is_inactive_ai)
 			clear_holo(M)
 			continue
 
@@ -440,7 +440,7 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 	return TRUE
 
 /obj/machinery/hologram/holopad/proc/check_connected_pad()
-	if(connected_pad.stat & NOPOWER)
+	if(!connected_pad.is_powered())
 		end_call()
 		return FALSE
 	if(!hacked)

@@ -113,7 +113,7 @@
 	inturf = get_step(src, dir)
 	locate_machinery()
 	if(!turbine)
-		stat |= BROKEN
+		set_broken(TRUE)
 	else
 		turbine.compressor = src
 
@@ -151,10 +151,10 @@
 		locate_machinery()
 		if(turbine)
 			to_chat(user, SPAN_NOTICE("Turbine connected."))
-			stat &= ~BROKEN
+			set_broken(FALSE)
 		else
 			FEEDBACK_FAILURE(user, "Compressor not connected.")
-			stat |= BROKEN
+			set_broken(TRUE)
 		return
 
 	if(default_deconstruction_crowbar(user, attacking_item))
@@ -177,11 +177,11 @@
 
 /obj/machinery/power/compressor/process(seconds_per_tick)
 	if(!turbine)
-		stat |= BROKEN
+		set_broken(TRUE)
 	if(!starter)
 		return
 	ClearOverlays()
-	if(stat & BROKEN || panel_open)
+	if(is_broken() || panel_open)
 		return
 
 	if(rpm_threshold == OVERDRIVE)
@@ -199,7 +199,7 @@
 	// RPM function to include compression friction - be advised that too low/high of a compfriction value can make things screwy
 	rpm = max(0, rpm - (rpm*rpm)/(COMPFRICTION*efficiency))
 
-	if(!(stat & NOPOWER))
+	if(!(!is_powered()))
 		draw_power(2800)
 		if(rpm < 1000)
 			rpmtarget = 1000
@@ -257,9 +257,9 @@
 
 /obj/machinery/power/turbine/process(seconds_per_tick)
 	if(!compressor)
-		stat |= BROKEN
+		set_broken(TRUE)
 
-	if((stat & BROKEN) || panel_open)
+	if((is_broken()) || panel_open)
 		return
 
 	if(!compressor.starter)
@@ -302,10 +302,10 @@
 		locate_machinery()
 		if(compressor)
 			to_chat(user, SPAN_NOTICE("Compressor connected."))
-			stat &= ~BROKEN
+			set_broken(FALSE)
 		else
 			FEEDBACK_FAILURE(user, "Compressor not connected.")
-			stat |= BROKEN
+			set_broken(TRUE)
 		return
 
 	if(default_deconstruction_crowbar(user, attacking_item))
@@ -329,9 +329,9 @@
 /obj/machinery/power/turbine/ui_data(mob/user)
 	var/list/data = list()
 	data["compressor"] = !isnull(compressor)
-	data["compressor_broken"] = (!compressor || (compressor.stat & BROKEN))
+	data["compressor_broken"] = (!compressor || (compressor.is_broken()))
 	data["turbine"] = !isnull(compressor?.turbine)
-	data["turbine_broken"] = (compressor?.turbine?.stat & BROKEN)
+	data["turbine_broken"] = (compressor?.turbine?.is_broken())
 
 	if(compressor && compressor.turbine)
 		data["online"] = compressor.starter
@@ -397,9 +397,9 @@
 /obj/machinery/computer/terminal/turbine_computer/ui_data(mob/user)
 	var/list/data = list()
 	data["compressor"] = !isnull(compressor)
-	data["compressor_broken"] = (compressor?.stat & BROKEN)
+	data["compressor_broken"] = (compressor?.is_broken())
 	data["turbine"] = !isnull(compressor?.turbine)
-	data["turbine_broken"] = (compressor?.turbine?.stat & BROKEN)
+	data["turbine_broken"] = (compressor?.turbine?.is_broken())
 
 	if(compressor?.turbine)
 		data["online"] = compressor.starter

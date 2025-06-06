@@ -43,9 +43,9 @@
 
 /obj/machinery/food_cart/get_examine_text(mob/user, distance, is_adjacent, infix, suffix)
 	. = ..()
-	if(stat & BROKEN)
+	if(is_broken())
 		return
-	if(cart_griddle.stat & BROKEN)
+	if(cart_griddle.is_broken())
 		. += SPAN_WARNING("The stand's [SPAN_BOLD("grill")] is completely broken!")
 	else
 		. += SPAN_NOTICE("The stand's [SPAN_BOLD("grill")] is intact.")
@@ -62,11 +62,11 @@
 	for(var/obj/object as anything in packed_things)
 		UnregisterSignal(object, COMSIG_MOVABLE_MOVED)
 		object.forceMove(src)
-	if(!(cart_griddle?.stat & BROKEN)) // Don't draw power if it's packed inside
+	if(!(cart_griddle?.is_broken())) // Don't draw power if it's packed inside
 		cart_griddle.stat = POWEROFF
 		cart_griddle.use_power = POWER_USE_OFF
 		cart_griddle.update_icon()
-	if(!(cart_smartfridge?.stat & BROKEN))
+	if(!(cart_smartfridge?.is_broken()))
 		cart_smartfridge.use_power = POWER_USE_OFF
 	anchored = FALSE
 	unpacked = FALSE
@@ -82,9 +82,9 @@
 		return
 	visible_message(SPAN_NOTICE("[src] expands into a full stand."))
 	anchored = TRUE
-	if(!(cart_griddle?.stat & BROKEN))
+	if(!(cart_griddle?.is_broken()))
 		cart_griddle.stat = POWEROFF
-	if(!(cart_smartfridge?.stat & BROKEN)) // Unpacked, draw power
+	if(!(cart_smartfridge?.is_broken())) // Unpacked, draw power
 		cart_smartfridge.use_power = POWER_USE_IDLE
 	var/iteration = 1
 	var/turf/grabbed_turf = get_step(get_turf(src), EAST)
@@ -98,7 +98,7 @@
 
 /obj/machinery/food_cart/attack_hand(mob/living/user, list/modifiers)
 	. = ..()
-	if(stat & BROKEN)
+	if(is_broken())
 		to_chat(user, SPAN_WARNING("[src] is completely busted."))
 		return
 	var/obj/item/card/id/id_card = user.GetIdCard()

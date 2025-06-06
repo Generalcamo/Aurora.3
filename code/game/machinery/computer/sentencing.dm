@@ -24,7 +24,7 @@
 /obj/machinery/computer/sentencing/attack_hand(mob/user as mob)
 	if(..())
 		return
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 	ui_interact(user)
 

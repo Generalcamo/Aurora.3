@@ -17,16 +17,16 @@
 
 /obj/machinery/stargazer/get_examine_text(mob/user, distance, is_adjacent, infix, suffix)
 	. = ..()
-	if(!(stat & BROKEN) && !(stat & NOPOWER))
+	if(!(is_broken()) && !(!is_powered()))
 		. += SPAN_NOTICE("\The [src] shows the current sector to be <a href='byond://?src=[REF(src)];examine=1'>[SSatlas.current_sector.name]</a>.")
 
 /obj/machinery/stargazer/power_change()
 	..()
-	if(stat & BROKEN)
+	if(is_broken())
 		icon_state = "stargazer_off"
 		ClearOverlays()
 		set_light(0)
-	else if(!(stat & NOPOWER))
+	else if(!(!is_powered()))
 		icon_state = "stargazer_on"
 		AddOverlays(star_system_image)
 		var/stargazer_light_color = LIGHT_COLOR_HALOGEN
@@ -39,7 +39,7 @@
 		set_light(0)
 
 /obj/machinery/stargazer/Topic(href, href_list, datum/ui_state/state)
-	if((stat & BROKEN) || (stat & NOPOWER))
+	if((is_broken()) || (!is_powered()))
 		return TRUE
 	if(!is_in_sight(usr, src))
 		return TRUE

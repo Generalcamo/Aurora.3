@@ -1,5 +1,5 @@
 /obj/machinery/Value()
 	. = ..()
-	if(stat & BROKEN)
+	if(is_broken())
 		. *= 0.5
 	. = round(.)

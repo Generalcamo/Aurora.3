@@ -272,7 +272,7 @@
 
 		if((istype(O, /obj/machinery/door/firedoor) && O.density) || (istype(O, /obj/machinery/door/airlock) && O.density) || istype(O, /obj/machinery/door/blast) && O.density)
 			var/obj/machinery/door/D = O
-			if(D.stat & BROKEN)
+			if(D.is_broken())
 				src.visible_message(SPAN_NOTICE("[src] starts to tear \the [D] open."))
 				busy = 1
 				if(do_after(src, 48))

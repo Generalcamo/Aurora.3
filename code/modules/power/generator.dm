@@ -82,7 +82,7 @@
 		circ1.temperature_overlay = null
 	if (circ2)
 		circ2.temperature_overlay = null
-	if (stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return TRUE
 	else
 		if (lastgenlev != 0)
@@ -98,7 +98,7 @@
 		return TRUE
 
 /obj/machinery/power/generator/process()
-	if(!circ1 || !circ2 || !anchored || stat & (BROKEN|NOPOWER))
+	if(!circ1 || !circ2 || !anchored || inoperable())
 		stored_energy = 0
 		return
 
@@ -188,7 +188,7 @@
 
 /obj/machinery/power/generator/attack_hand(mob/user)
 	add_fingerprint(user)
-	if(stat & (BROKEN|NOPOWER) || !anchored) return
+	if(inoperable() || !anchored) return
 	if(!circ1 || !circ2) //Just incase the middle part of the TEG was not wrenched last.
 		reconnect()
 	ui_interact(user)

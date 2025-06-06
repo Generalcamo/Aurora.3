@@ -206,7 +206,7 @@ GLOBAL_LIST_EMPTY(admin_departments)
  * 		display_message: 	(bool) 1=display info text, 0="silent mode"
  */
 /obj/machinery/photocopier/faxmachine/proc/sendfax(var/destination, var/display_message = 1)
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return 0
 
 	use_power_oneoff(200)
@@ -228,7 +228,7 @@ GLOBAL_LIST_EMPTY(admin_departments)
 	return success
 
 /obj/machinery/photocopier/faxmachine/proc/receivefax(var/obj/item/incoming)
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return 0
 
 	if(department == "Unknown")
@@ -269,7 +269,7 @@ GLOBAL_LIST_EMPTY(admin_departments)
 		set_cooldown(normalfax_cooldown)
 
 /obj/machinery/photocopier/faxmachine/proc/send_admin_fax(var/mob/sender, var/destination)
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 
 	use_power_oneoff(200)

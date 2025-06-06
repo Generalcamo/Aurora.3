@@ -81,7 +81,7 @@
 		sound_id = "[type]_[sequential_id(/obj/machinery/computer/ship/sensors)]"
 
 	var/obj/machinery/shipsensors/sensors = get_sensors()
-	if(linked && sensors?.use_power && !(sensors.stat & NOPOWER))
+	if(linked && sensors?.use_power && (sensors.is_powered()))
 		var/volume = 15
 		if(!sound_token)
 			sound_token = GLOB.sound_player.PlayLoopingSound(src, sound_id, working_sound, volume = volume, range = 10, sound_type = ASFX_CONSOLE_AMBIENCE)
@@ -90,7 +90,7 @@
 		QDEL_NULL(sound_token)
 
 /obj/machinery/computer/ship/sensors/proc/display_message(var/message)
-	if(OPERABLE(src))
+	if(operable(MACHINE_STAT_EMPED))
 		playsound(src, 'sound/machines/triplebeep.ogg', 50)
 		visible_message(SPAN_NOTICE("\The [src] beeps, [SPAN_ITALIC("\"" + message + "\"")]"))
 

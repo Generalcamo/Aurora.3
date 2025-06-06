@@ -155,7 +155,7 @@
 	return
 
 /obj/machinery/telecomms/message_server/attackby(obj/item/attacking_item, mob/user)
-	if (use_power && operable(EMPED) && (spamfilter_limit < MESSAGE_SERVER_DEFAULT_SPAM_LIMIT*2) && \
+	if (use_power && operable(MACHINE_STAT_EMPED) && (spamfilter_limit < MESSAGE_SERVER_DEFAULT_SPAM_LIMIT*2) && \
 		istype(attacking_item, /obj/item/circuitboard/message_monitor) && istype(user))
 		spamfilter_limit += round(MESSAGE_SERVER_DEFAULT_SPAM_LIMIT / 2)
 		user.drop_from_inventory(attacking_item, get_turf(src))

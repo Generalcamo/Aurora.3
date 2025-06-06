@@ -35,7 +35,7 @@
 
 /obj/machinery/orderterminal/update_icon()
 	ClearOverlays()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		set_light(FALSE)
 		return
 
@@ -44,7 +44,7 @@
 	set_light(1.4, 1, COLOR_CYAN)
 
 /obj/machinery/orderterminal/process()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		ClearOverlays()
 		set_light(FALSE)
 		return

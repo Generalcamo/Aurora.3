@@ -53,7 +53,7 @@
 	return ..()
 
 /obj/machinery/computer/message_monitor/attackby(obj/item/attacking_item, mob/user, params)
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return ..()
 	if(!istype(user))
 		return TRUE
@@ -91,7 +91,7 @@
 	..()
 
 /obj/machinery/computer/message_monitor/attack_hand(var/mob/living/user as mob)
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 	if(!istype(user))
 		return
@@ -111,8 +111,8 @@
 
 	if(hacking || emag)
 		screen = 2
-	else if(!auth || !linkedServer || (linkedServer.stat & (NOPOWER|BROKEN)))
-		if(!linkedServer || (linkedServer.stat & (NOPOWER|BROKEN))) message = noserver
+	else if(!auth || !linkedServer || (linkedServer.inoperable()))
+		if(!linkedServer || (linkedServer.inoperable())) message = noserver
 		screen = 0
 
 	switch(screen)
@@ -122,7 +122,7 @@
 			var/i = 0
 			dat += "<dd><A href='byond://?src=[REF(src)];find=1'>&#09;[++i]. Link To A Server</a></dd>"
 			if(auth)
-				if(!linkedServer || (linkedServer.stat & (NOPOWER|BROKEN)))
+				if(!linkedServer || (linkedServer.inoperable()))
 					dat += "<dd><A>&#09;ERROR: Server not found!</A><br></dd>"
 				else
 					dat += "<dd><A href='byond://?src=[REF(src)];view=1'>&#09;[++i]. View Message Logs </a><br></dd>"
@@ -149,7 +149,7 @@
 
 		//Message Logs
 		if(1)
-			if(src.linkedServer?.stat & (NOPOWER|BROKEN))
+			if(src.linkedServer?.is_broken())
 				dat += "<br><hr><dd><span class='notice'>Server is currently not accepting connections, or is down.</span>"
 			else
 				var/index = 3000
@@ -311,7 +311,7 @@
 
 	//View the logs - KEY REQUIRED
 	if (href_list["view"])
-		if(src.linkedServer == null || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+		if(src.linkedServer == null || (src.linkedServer.is_broken()))
 			message = noserver
 		else
 			if(auth)
@@ -319,7 +319,7 @@
 
 	//Clears the logs - KEY REQUIRED
 	if (href_list["clear"])
-		if(!linkedServer || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+		if(!linkedServer || (src.linkedServer.is_broken()))
 			message = noserver
 		else
 			if(auth)
@@ -327,7 +327,7 @@
 				message = SPAN_NOTICE("NOTICE: Logs cleared.")
 	//Clears the requests console logs - KEY REQUIRED
 	if (href_list["clearr"])
-		if(!linkedServer || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+		if(!linkedServer || (src.linkedServer.is_broken()))
 			message = noserver
 		else
 			if(auth)
@@ -335,7 +335,7 @@
 				message = SPAN_NOTICE("NOTICE: Logs cleared.")
 	//Change the password - KEY REQUIRED
 	if (href_list["pass"])
-		if(!linkedServer || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+		if(!linkedServer || (src.linkedServer.is_broken()))
 			message = noserver
 		else
 			if(auth)
@@ -367,7 +367,7 @@
 	if (href_list["delete"])
 		//Are they on the view logs screen?
 		if(screen == 1)
-			if(!linkedServer || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+			if(!linkedServer || (src.linkedServer.is_broken()))
 				message = noserver
 			else //if(istype(href_list["delete"], /datum/data_pda_msg))
 				src.linkedServer.pda_msgs -= locate(href_list["delete"])
@@ -376,14 +376,14 @@
 	if (href_list["deleter"])
 		//Are they on the view logs screen?
 		if(screen == 4)
-			if(!linkedServer || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+			if(!linkedServer || (src.linkedServer.is_broken()))
 				message = noserver
 			else //if(istype(href_list["delete"], /datum/data_pda_msg))
 				src.linkedServer.rc_msgs -= locate(href_list["deleter"])
 				message = SPAN_NOTICE("NOTICE: Log Deleted!")
 	//Create a custom message
 	if (href_list["msg"])
-		if(src.linkedServer == null || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+		if(src.linkedServer == null || (src.linkedServer.is_broken()))
 			message = noserver
 		else
 			if(auth)
@@ -391,7 +391,7 @@
 
 	//Requests Console Logs - KEY REQUIRED
 	if(href_list["viewr"])
-		if(src.linkedServer == null || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+		if(src.linkedServer == null || (src.linkedServer.is_broken()))
 			message = noserver
 		else
 			if(auth)
@@ -400,20 +400,20 @@
 		//to_chat(usr, href_list["select"])
 
 	if(href_list["spam"])
-		if(src.linkedServer == null || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+		if(src.linkedServer == null || (src.linkedServer.is_broken()))
 			message = noserver
 		else
 			if(auth)
 				src.screen = 5
 
 	if(href_list["addtoken"])
-		if(src.linkedServer == null || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+		if(src.linkedServer == null || (src.linkedServer.is_broken()))
 			message = noserver
 		else
 			src.linkedServer.spamfilter += input(usr,"Enter text you want to be filtered out","Token creation") as text|null
 
 	if(href_list["deltoken"])
-		if(src.linkedServer == null || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+		if(src.linkedServer == null || (src.linkedServer.is_broken()))
 			message = noserver
 		else
 			var/tokennum = text2num(href_list["deltoken"])

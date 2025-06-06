@@ -94,7 +94,7 @@ pixel_x = 8;
 	))
 	screen_hologram.blend_mode = BLEND_MULTIPLY
 	screen.blend_mode = BLEND_ADD
-	if(!on || stat & NOPOWER)
+	if(!on || !is_powered())
 		icon_state = initial(icon_state)
 		set_light(FALSE)
 		return
@@ -114,7 +114,7 @@ pixel_x = 8;
 	AddOverlays(screen_emis)
 
 /obj/machinery/ringer/attackby(obj/item/attacking_item, mob/user)
-	if(stat & (BROKEN|NOPOWER) || !istype(user,/mob/living))
+	if(inoperable() || !istype(user,/mob/living))
 		return TRUE
 
 	if (istype(attacking_item, /obj/item/modular_computer))
@@ -139,7 +139,7 @@ pixel_x = 8;
 
 	add_fingerprint(user)
 
-	if(stat & (BROKEN|NOPOWER) || !istype(usr,/mob/living))
+	if(inoperable() || !istype(usr,/mob/living))
 		return
 
 	if(!on)
@@ -195,7 +195,7 @@ pixel_x = 8;
 	update_icon()
 
 /obj/machinery/ringer_button/update_icon()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		icon_state = "ringer_off"
 	else
 		icon_state = "ringer"

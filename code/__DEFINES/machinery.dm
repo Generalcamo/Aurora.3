@@ -24,14 +24,20 @@
 #define POWER_USE_ACTIVE    2
 
 // Bitflags for machine stat variable.
-#define BROKEN   0x1
-#define NOPOWER  0x2
-#define POWEROFF 0x4  // TBD.
-#define MAINT    0x8  // Under maintenance.
-#define EMPED    0x10 // Temporary broken by EMP pulse.
-
-#define INOPERABLE(machine)  (machine.stat & (BROKEN|NOPOWER|MAINT|EMPED))
-#define OPERABLE(machine)    !INOPERABLE(machine)
+/// Machine is broken
+#define MACHINE_STAT_BROKEN 0x01
+/// Machine has no power
+#define MACHINE_STAT_NOPOWER 0x02
+/// TBD.
+#define MACHINE_STAT_POWEROFF 0x04
+/// Under maintenance.
+#define MACHINE_STAT_MAINT 0x08
+/// Temporarily broken by EMP pulse.
+#define MACHINE_STAT_EMPED 0x10
+/// No UI shown via direct interaction
+#define MACHINE_STAT_NOSCREEN 0x20
+/// No input taken from direct interaction
+#define MACHINE_STAT_NOINPUT 0x40
 
 // Used by firelocks
 #define FIREDOOR_OPEN 1
@@ -156,6 +162,4 @@ GLOBAL_LIST_INIT(restricted_camera_networks, list(NETWORK_ERT,NETWORK_MERCENARY,
 #define MACHINERY_PROCESS_ALL           (MACHINERY_PROCESS_SELF | MACHINERY_PROCESS_COMPONENTS)
 
 // Machinery init flag masks
-#define INIT_MACHINERY_PROCESS_SELF         0x1
-#define INIT_MACHINERY_PROCESS_COMPONENTS   0x2
-#define INIT_MACHINERY_PROCESS_ALL          0x3
+#define INIT_MACHINERY_START_PROCESSING FLAG(0)

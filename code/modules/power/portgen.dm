@@ -23,9 +23,6 @@
 	QDEL_NULL(soundloop)
 	return ..()
 
-/obj/machinery/power/portgen/proc/IsBroken()
-	return (stat & (BROKEN|EMPED))
-
 /obj/machinery/power/portgen/proc/HasFuel() //Placeholder for fuel check.
 	return TRUE
 
@@ -39,7 +36,7 @@
 	return
 
 /obj/machinery/power/portgen/process()
-	if(active && HasFuel() && !IsBroken() && anchored)
+	if(active && HasFuel() && !is_broken(MACHINE_STAT_EMPED) && anchored)
 		set_light(2, 1, l_color = portgen_lightcolour)
 		if(powernet)
 			add_avail(power_gen * power_output)
@@ -80,16 +77,16 @@
 	var/duration = 6000 //ten minutes
 	switch(severity)
 		if(EMP_HEAVY)
-			stat &= BROKEN
+			set_broken(TRUE)
 			if(prob(75)) explode()
 		if(EMP_LIGHT)
-			if(prob(25)) stat &= BROKEN
+			if(prob(25)) set_broken(TRUE)
 			if(prob(10)) explode()
 
-	stat |= EMPED
+	set_stat(MACHINE_STAT_EMPED, TRUE)
 	if(duration)
 		spawn(duration)
-			stat &= ~EMPED
+			set_stat(MACHINE_STAT_EMPED, FALSE)
 
 /obj/machinery/power/portgen/proc/explode()
 	explosion(loc, -1, 3, 5, -1)
@@ -163,7 +160,7 @@
 	. = ..()
 	. += "\The [src] appears to be producing [power_gen*power_output] W."
 	. += "There [sheets == 1 ? "is" : "are"] [sheets] sheet\s left in the hopper."
-	if(IsBroken())
+	if(is_broken())
 		. += SPAN_WARNING("\The [src] seems to have broken down.")
 	if(overheating)
 		. += SPAN_DANGER("\The [src] is overheating!")
@@ -335,7 +332,7 @@
 			data["temperature_min"] = FLOOR(environment.temperature - T0C, 1)
 
 	data["output_min"] = initial(power_output)
-	data["is_broken"] = IsBroken()
+	data["is_broken"] = is_broken()
 	data["is_ai"] = (isAI(user) || (isrobot(user) && !Adjacent(user)))
 
 	var/list/fuel = list(
@@ -369,7 +366,7 @@
 	add_fingerprint(usr)
 	switch(action)
 		if("enable")
-			if(!active && HasFuel() && !IsBroken())
+			if(!active && HasFuel() && !is_broken())
 				active = TRUE
 				update_icon()
 				soundloop.start(src)

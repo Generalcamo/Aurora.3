@@ -126,7 +126,7 @@ pixel_x = 10;
 	var/shorted = 0
 	var/highpower = 0	// if true, power usage & temperature regulation power is increased
 
-	var/datum/wires/alarm/wires
+	wires = /datum/wires/alarm
 
 	var/mode = AALARM_MODE_SCRUBBING
 	var/screen = AALARM_SCREEN_MAIN
@@ -378,7 +378,7 @@ pixel_x = 10;
 	TLV["temperature"] =	list(T0C-26, T0C, T0C+40, T0C+66) // K
 
 /obj/machinery/alarm/process(seconds_per_tick)
-	if((stat & (NOPOWER|BROKEN)) || shorted || buildstage != 2)
+	if(inoperable() || shorted || buildstage != 2)
 		return
 
 	var/turf/simulated/location = loc
@@ -517,7 +517,7 @@ pixel_x = 10;
 	if(wiresexposed)
 		icon_state = "alarmx"
 
-	if((stat & (NOPOWER|BROKEN)) || shorted)
+	if(inoperable() || shorted)
 		AddOverlays("alarm_fan_off")
 		set_light(0)
 		return
@@ -974,7 +974,7 @@ pixel_x = 10;
 				return TRUE
 
 			if (attacking_item.GetID())// trying to unlock the interface with an ID card
-				if(stat & (NOPOWER|BROKEN))
+				if (inoperable())
 					to_chat(user, SPAN_NOTICE("Nothing happens."))
 					return TRUE
 				else

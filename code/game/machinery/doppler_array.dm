@@ -30,18 +30,18 @@ GLOBAL_LIST_INIT_TYPED(doppler_arrays, /obj/machinery/doppler_array, list())
 /obj/machinery/doppler_array/update_icon()
 	icon_state = initial(icon_state)
 	set_light(0)
-	if(stat & BROKEN)
+	if(is_broken())
 		icon_state = "broken"
 	else
 		ClearOverlays()
-		if(!(stat & NOPOWER))
+		if(!(!is_powered()))
 			set_light(2, 1, COLOR_CYAN)
 			AddOverlays(image(icon, src, "teleport"))
 
 /obj/machinery/doppler_array/proc/sense_explosion(var/x0,var/y0,var/z0,var/devastation_range,var/heavy_impact_range,var/light_impact_range)
 	if(!active)
 		return
-	if(stat & NOPOWER)
+	if(!is_powered())
 		return
 	if(z != z0)
 		return

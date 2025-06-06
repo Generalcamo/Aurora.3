@@ -25,7 +25,7 @@
 	return ..()
 
 /obj/machinery/holosign/proc/toggle()
-	if (stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 	lit = !lit
 	update_use_power(lit ? POWER_USE_ACTIVE : POWER_USE_IDLE)
@@ -39,7 +39,7 @@
 
 /obj/machinery/holosign/power_change()
 	..()
-	if (stat & NOPOWER)
+	if (!is_powered())
 		lit = 0
 		update_use_power(POWER_USE_OFF)
 	update_icon()

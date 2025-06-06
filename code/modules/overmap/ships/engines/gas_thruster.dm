@@ -42,7 +42,7 @@
 			if(nozzle.check_blockage())
 				return
 		nozzle.update_use_power(POWER_USE_IDLE)
-		if(nozzle.stat & NOPOWER)//try again
+		if(!nozzle.is_powered())//try again
 			nozzle.power_change()
 		if(nozzle.is_on())//if everything is in working order, start booting!
 			nozzle.next_on = world.time + nozzle.boot_time
@@ -143,7 +143,7 @@
 			if(S.check_ownership(src))
 				S.engines |= controller
 				if(dir != S.fore_dir)
-					stat |= BROKEN
+					set_broken(TRUE)
 				break
 
 /obj/machinery/atmospherics/unary/engine/Destroy()
@@ -159,11 +159,11 @@
 /obj/machinery/atmospherics/unary/engine/proc/get_status()
 	. = list()
 	.+= "Location: [get_area(src)]."
-	if(stat & NOPOWER)
+	if(!is_powered())
 		.+= "<span class='average'>Insufficient power to operate.</span>"
 	if(!check_fuel())
 		.+= "<span class='average'>Insufficient fuel for a burn.</span>"
-	if(stat & BROKEN)
+	if(is_broken())
 		.+= "<span class='average'>Inoperable engine configuration.</span>"
 	if(blockage)
 		.+= "<span class='average'>Obstruction of airflow detected.</span>"
@@ -175,7 +175,7 @@
 
 /obj/machinery/atmospherics/unary/engine/power_change()
 	. = ..()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		update_use_power(POWER_USE_OFF)
 
 /obj/machinery/atmospherics/unary/engine/update_use_power()

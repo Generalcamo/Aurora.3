@@ -54,7 +54,7 @@
 		return TRUE
 
 /obj/machinery/chem_heater/interact(mob/user as mob)
-	if(stat & BROKEN)
+	if(is_broken())
 		return
 	user.set_machine(src)
 	var/dat = "<html>"
@@ -87,7 +87,7 @@
 	chem_win.open()
 
 /obj/machinery/chem_heater/Topic(href, href_list)
-	if(stat & BROKEN) return
+	if(inoperable()) return
 	if(usr.stat || usr.restrained()) return
 	if(!in_range(src, usr)) return
 

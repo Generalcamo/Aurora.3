@@ -16,7 +16,7 @@
 	optimal_power = 1.2
 	light_x = 2
 	max_contents = 5
-	stat = POWEROFF	//Starts turned off
+	stat = MACHINE_STAT_POWEROFF	//Starts turned off
 	var/open = FALSE // Start closed so people don't heat up ovens with the door open
 	///Looping sound for the oven
 	var/datum/looping_sound/oven/oven_loop

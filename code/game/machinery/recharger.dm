@@ -105,7 +105,7 @@
 		update_icon()
 
 /obj/machinery/recharger/process()
-	if(stat & (NOPOWER|BROKEN) || !anchored)
+	if(is_broken() || !anchored)
 		update_use_power(POWER_USE_OFF)
 		icon_state = icon_state_idle
 		return
@@ -152,7 +152,7 @@
 /obj/machinery/recharger/emp_act(severity)
 	. = ..()
 
-	if(stat & (NOPOWER|BROKEN) || !anchored)
+	if(is_broken() || !anchored)
 		return
 
 	if(istype(charging,  /obj/item/gun/energy))

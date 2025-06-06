@@ -22,7 +22,7 @@
 	update_icon()
 
 /obj/machinery/ai_slipper/update_icon()
-	if (stat & NOPOWER || stat & BROKEN)
+	if (inoperable())
 		icon_state = "motion0"
 	else
 		icon_state = disabled ? "motion0" : "motion3"
@@ -33,7 +33,7 @@
 	src.power_change()
 
 /obj/machinery/ai_slipper/attackby(obj/item/attacking_item, mob/user)
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 	if (istype(user, /mob/living/silicon))
 		return src.attack_hand(user)
@@ -58,8 +58,7 @@
 	return attack_hand(user)
 
 /obj/machinery/ai_slipper/attack_hand(mob/user as mob)
-	if(stat & (NOPOWER|BROKEN))
-		return
+	. = ..()
 	if ( (get_dist(src, user) > 1 ))
 		if (!istype(user, /mob/living/silicon))
 			to_chat(user, "Too far away.")

@@ -159,7 +159,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 		opened = COVER_OPENED
 		operating = FALSE
 		name = "[area.name] APC"
-		stat |= MAINT
+		set_stat(MACHINE_STAT_MAINT, TRUE)
 		update_icon()
 
 	if(!mapload)
@@ -258,7 +258,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 /obj/machinery/power/apc/get_examine_text(mob/user, distance, is_adjacent, infix, suffix)
 	. = ..()
 	if(distance <= 1)
-		if(stat & BROKEN)
+		if(is_broken())
 			. += SPAN_WARNING("It looks broken.")
 			return
 		if(opened)
@@ -390,7 +390,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 
 	if(cell)
 		update_state |= UPDATE_CELL_IN
-	if(stat & BROKEN)
+	if(is_broken())
 		update_state |= UPDATE_BROKE
 	if(stat & MAINT)
 		update_state |= UPDATE_MAINT
@@ -480,7 +480,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 			if(attacking_item.use_tool(src, user, 50, volume = 50))
 				if (has_electronics == HAS_ELECTRONICS_CONNECT)
 					has_electronics = HAS_ELECTRONICS_NONE
-					if ((stat & BROKEN))
+					if ((is_broken()))
 						user.visible_message(\
 							SPAN_WARNING("[user.name] has broken the power control board inside [name]!"),\
 							SPAN_NOTICE("You broke the charred power control board and remove the remains."),
@@ -495,7 +495,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 			panel_open = FALSE
 			opened = COVER_CLOSED
 			update_icon()
-	else if (attacking_item.iscrowbar() && !((stat & BROKEN) || hacker) )
+	else if (attacking_item.iscrowbar() && !((is_broken()) || hacker) )
 		if(coverlocked && !(stat & MAINT))
 			to_chat(user, SPAN_WARNING("The cover is locked and cannot be opened."))
 			return
@@ -553,7 +553,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 					to_chat(user, "You screw the circuit electronics into place.")
 				else if (has_electronics == HAS_ELECTRONICS_SECURED)
 					has_electronics = HAS_ELECTRONICS_CONNECT
-					stat |= MAINT
+					set_stat(MACHINE_STAT_MAINT, TRUE)
 					attacking_item.play_tool_sound(get_turf(src), 50)
 					to_chat(user, "You unfasten the electronics.")
 				else /* has_electronics == HAS_ELECTRONICS_NONE */
@@ -632,7 +632,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 	// POWER CONTROL CIRCUIT BOARD: If APC is broken, tell the player so.
 	//                              If APC is not broken, attempt to install the board inside.
 	else if (istype(attacking_item, /obj/item/module/power_control) && opened != COVER_CLOSED && has_electronics == HAS_ELECTRONICS_NONE)
-		if (stat & BROKEN)
+		if (is_broken())
 			to_chat(user, SPAN_WARNING("You cannot put the board inside, the frame is damaged."))
 			return
 		else
@@ -649,7 +649,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 	//         If the cover is open and APC has been stripped down, dismantle it back into steel.
 	else if (attacking_item.iswelder())
 		var/obj/item/weldingtool/WT = attacking_item
-		if (opened != COVER_REMOVED && (stat & BROKEN))
+		if (opened != COVER_REMOVED && (is_broken()))
 			if (!WT.isOn()) return
 			if (WT.get_fuel() <1)
 				to_chat(user, SPAN_WARNING("You need more welding fuel to complete this task."))
@@ -678,7 +678,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 			if(attacking_item.use_tool(src, user, 50, volume = 50))
 				if(!src || !WT.use(3, user))
 					return
-				if (emagged || (stat & BROKEN) || opened == COVER_REMOVED)
+				if (emagged || (is_broken()) || opened == COVER_REMOVED)
 					new /obj/item/stack/material/steel(loc)
 					user.visible_message(\
 						SPAN_WARNING("[src] has been cut apart by [user.name] with the welding tool."),\
@@ -705,7 +705,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 				SPAN_NOTICE("You replace the damaged APC cover panel with a new one."))
 			qdel(attacking_item)
 			update_icon()
-		else if (opened != COVER_CLOSED && ((stat & BROKEN) || hacker))
+		else if (opened != COVER_CLOSED && ((is_broken()) || hacker))
 			if (has_electronics == HAS_ELECTRONICS_CONNECT)
 				to_chat(user, SPAN_WARNING("You cannot repair this APC until you remove the electronics still inside."))
 				return
@@ -716,7 +716,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 					SPAN_NOTICE("[user.name] has replaced the damaged APC frame with new one."),\
 					"You replace the damaged APC frame with new one.")
 				qdel(attacking_item)
-				stat &= ~BROKEN
+				set_broken(FALSE)
 				// Malf AI, removes the APC from AI's hacked APCs list.
 				if(hacker?.hacked_apcs && (src in hacker.hacked_apcs))
 					hacker.hacked_apcs -= src
@@ -757,7 +757,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 
 	// ANYTHING ELSE: Beat the crap out of it.
 	else
-		if (((stat & BROKEN) || hacker) \
+		if (((is_broken()) || hacker) \
 				&& opened == COVER_CLOSED \
 				&& attacking_item.force >= 5 \
 				&& attacking_item.w_class >= WEIGHT_CLASS_NORMAL \
@@ -815,7 +815,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 		var/mob/living/carbon/human/H = user
 
 		if(isipc(H) && H.a_intent == I_GRAB)
-			if(emagged || stat & BROKEN)
+			if(emagged || is_broken())
 				spark(src, 5, GLOB.alldirs)
 				to_chat(H, SPAN_DANGER("The APC power currents surge eratically, damaging your chassis!"))
 				H.adjustFireLoss(10, 0)
@@ -1322,7 +1322,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 
 /obj/machinery/power/apc/proc/break_timer()
 	visible_message(SPAN_NOTICE("[src]'s screen suddenly explodes in rain of sparks and small debris!"))
-	stat |= BROKEN
+	set_broken(TRUE)
 	operating = 0
 	queue_icon_update()
 	update()
@@ -1339,7 +1339,7 @@ ABSTRACT_TYPE(/obj/machinery/power/apc)
 
 		for (var/obj/machinery/light/L in area)
 			if (prob(chance))
-				L.stat &= ~POWEROFF
+				L.set_stat(MACHINE_STAT_NOPOWER, TRUE)
 				L.broken()
 				CHECK_TICK
 

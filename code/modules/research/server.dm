@@ -55,7 +55,7 @@
 			id_with_download += text2num(N)
 
 /obj/machinery/r_n_d/server/process()
-	if(stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		return
 
 	if(!loc) return
@@ -84,7 +84,7 @@
 
 /obj/machinery/r_n_d/server/proc/upgrade_techs()
 	for(var/obj/machinery/r_n_d/tech_processor/TP as anything in linked_processors)
-		if(TP.stat & (NOPOWER|BROKEN))
+		if(TP.is_broken())
 			continue
 		TP.processing_stage++
 		if(TP.processing_stage == 5)
@@ -118,7 +118,7 @@
 	if(!use_power)
 		return
 
-	if(!(stat & (NOPOWER|BROKEN))) //Blatently stolen from telecoms
+	if(operable()) //Blatently stolen from telecoms
 		var/turf/simulated/L = loc
 		if(istype(L))
 			var/datum/gas_mixture/env = L.return_air()
@@ -289,7 +289,7 @@
 	return
 
 /obj/machinery/computer/rdservercontrol/attack_hand(mob/user as mob)
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		return
 	user.set_machine(src)
 	var/dat = ""

@@ -10,3 +10,5 @@
 #define COMSIG_GLOB_ATOM_AFTER_POST_INIT "!atom_after_post_init"
 /// mob died somewhere : (mob/living, gibbed)
 #define COMSIG_GLOB_MOB_DEATH "!mob_death"
+/// an obj/machinery is created! (obj/machinery/Initialize)
+#define COMSIG_GLOB_NEW_MACHINE "!new_machine"

@@ -58,9 +58,9 @@
 	if(length(output_options))
 		verbs += /obj/machinery/appliance/proc/choose_output
 	if(powered())
-		stat &= ~NOPOWER
+		set_stat(MACHINE_STAT_NOPOWER, TRUE)
 	else
-		stat |= NOPOWER
+		set_stat(MACHINE_STAT_NOPOWER, TRUE)
 	particle_holder = new particle_type
 
 /obj/machinery/appliance/Destroy()
@@ -124,7 +124,7 @@
 		return
 
 	stat ^= POWEROFF // Toggles power
-	update_use_power(stat & POWEROFF ? POWER_USE_OFF : POWER_USE_ACTIVE)
+	update_use_power(is_powered() ? POWER_USE_OFF : POWER_USE_ACTIVE)
 	if(user)
 		user.visible_message("[user] turns [src] [use_power ? "on" : "off"].", "You turn [use_power ? "on" : "off"] [src].")
 	playsound(src, 'sound/machines/click.ogg', 40, 1)
@@ -199,7 +199,7 @@
 	return TRUE
 
 /obj/machinery/appliance/attackby(obj/item/attacking_item, mob/user)
-	if(!cook_type || (stat & (BROKEN)))
+	if(!cook_type || (is_broken()))
 		to_chat(user, SPAN_WARNING("[src] is not working."))
 		return
 

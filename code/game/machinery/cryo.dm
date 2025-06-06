@@ -393,7 +393,7 @@
 	update_icon()
 
 /obj/machinery/atmospherics/unary/cryo_cell/proc/put_mob(mob/living/carbon/human/M as mob)
-	if (stat & (NOPOWER|BROKEN))
+	if (inoperable())
 		to_chat(usr, SPAN_WARNING("The cryo cell is not functioning."))
 		return
 	if (!istype(M))

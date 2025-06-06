@@ -40,10 +40,10 @@
 
 
 /obj/machinery/computer/aiupload/attack_hand(var/mob/user as mob)
-	if(src.stat & NOPOWER)
+	if(!is_powered())
 		to_chat(user, "The upload computer has no power!")
 		return
-	if(src.stat & BROKEN)
+	if(inoperable())
 		to_chat(user, "The upload computer is broken!")
 		return
 
@@ -83,19 +83,19 @@
 
 
 /obj/machinery/computer/borgupload/attack_hand(var/mob/user as mob)
-	if(src.stat & NOPOWER)
+	if(!is_powered())
 		to_chat(user, "The upload computer has no power!")
 		return
-	if(src.stat & BROKEN)
+	if(inoperable())
 		to_chat(user, "The upload computer is broken!")
 		return
 
-	src.current = freeborg()
+	current = freeborg()
 
-	if (!src.current)
+	if (!current)
 		to_chat(user, "No free cyborgs detected.")
 	else
-		to_chat(user, "[src.current.name] selected for law changes.")
+		to_chat(user, "[current.name] selected for law changes.")
 	return
 
 /obj/machinery/computer/borgupload/attack_ghost(user)

@@ -55,7 +55,7 @@
 		check_shield_icons()
 		update_shield_icons = 0
 
-	if(stat & (NOPOWER|BROKEN) || !active)//can update the icons even without power
+	if(is_broken() || !active)//can update the icons even without power
 		return
 
 	if(!fueljar)//No fuel but we are on, shutdown
@@ -123,7 +123,7 @@
 
 /obj/machinery/power/am_control_unit/power_change()
 	..()
-	if(stat & NOPOWER && active)
+	if(!is_powered() && active)
 		toggle_power()
 
 /obj/machinery/power/am_control_unit/update_icon()
@@ -258,7 +258,7 @@
 	update_icon()
 
 /obj/machinery/power/am_control_unit/interact(mob/user)
-	if((get_dist(src, user) > 1) || (stat & (BROKEN|NOPOWER)))
+	if((get_dist(src, user) > 1) || inoperable())
 		if(!issilicon(user))
 			user.unset_machine()
 			user << browse(null, "window=AMcontrol")
@@ -310,7 +310,7 @@
 			usr.unset_machine()
 		return TRUE
 	//Ignore input if we are broken or guy is not touching us, AI can control from a ways away
-	if(stat & (BROKEN|NOPOWER))
+	if (inoperable())
 		usr.unset_machine()
 		usr << browse(null, "window=AMcontrol")
 		return

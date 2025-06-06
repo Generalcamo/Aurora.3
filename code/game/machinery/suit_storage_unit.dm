@@ -81,7 +81,7 @@
 
 /obj/machinery/suit_storage_unit/power_change()
 	..()
-	if( !(stat & NOPOWER) )
+	if( !(!is_powered()) )
 		src.ispowered = 1
 		src.update_icon()
 	else
@@ -114,7 +114,7 @@
 	var/dat
 	if(..())
 		return
-	if(stat & NOPOWER)
+	if(!is_powered())
 		return
 	if(!user.IsAdvancedToolUser())
 		return 0

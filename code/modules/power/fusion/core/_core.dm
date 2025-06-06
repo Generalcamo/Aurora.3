@@ -27,7 +27,7 @@
 
 /obj/machinery/power/fusion_core/process()
 	. = ..()
-	if(stat & BROKEN || !powernet || !owned_field)
+	if(is_broken() || !powernet || !owned_field)
 		Shutdown()
 
 /obj/machinery/power/fusion_core/proc/Startup()
@@ -115,7 +115,7 @@
 /obj/machinery/power/fusion_core/proc/check_core_status()
 	if(!powernet)
 		connect_to_network()
-	if(stat & BROKEN)
+	if(is_broken())
 		return FALSE
 	if(idle_power_usage > avail())
 		return FALSE

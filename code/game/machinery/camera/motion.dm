@@ -26,7 +26,7 @@
 		cancelAlarm()
 
 /obj/machinery/camera/proc/cancelAlarm()
-	if (!status || (stat & NOPOWER))
+	if (!status || (!is_powered()))
 		return 0
 	if (detectTime == -1)
 		GLOB.motion_alarm.clearAlarm(loc, src)
@@ -34,7 +34,7 @@
 	return 1
 
 /obj/machinery/camera/proc/triggerAlarm()
-	if (!status || (stat & NOPOWER))
+	if (!status || (!is_powered()))
 		return 0
 	if (!detectTime) return 0
 	GLOB.motion_alarm.triggerAlarm(loc, src)

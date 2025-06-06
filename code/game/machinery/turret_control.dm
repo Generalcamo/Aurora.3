@@ -94,7 +94,7 @@
 	return ..()
 
 /obj/machinery/turretid/attackby(obj/item/attacking_item, mob/user)
-	if(stat & BROKEN)
+	if(is_broken())
 		return
 
 	if(attacking_item.GetID())
@@ -257,7 +257,7 @@
 
 /obj/machinery/turretid/update_icon()
 	..()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		icon_state = "control_off"
 		set_light(0)
 	else if (enabled)
