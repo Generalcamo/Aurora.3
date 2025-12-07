@@ -24,7 +24,8 @@
 		/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/carafe = 3,
 		/obj/item/reagent_containers/glass/beaker/pitcher = 3,
 		/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/coffeecup = 6,
-		/obj/item/reagent_containers/food/drinks/takeaway_cup_idris = 6,
+		/obj/item/reagent_containers/food/drinks/takeaway_cup/idris = 6,
+		/obj/item/reagent_containers/food/drinks/takeaway_cup/nanotrasen = 6,
 		/obj/item/clothing/accessory/apron/chef = 2,
 		/obj/item/clothing/suit/chef_jacket = 2,
 		/obj/item/material/kitchen/rollingpin = 2,
@@ -70,7 +71,8 @@
 		/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/carafe = 3,
 		/obj/item/reagent_containers/glass/beaker/pitcher = 3,
 		/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/coffeecup = 6,
-		/obj/item/reagent_containers/food/drinks/takeaway_cup_idris = 6,
+		/obj/item/reagent_containers/food/drinks/takeaway_cup/idris = 6,
+		/obj/item/reagent_containers/food/drinks/takeaway_cup/nanotrasen = 6,
 	)
 
 /obj/machinery/vending/dinnerware/metal
@@ -85,7 +87,8 @@
 		/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/carafe = 3,
 		/obj/item/reagent_containers/glass/beaker/pitcher = 3,
 		/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/coffeecup = 6,
-		/obj/item/reagent_containers/food/drinks/takeaway_cup_idris = 6,
+		/obj/item/reagent_containers/food/drinks/takeaway_cup/idris = 6,
+		/obj/item/reagent_containers/food/drinks/takeaway_cup/nanotrasen = 6,
 	)
 
 /obj/machinery/vending/dinnerware/bar
@@ -96,7 +99,8 @@
 		/obj/item/reagent_containers/food/drinks/drinkingglass = 40,
 		/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/carafe = 3,
 		/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/coffeecup = 6,
-		/obj/item/reagent_containers/food/drinks/takeaway_cup_idris = 12,
+		/obj/item/reagent_containers/food/drinks/takeaway_cup/idris = 12,
+		/obj/item/reagent_containers/food/drinks/takeaway_cup/nanotrasen = 12,
 		/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/pint = 6,
 		/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/square = 6,
 		/obj/item/reagent_containers/food/drinks/drinkingglass/newglass/mug = 6,

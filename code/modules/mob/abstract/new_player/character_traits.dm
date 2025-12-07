@@ -80,6 +80,14 @@
 	desc = "Your blood lacks ALL clotting factors, causing wounds to never stop bleeding."
 	trait_type = TRAIT_DISABILITY_HEMOPHILIA_MAJOR
 
+/datum/character_disabilities/phenylketonuria
+	name = "Phenylketonuria"
+	desc = "You are unable to properly metabolize phenylalanine, a common amino acid."
+	var/trait_type = TRAIT_DISABILITY_PHENYLKETONURIA
+
+/datum/character_disabilities/phenylketonuria/apply_self(var/mob/living/carbon/human/H)
+	ADD_TRAIT(H, trait_type, DISABILITY_TRAIT)
+
 
 ABSTRACT_TYPE(/datum/character_disabilities/organ_scarring)
 	name = "Organ Scarring"

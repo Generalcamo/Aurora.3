@@ -3,10 +3,10 @@
 ///Standard temperature of coffee made by the coffee machines. About 90° Celcius
 #define STANDARD_COFFEE_TEMPERATURE 363.15
 
-//Base type for all coffee makers.
+///Base type for all coffee makers.
 ABSTRACT_TYPE(/obj/machinery/coffeemaker)
 	name = "coffeemaker"
-	desc = "A Modello 4 Coffeemaker that brews coffee and holds it at the perfect temperature of 90° Celcius. Made by Piccionaia Home Appliances, a known subsidiary of Getmore Corporation."
+	desc = "A Modello 3 Coffeemaker that brews coffee and holds it at the perfect temperature of 90° Celcius."
 	icon = 'icons/obj/machinery/coffeemaker.dmi'
 	icon_state = "coffeemaker_nopot_nocart"
 	var/obj/item/reagent_containers/glass/beaker/pitcher/coffeepot = null
@@ -367,16 +367,30 @@ ABSTRACT_TYPE(/obj/machinery/coffeemaker)
 	brewing = FALSE
 	//toggle_steam()
 
-/obj/machinery/coffeemaker/proc/brew(user)
+/obj/machinery/coffeemaker/proc/brew_from_cartridge(user)
 	power_change()
 	if(!try_brew_from_cartridge(user))
 		return
 	operate_for(brew_time)
-	coffeepot.reagents.add_reagent()
 	for(var/drink as anything in cartridge.drink_type)
 		var/amount = cartridge.drink_type[drink]
 		coffeepot.reagents.add_reagent(drink, amount, temperature = STANDARD_COFFEE_TEMPERATURE)
 	cartridge.charges--
+	update_icon()
+
+/obj/machinery/coffeemaker/proc/brew_from_beans(user)
+	power_change()
+	if(!try_brew_from_beans(user))
+		return
+	operate_for(brew_time)
+
+	// create a reference bean reagent list
+	var/list/reference_bean_reagents = list()
+	var/obj/item/food/grown/coffee/reference_bean = new /obj/item/food/grown/coffee(src)
+	for(var/datum/reagent/ref_bean_reagent as anything in reference_bean.reagents.reagent_list)
+		reference_bean_reagents += ref_bean_reagent.name
+
+
 	update_icon()
 
 /obj/machinery/coffeemaker/cartridge/standard
@@ -442,6 +456,23 @@ ABSTRACT_TYPE(/obj/item/coffee_cartridge)
 	desc = "A hot chocolate cartridge manufactured by Piccionaia Coffee, for use with the Modello 3 system."
 	drink_type = list(/singleton/reagent/drink/hot_coco = 120)
 
+//The Piccionaia Modello 3 coffeemaker, common
+/obj/machinery/coffeemaker/piccionaia
+	name = "\improper Piccionaia Modello 3 coffeemaker"
+	desc = "A Modello 3 Coffeemaker that brews coffee and holds it at the perfect temperature of 90° Celcius. Made by Piccionaia Home Appliances, a known subsidiary of Getmore Corporation."
+	initial_cartridge = /obj/item/coffee_cartridge/standard
+
+//Piccionaia Modello 3 coffeemaker, but spawns with hot cocoa cartridge
+/obj/machinery/coffeemaker/piccionaia/hot_cocoa
+	initial_cartridge = /obj/item/coffee_cartridge/hot_coco
+
+//A pirated version of the Piccionaia Modello 3 coffeemaker. Meant for anti-corporate usage.
+/obj/machinery/coffeemaker/pirate
+	name = "pirated Modello 3 coffeemaker"
+	desc = "A pirated Modello 3 Coffeemaker that brews coffee and holds it at the perfect temperature of 90° Celcius. Appears to be a knock-off of Getmore's Piccionaia brand."
+	initial_cartridge = /obj/item/coffee_cartridge/standard
+	// It's a knock-off, so it won't be as good at brewing
+	brew_time = 25 SECONDS
 
 #undef BEAN_CAPACITY
 #undef STANDARD_COFFEE_TEMPERATURE

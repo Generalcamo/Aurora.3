@@ -288,6 +288,8 @@
 	var/list/inherent_verbs
 	/// Species-specific spells.
 	var/list/inherent_spells
+	/// Generic traits tied to having the species.
+	var/list/inherent_traits = list()
 	/// Can use small items.
 	var/has_fine_manipulation = 1
 	/// The lower, the thicker the skin and better the insulation.
@@ -634,6 +636,10 @@
 		H.pronouns = H.gender
 	if(has_psionics)
 		H.set_psi_rank(has_psionics)
+	if(length(inherent_traits))
+		for(var/trait_path in inherent_traits)
+			ADD_TRAIT(H, trait_path)
+
 
 /datum/species/proc/handle_death(var/mob/living/carbon/human/H, var/gibbed = 0) //Handles any species-specific death events (such as dionaea nymph spawns).
 	return

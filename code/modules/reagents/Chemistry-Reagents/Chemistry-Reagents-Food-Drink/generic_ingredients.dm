@@ -237,13 +237,21 @@
 
 /singleton/reagent/phenyltame
 	name = "\improper Phenyltame"
-	description = "An advanced artificial sweetener, developed and distributed by Getmore Corporation."
+	description = "An advanced artificial sweetener, developed and distributed by Getmore Corporation. It has a warning label on it: \"Phenylketonurics: Contains Phenylalanine.\""
 	reagent_state = SOLID
 	color = COLOR_WHITE
 	taste_description = "sweetness"
 	value = 0.2
 	overdose = 17
 	metabolism = REM * 2
+
+/singleton/reagent/phenyltame/affect_blood(mob/living/carbon/M, alien, removed, datum/reagents/holder)
+	if(HAS_TRAIT(M, TRAIT_DISABILITY_PHENYLKETONURIA))
+		M.adjustToxLoss(removed * 2)
+		M.confused = max(M.confused, 10)
+		if(prob(5))
+			to_chat(M, SPAN_WARNING("You feel dizzy and disoriented."))
+
 
 /singleton/reagent/blackpepper
 	name = "Black Pepper"

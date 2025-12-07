@@ -66,7 +66,8 @@
 	eventual revolution that overthrew their ancient monarchies to become totalitarian - and NanoTrasen friendly - \
 	republics. Adhomai is still enduring a global war in the aftermath of the new world order, and many Tajara are \
 	fleeing their homeworld to seek safety and employment in human space. They prefer colder environments, and speak \
-	a variety of languages, mostly Siik'Maas, using unique inflections their mouths form."
+	a variety of languages, mostly Siik'Maas, using unique inflections their mouths form. Compared to most humans, Tajara are \
+	unable to digest phenylalanine, a common amino acid found in many foods, and must avoid it to prevent sickness."
 
 	cold_level_1 = 200 //Default 260
 	cold_level_2 = 140 //Default 200
@@ -105,6 +106,8 @@
 
 	inherent_verbs = list(
 		/mob/living/carbon/human/proc/tie_hair)
+	inherent_traits = list(
+		TRAIT_DISABILITY_PHENYLKETONURIA)
 
 	zombie_type = SPECIES_ZOMBIE_TAJARA
 
