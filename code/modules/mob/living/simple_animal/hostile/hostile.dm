@@ -12,11 +12,22 @@ ABSTRACT_TYPE(/mob/living/simple_animal/hostile)
 	 */
 	var/atom/last_found_target
 
+	///Does this mob belong to the station?
 	var/belongs_to_station = FALSE
-	var/attack_same = 0
-	var/ranged = 0
+	///Do we attack targets of the same faction?
+	var/attack_same = FALSE
+	///Does this mob use ranged attacks?
+	var/ranged = FALSE
+	///How many shots per volley?
 	var/rapid = 0
+	///Time between rapid fire shots
+	var/rapid_fire_delay = 0.2 SECONDS
+	///How far this mob can shoot
 	var/ranged_attack_range = 6
+	///What the current cooldown on ranged attacks is, generally world.time + ranged_cooldown_time
+	var/ranged_cooldown = 0
+	///How long, in deciseconds, the cooldown of ranged attacks is
+	var/ranged_cooldown_time = 3 SECONDS
 	var/projectiletype
 	var/projectilesound
 	var/casingtype
@@ -30,7 +41,8 @@ ABSTRACT_TYPE(/mob/living/simple_animal/hostile)
 	hunger_enabled = 0//Until automated eating mechanics are enabled, disable hunger for hostile mobs
 	var/shuttletarget = null
 	var/enroute = 0
-	var/obj/effect/landmark/mob_waypoint/target_waypoint = null // The waypoint mobs that are spawned by mapped in spawners move to
+	/// The waypoint mobs that are spawned by mapped in spawners move to
+	var/obj/effect/landmark/mob_waypoint/target_waypoint = null
 
 	// Vars to help find targets
 	var/list/targets = list()
@@ -39,13 +51,16 @@ ABSTRACT_TYPE(/mob/living/simple_animal/hostile)
 	var/list/tolerated_types = list()
 	var/attack_emote = "stares menacingly at"
 
-	var/smart_melee = TRUE   // This makes melee mobs try to stay two tiles away from their target in combat, lunging in to attack only
-	var/smart_ranged = FALSE // This makes ranged mob check for friendly fire and obstacles
-	var/hostile_nameable = FALSE //If we can rename this hostile mob. Mostly to prevent repeat checks with guard dogs and hostile/retaliate farm animals
+	/// This makes melee mobs try to stay two tiles away from their target in combat, lunging in to attack only
+	var/smart_melee = TRUE
+	/// This makes ranged mob check for friendly fire and obstacles
+	var/smart_ranged = FALSE
+	///If we can rename this hostile mob. Mostly to prevent repeat checks with guard dogs and hostile/retaliate farm animals
+	var/hostile_nameable = FALSE
 
 	var/is_fast_processing = FALSE
 
-	// actions measured in deciseconds
+	/// actions measured in deciseconds
 	var/hostile_time_between_attacks = 10
 	var/hostile_last_attack = 0
 
@@ -388,13 +403,13 @@ ABSTRACT_TYPE(/mob/living/simple_animal/hostile)
 	visible_message(SPAN_DANGER("[capitalize_first_letters(src.name)] fires at \the [target]!"))
 	hostile_last_attack = world.time
 
-	if(rapid)
+	if(rapid > 1)
 		var/datum/callback/shoot_cb = CALLBACK(src, PROC_REF(shoot_wrapper), target, loc, src)
-		addtimer(shoot_cb, 1)
-		addtimer(shoot_cb, 4)
-		addtimer(shoot_cb, 6)
+		for(var/i in 1 to rapid)
+			addtimer(shoot_cb, (i - 1) * rapid_fire_delay)
 	else
 		shoot_wrapper(target, loc, src)
+	ranged_cooldown = world.time + ranged_cooldown_time
 
 	change_stance(HOSTILE_STANCE_IDLE)
 	unset_last_found_target()
@@ -410,7 +425,7 @@ ABSTRACT_TYPE(/mob/living/simple_animal/hostile)
 			target_hit = TRUE
 		if(ismob(V))
 			var/mob/M = V
-			if((M.faction == faction) || (M in friends))
+			if((M.faction == faction && !attack_same) || (M in friends))
 				return FALSE
 		if(validator_e_field(V, null))
 			target_hit = TRUE
@@ -507,8 +522,7 @@ ABSTRACT_TYPE(/mob/living/simple_animal/hostile)
 		return FALSE
 
 /mob/living/simple_animal/hostile/RangedAttack(atom/A, params) //Player firing
-	if(ranged)
-		setClickCooldown(attack_delay)
+	if(ranged && ranged_cooldown <= world.time)
 		set_last_found_target(A)
 		OpenFire(A)
 		return

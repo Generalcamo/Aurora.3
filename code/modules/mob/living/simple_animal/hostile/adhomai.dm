@@ -146,6 +146,12 @@
 
 	blood_overlay_icon = null
 
+/mob/living/simple_animal/hostile/plasmageist/update_icon()
+	..()
+	ClearOverlays()
+	if(stat != DEAD)
+		AddOverlays(emissive_appearance(icon, icon_state, src, alpha = src.alpha))
+
 /mob/living/simple_animal/hostile/plasmageist/attack_hand(mob/living/carbon/human/M as mob)
 	M.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
 	visible_message(SPAN_WARNING("\The [M] tries to touch \the [src]!"))
@@ -164,6 +170,15 @@
 	spark(T, 1, GLOB.alldirs)
 	explosion(T, -1, 0, 2)
 	qdel(src)
+
+/mob/living/simple_animal/hostile/plasmageist/handle_fire()
+	return TRUE // Immune to fire
+
+/mob/living/simple_animal/hostile/plasmageist/IgniteMob(fire_stacks_to_add)
+	return // Immune to fire
+
+/mob/living/simple_animal/hostile/plasmageist/ExtinguishMob(fire_stacks_to_remove)
+	return // Immune to fire
 
 /mob/living/simple_animal/hostile/plasmageist/ex_act(severity)
 	return
