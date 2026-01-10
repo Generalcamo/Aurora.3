@@ -1267,8 +1267,8 @@
 /turf/unsimulated/floor,
 /area/centcom/bar)
 "agv" = (
-/obj/machinery/atmospherics/pipe/simple/visible/purple{
-	dir = 4
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
+	dir = 8
 	},
 /obj/effect/floor_decal/corner_wide/black{
 	dir = 5
@@ -1364,6 +1364,9 @@
 	sensors = list("h_sensor"="Tank")
 	},
 /obj/effect/floor_decal/industrial/outline/firefighting_closet,
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
+	dir = 10
+	},
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/propulsion/starboard)
 "ahf" = (
@@ -3458,8 +3461,8 @@
 /area/horizon/operations/office)
 "auX" = (
 /obj/machinery/firealarm/north,
-/obj/machinery/atmospherics/pipe/simple/visible/purple{
-	dir = 4
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
+	dir = 8
 	},
 /obj/effect/floor_decal/corner_wide/black{
 	dir = 5
@@ -6619,13 +6622,14 @@
 	name = "Port Propulsion Control Console";
 	input_tag = "port_prop_in"
 	},
-/obj/machinery/atmospherics/pipe/simple/hidden/purple{
-	dir = 6
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
+	dir = 8
 	},
 /obj/effect/floor_decal/industrial/outline/emergency_closet,
 /obj/structure/sign/nosmoking_1{
 	pixel_y = 32
 	},
+/obj/machinery/atmospherics/unary/vent_pump/on,
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/propulsion)
 "aPJ" = (
@@ -9677,8 +9681,8 @@
 	name = "Starboard Propulsion Control Console";
 	input_tag = "starboard_prop_in"
 	},
-/obj/machinery/atmospherics/pipe/simple/hidden/purple{
-	dir = 10
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
+	dir = 8
 	},
 /obj/effect/floor_decal/industrial/outline/emergency_closet,
 /obj/structure/sign/nosmoking_1{
@@ -13938,7 +13942,6 @@
 /turf/simulated/floor/holofloor/carpet,
 /area/horizon/holodeck/source_dininghall)
 "bPk" = (
-/obj/machinery/atmospherics/unary/vent_pump/on,
 /obj/machinery/light{
 	dir = 1
 	},
@@ -13948,6 +13951,9 @@
 	sensors = list("h_sensor"="Tank")
 	},
 /obj/effect/floor_decal/industrial/outline/firefighting_closet,
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
+	dir = 6
+	},
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/propulsion)
 "bPp" = (
@@ -67238,7 +67244,7 @@
 /turf/template_noop,
 /area/template_noop)
 "iUY" = (
-/obj/machinery/atmospherics/pipe/manifold/visible/purple,
+/obj/machinery/atmospherics/pipe/manifold/hidden/red,
 /obj/effect/floor_decal/corner_wide/black{
 	dir = 1
 	},
@@ -70545,8 +70551,8 @@
 	pixel_y = 26;
 	name = "Combustion Chamber Ignition"
 	},
-/obj/machinery/atmospherics/pipe/simple/visible/purple{
-	dir = 4
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
+	dir = 8
 	},
 /obj/effect/floor_decal/corner_wide/black/full{
 	dir = 8
@@ -75237,8 +75243,13 @@
 /turf/simulated/floor/marble,
 /area/horizon/holodeck/source_trinary)
 "jYg" = (
-/obj/machinery/atmospherics/pipe/manifold/visible/purple,
 /obj/structure/lattice/catwalk/indoor/grate/dark,
+/obj/machinery/atmospherics/pipe/simple/visible/purple{
+	dir = 4
+	},
+/obj/machinery/atmospherics/pipe/simple/hidden/supply{
+	dir = 9
+	},
 /turf/simulated/floor/plating,
 /area/horizon/engineering/atmos/propulsion)
 "jYi" = (
@@ -87401,7 +87412,7 @@
 /turf/unsimulated/floor,
 /area/antag/mercenary)
 "lzG" = (
-/obj/machinery/atmospherics/pipe/simple/visible/purple{
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
 	dir = 6
 	},
 /obj/effect/floor_decal/corner_wide/black/full{
@@ -93469,9 +93480,7 @@
 /turf/simulated/floor/plating,
 /area/horizon/maintenance/deck_1/wing/starboard/far)
 "mrg" = (
-/obj/machinery/atmospherics/pipe/simple/visible/red{
-	dir = 4
-	},
+/obj/machinery/atmospherics/pipe/manifold/visible/red,
 /obj/machinery/atmospherics/pipe/simple/hidden/supply,
 /obj/structure/lattice/catwalk/indoor/grate/dark,
 /turf/simulated/floor/plating,
@@ -95348,7 +95357,7 @@
 /turf/simulated/floor/wood,
 /area/horizon/command/heads/chief)
 "mFl" = (
-/obj/machinery/atmospherics/pipe/simple/visible/purple{
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
 	dir = 10
 	},
 /obj/effect/floor_decal/corner_wide/black/full{
@@ -111324,7 +111333,7 @@
 "oMG" = (
 /obj/machinery/atmospherics/binary/pump/high_power{
 	dir = 8;
-	name = "Phoron to Propellant Line"
+	name = "Hydrogen to Propellant Line"
 	},
 /obj/machinery/light{
 	dir = 1
@@ -116104,11 +116113,14 @@
 /obj/machinery/atmospherics/pipe/simple/visible/purple{
 	dir = 4
 	},
-/obj/machinery/atmospherics/pipe/simple/hidden/supply,
+/obj/machinery/atmospherics/pipe/simple/hidden/supply{
+	dir = 6
+	},
 /obj/structure/lattice/catwalk/indoor/grate/dark,
 /obj/structure/bed/stool/chair/office/dark{
 	dir = 1
 	},
+/obj/machinery/atmospherics/pipe/simple/hidden/red,
 /turf/simulated/floor/plating,
 /area/horizon/engineering/atmos/propulsion)
 "put" = (
@@ -116814,7 +116826,9 @@
 /turf/simulated/floor/wood,
 /area/horizon/command/heads/captain)
 "pzB" = (
-/obj/machinery/atmospherics/pipe/manifold/visible/purple,
+/obj/machinery/atmospherics/pipe/simple/visible/purple{
+	dir = 4
+	},
 /obj/structure/lattice/catwalk/indoor/grate/dark,
 /turf/simulated/floor/plating,
 /area/horizon/engineering/atmos/propulsion/starboard)
@@ -127403,8 +127417,8 @@
 /turf/simulated/floor/plating,
 /area/horizon/maintenance/deck_2/wing/port/nacelle)
 "qXl" = (
-/obj/machinery/atmospherics/pipe/simple/visible/purple{
-	dir = 4
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
+	dir = 8
 	},
 /obj/machinery/firealarm/north,
 /obj/machinery/meter,
@@ -131955,7 +131969,7 @@
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos)
 "rBa" = (
-/obj/machinery/atmospherics/pipe/manifold/visible/purple,
+/obj/machinery/atmospherics/pipe/manifold/hidden/red,
 /obj/effect/floor_decal/corner_wide/black{
 	dir = 4
 	},
@@ -133563,8 +133577,8 @@
 /turf/simulated/floor/plating,
 /area/horizon/engineering/atmos/air)
 "rMs" = (
-/obj/machinery/atmospherics/pipe/simple/visible/purple{
-	dir = 4
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
+	dir = 8
 	},
 /obj/effect/floor_decal/corner_wide/black{
 	dir = 5
@@ -135460,8 +135474,8 @@
 	pixel_y = 26;
 	name = "Combustion Chamber Ignition"
 	},
-/obj/machinery/atmospherics/pipe/simple/visible/purple{
-	dir = 4
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
+	dir = 8
 	},
 /obj/effect/floor_decal/corner_wide/black/full{
 	dir = 1
@@ -146997,6 +147011,9 @@
 /obj/structure/bed/stool/chair/office/dark{
 	dir = 1
 	},
+/obj/machinery/atmospherics/pipe/simple/hidden/red{
+	dir = 1
+	},
 /turf/simulated/floor/plating,
 /area/horizon/engineering/atmos/propulsion/starboard)
 "tyA" = (
@@ -147009,7 +147026,7 @@
 "tyB" = (
 /obj/machinery/atmospherics/binary/pump/high_power{
 	dir = 4;
-	name = "Phoron to Propellant Line"
+	name = "Hydrogen to Propellant Line"
 	},
 /obj/machinery/light{
 	dir = 1
@@ -155489,9 +155506,7 @@
 /turf/simulated/floor/carpet/rubber,
 /area/horizon/operations/machinist)
 "uHc" = (
-/obj/machinery/atmospherics/pipe/simple/visible/red{
-	dir = 8
-	},
+/obj/machinery/atmospherics/pipe/manifold/visible/red,
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
 /obj/structure/cable{
 	icon_state = "2-4"

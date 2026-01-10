@@ -69,24 +69,29 @@
 	component_types = list(
 		/obj/item/circuitboard/unary_atmos/engine,
 		/obj/item/stack/cable_coil = 30,
-		/obj/item/pipe = 2)
+		/obj/item/pipe = 2,
+		/obj/item/stock_parts/matter_bin = 1,
+		/obj/item/stock_parts/capacitor = 2)
 
 	var/datum/ship_engine/gas_thruster/controller
 	var/thrust_limit = 1	//Value between 1 and 0 to limit the resulting thrust
-	var/volume_per_burn = 15 //20 litres(with bin)
+	var/moles_per_burn = 5.0
 	var/charge_per_burn = 36000 //10Wh for default 2 capacitor, chews through that battery power! Makes a trade off of fuel efficient vs energy efficient
 	var/boot_time = 35
 	var/next_on
 	var/blockage
 	var/exhaust_offset = 1 // for engines that are longer
 	var/exhaust_width = 1 //for engines that are wider
+	var/max_upgrade_level = 6
 
 /obj/machinery/atmospherics/unary/engine/scc_shuttle
 	icon = 'icons/obj/spaceship/scc/ship_engine.dmi'
 	component_types = list(
 		/obj/item/circuitboard/unary_atmos/engine/scc_shuttle,
 		/obj/item/stack/cable_coil = 30,
-		/obj/item/pipe = 2)
+		/obj/item/pipe = 2,
+		/obj/item/stock_parts/matter_bin = 1,
+		/obj/item/stock_parts/capacitor = 2)
 
 /obj/machinery/atmospherics/unary/engine/scc_ship_engine
 	name = "ship thruster"
@@ -98,7 +103,12 @@
 	component_types = list(
 		/obj/item/circuitboard/unary_atmos/engine/scc_ship,
 		/obj/item/stack/cable_coil = 30,
-		/obj/item/pipe = 2)
+		/obj/item/pipe = 2,
+		/obj/item/stock_parts/matter_bin = 3,
+		/obj/item/stock_parts/capacitor = 6)
+	moles_per_burn = 25.0 // Five times the power
+	charge_per_burn = 180000 // For five times the energy cost!
+	max_upgrade_level = 12
 
 /obj/machinery/atmospherics/unary/engine/attackby(obj/item/attacking_item, mob/user)
 	. = ..()
@@ -152,9 +162,9 @@
 	. = ..()
 
 /obj/machinery/atmospherics/unary/engine/update_icon()
-	overlays.Cut()
+	ClearOverlays()
 	if(is_on())
-		overlays += "nozzle_idle"
+		AddOverlays(overlay_image(icon, "nozzle_idle", plane = ABOVE_GAME_PLANE, layer = SINGULARITY_LAYER))
 
 /obj/machinery/atmospherics/unary/engine/proc/get_status()
 	. = list()
@@ -169,7 +179,7 @@
 		.+= "<span class='average'>Obstruction of airflow detected.</span>"
 
 	.+= "Propellant total mass: [round(air_contents.get_mass(),0.01)] kg."
-	.+= "Propellant used per burn: [round(air_contents.get_mass() * volume_per_burn * thrust_limit / air_contents.volume,0.01)] kg."
+	.+= "Propellant used per burn: [round(air_contents.specific_mass() * moles_per_burn * thrust_limit,0.01)] kg."
 	.+= "Propellant pressure: [round(air_contents.return_pressure()/1000,0.1)] MPa."
 	. = jointext(.,"<br>")
 
@@ -186,12 +196,12 @@
 	return use_power && operable() && (next_on < world.time)
 
 /obj/machinery/atmospherics/unary/engine/proc/check_fuel()
-	return air_contents.total_moles > 5 // minimum fuel usage is five moles, for EXTREMELY hot mix or super low pressure
+	return air_contents.total_moles > moles_per_burn * thrust_limit
 
 /obj/machinery/atmospherics/unary/engine/proc/get_thrust()
 	if(!is_on() || !check_fuel())
 		return 0
-	var/used_part = volume_per_burn * thrust_limit / air_contents.volume
+	var/used_part = moles_per_burn/air_contents.get_total_moles() * thrust_limit
 	. = calculate_thrust(air_contents, used_part)
 	return
 
@@ -218,7 +228,7 @@
 		update_use_power(POWER_USE_OFF)
 		return 0
 
-	var/datum/gas_mixture/removed = air_contents.remove_ratio(volume_per_burn * thrust_limit * power_modifier / air_contents.volume)
+	var/datum/gas_mixture/removed = air_contents.remove(moles_per_burn * thrust_limit)
 	if(!removed)
 		return 0
 	. = calculate_thrust(removed)
@@ -244,7 +254,26 @@
 		new/obj/effect/engine_exhaust(T, dir, air_contents.check_combustibility() && air_contents.temperature >= PHORON_MINIMUM_BURN_TEMPERATURE)
 
 /obj/machinery/atmospherics/unary/engine/proc/calculate_thrust(datum/gas_mixture/propellant, used_part = 1)
-	return round(sqrt(propellant.get_mass() * used_part * sqrt(air_contents.return_pressure()/200)),0.1)
+	return round(sqrt(propellant.get_mass() * used_part * sqrt(air_contents.return_pressure()/100)),0.1)
+
+/obj/machinery/atmospherics/unary/engine/RefreshParts()
+	..()
+	var/bin_rating = 0
+	var/cap_rating = 0
+	for(var/obj/item/stock_parts/P in component_parts)
+		if(ismatterbin(P))
+			bin_rating += P.rating
+		if(iscapacitor(P))
+			cap_rating += P.rating
+
+	//allows them to upgrade the max limit of fuel intake (which only gives diminishing returns) for increase in max thrust but massive reduction in fuel economy
+	var/bin_upgrade = 0.5 * clamp(bin_rating, 0, max_upgrade_level)//0.5 mol per rank
+	moles_per_burn = bin_upgrade ? initial(moles_per_burn) + bin_upgrade : 0.5 //Penalty missing part: 10% fuel use
+	boot_time = bin_upgrade ? initial(boot_time) - bin_upgrade : initial(boot_time) * 2
+	//energy cost - thb all of this is to limit the use of back up batteries
+	var/energy_upgrade = clamp(cap_rating, 1, max_upgrade_level)
+	charge_per_burn = initial(charge_per_burn) / energy_upgrade
+	change_power_consumption(initial(idle_power_usage) / energy_upgrade, POWER_USE_IDLE)
 
 //Exhaust effect
 /obj/effect/engine_exhaust
