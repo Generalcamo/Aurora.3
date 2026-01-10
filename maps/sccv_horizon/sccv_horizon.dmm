@@ -1193,15 +1193,12 @@
 /turf/simulated/wall,
 /area/horizon/crew/fitness/changing)
 "agm" = (
-/obj/structure/lattice/catwalk,
-/obj/item/hullbeacon/red,
-/obj/structure/sign/securearea{
-	name = "\improper DANGER: HOT GAS sign";
-	pixel_y = -29;
-	desc = "A warning sign which reads \"DANGER: HOT GAS\"."
+/obj/machinery/atmospherics/unary/vent_pump/siphon/on/atmos{
+	dir = 8;
+	id_tag = "air_out"
 	},
-/turf/space,
-/area/horizon/exterior)
+/turf/simulated/floor/reinforced/airless,
+/area/horizon/engineering/atmos/turbine)
 "ago" = (
 /obj/structure/table/wood,
 /obj/item/storage/box/fancy/cigarettes,
@@ -5641,11 +5638,10 @@
 /turf/unsimulated/floor/plating,
 /area/shuttle/syndicate_elite)
 "aJU" = (
-/obj/machinery/atmospherics/pipe/simple/heat_exchanging,
-/obj/machinery/atmospherics/pipe/simple/heat_exchanging{
-	dir = 4
-	},
 /obj/structure/lattice,
+/obj/structure/sign/fire{
+	pixel_x = -32
+	},
 /turf/space,
 /area/horizon/exterior)
 "aJX" = (
@@ -11124,21 +11120,17 @@
 /turf/simulated/floor/plating,
 /area/horizon/maintenance/deck_1/atmos_crosser)
 "btE" = (
-/obj/machinery/button/ignition{
-	id = "turbine_igni";
-	pixel_y = 26;
-	name = "Combustion Chamber Ignition"
-	},
 /obj/effect/floor_decal/corner/dark_blue{
 	dir = 4
 	},
 /obj/effect/floor_decal/corner/yellow{
 	dir = 1
 	},
-/obj/effect/floor_decal/industrial/warning{
-	dir = 1
+/obj/machinery/button/switch{
+	dir = 1;
+	pixel_y = 32;
+	id = "turbine_ignite"
 	},
-/obj/machinery/atmospherics/pipe/simple/visible/cyan,
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/turbine)
 "btM" = (
@@ -13992,12 +13984,10 @@
 /turf/simulated/floor/tiled/dark/full,
 /area/horizon/storage/eva)
 "bPt" = (
-/obj/machinery/camera/network/engineering{
-	c_tag = "Engineering - Turbine Combustion Chamber";
-	dir = 1;
-	pixel_x = -11
+/obj/machinery/atmospherics/unary/outlet_injector/fuel{
+	id = "turbine_fuel_in";
+	frequency = 1443
 	},
-/obj/machinery/atmospherics/pipe/simple/visible/purple,
 /turf/simulated/floor/reinforced/airless,
 /area/horizon/engineering/atmos/turbine)
 "bPx" = (
@@ -14440,10 +14430,7 @@
 /obj/effect/floor_decal/corner/yellow{
 	dir = 1
 	},
-/obj/effect/floor_decal/industrial/warning{
-	dir = 1
-	},
-/obj/machinery/atmospherics/pipe/simple/visible/yellow,
+/obj/machinery/atmospherics/pipe/simple/visible/black,
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/turbine)
 "bSB" = (
@@ -14660,11 +14647,8 @@
 /turf/simulated/floor/plating,
 /area/horizon/maintenance/deck_3/security/starboard)
 "bUf" = (
-/obj/machinery/atmospherics/binary/pump{
-	name = "Connector to Cold Loop";
-	dir = 1
-	},
-/turf/simulated/floor/tiled/dark/full,
+/obj/structure/window/shuttle/scc_space_ship/cardinal,
+/turf/simulated/floor/reinforced/airless,
 /area/horizon/engineering/atmos/turbine)
 "bUg" = (
 /obj/machinery/door/airlock/command{
@@ -15007,17 +14991,9 @@
 /turf/simulated/floor/tiled/dark,
 /area/horizon/maintenance/deck_2/wing/starboard/nacelle)
 "bWI" = (
-/obj/machinery/power/generator{
-	anchored = 1
-	},
-/obj/effect/floor_decal/industrial/outline_straight/yellow{
-	dir = 4
-	},
-/obj/effect/floor_decal/industrial/outline_straight/yellow{
-	dir = 8
-	},
+/obj/machinery/atmospherics/pipe/simple/visible/black,
 /obj/structure/cable/yellow{
-	icon_state = "0-8"
+	icon_state = "4-8"
 	},
 /turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
@@ -17859,9 +17835,15 @@
 	dir = 4
 	},
 /obj/effect/floor_decal/corner/yellow,
-/obj/machinery/atmospherics/binary/pump{
-	dir = 8;
-	name = "Cooling Array to Turbine"
+/obj/machinery/atmospherics/pipe/simple/visible/black,
+/obj/machinery/meter,
+/obj/machinery/computer/general_air_control/large_tank_control/wall{
+	input_tag = "turbine_hot_in";
+	name = "Turbine Hot Loop Control";
+	output_tag = "turbine_hot_out";
+	sensors = list("turbine_sensor"="Turbine Combustion Sensor");
+	frequency = 1443;
+	pixel_x = 32
 	},
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/turbine)
@@ -18153,18 +18135,14 @@
 /turf/unsimulated/floor,
 /area/antag/mercenary)
 "ctx" = (
-/obj/machinery/sparker{
-	id = "turbine_igni";
-	pixel_x = -15
+/obj/structure/lattice/catwalk,
+/obj/structure/sign/securearea{
+	name = "\improper DANGER: HOT GAS sign";
+	desc = "A warning sign which reads \"DANGER: HOT GAS\".";
+	pixel_x = -32
 	},
-/obj/machinery/atmospherics/unary/outlet_injector{
-	frequency = 1443;
-	id = "turbine_fuel_in";
-	name = "fuel injector";
-	tag = "turbine_fuel_in"
-	},
-/turf/simulated/floor/reinforced/airless,
-/area/horizon/engineering/atmos/turbine)
+/turf/space,
+/area/horizon/exterior)
 "ctE" = (
 /obj/structure/window/shuttle/scc_space_ship/cardinal,
 /obj/structure/grille,
@@ -22085,21 +22063,8 @@
 /turf/simulated/floor/tiled/full,
 /area/horizon/hallway/primary/deck_2/starboard)
 "cUA" = (
-/obj/machinery/door/airlock/external{
-	dir = 1;
-	frequency = 1379;
-	icon_state = "door_locked";
-	id_tag = "turbine_combustion";
-	locked = 1;
-	name = "Combustion Chamber";
-	req_access = list(24)
-	},
-/obj/machinery/door/blast/regular{
-	id = "turbineinterior";
-	dir = 4
-	},
-/obj/machinery/atmospherics/pipe/simple/visible/yellow,
-/turf/simulated/floor/reinforced/airless,
+/obj/machinery/atmospherics/pipe/simple/visible/black,
+/turf/simulated/wall/shuttle/scc_space_ship/cardinal,
 /area/horizon/engineering/atmos/turbine)
 "cUG" = (
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
@@ -23772,12 +23737,25 @@
 /turf/unsimulated/floor,
 /area/centcom/legion/hangar5)
 "dfr" = (
-/obj/machinery/atmospherics/pipe/simple/heat_exchanging/junction{
+/obj/machinery/atmospherics/pipe/simple/visible/black{
 	dir = 4
 	},
-/obj/structure/lattice,
-/turf/space,
-/area/horizon/exterior)
+/obj/machinery/atmospherics/pipe/simple/visible/fuel{
+	dir = 4
+	},
+/obj/machinery/door/airlock/hatch{
+	dir = 4
+	},
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/obj/machinery/access_button{
+	pixel_y = 32;
+	dir = 8;
+	pixel_x = -6
+	},
+/turf/simulated/floor/reinforced/airless,
+/area/horizon/engineering/atmos/turbine)
 "dfu" = (
 /obj/effect/floor_decal/corner/grey/diagonal,
 /obj/machinery/door/blast/shutters{
@@ -24642,6 +24620,11 @@
 	dir = 8
 	},
 /obj/effect/floor_decal/corner/yellow,
+/obj/machinery/atmospherics/portables_connector{
+	dir = 1
+	},
+/obj/machinery/portable_atmospherics/canister/empty,
+/obj/effect/floor_decal/industrial/outline/yellow,
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/turbine)
 "dkG" = (
@@ -27460,13 +27443,6 @@
 	},
 /turf/simulated/floor/tiled,
 /area/horizon/hallway/primary/deck_3/port/docks)
-"dCk" = (
-/obj/machinery/meter,
-/obj/machinery/atmospherics/pipe/manifold/visible/yellow{
-	dir = 8
-	},
-/turf/simulated/floor/tiled/dark/full,
-/area/horizon/engineering/atmos/turbine)
 "dCp" = (
 /obj/effect/floor_decal/corner/red{
 	dir = 5
@@ -31168,11 +31144,15 @@
 /turf/simulated/floor/plating,
 /area/horizon/engineering/atmos/air)
 "ecJ" = (
-/obj/machinery/atmospherics/unary/outlet_injector{
-	frequency = 1443;
-	id = "turbine_hot_in";
-	name = "fuel injector";
-	tag = "turbine_hot_in"
+/obj/machinery/power/compressor{
+	dir = 8;
+	comp_id = "atmos_turbine"
+	},
+/obj/machinery/atmospherics/pipe/simple/visible/black{
+	dir = 4
+	},
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
 	},
 /turf/simulated/floor/reinforced/airless,
 /area/horizon/engineering/atmos/turbine)
@@ -31860,9 +31840,7 @@
 /turf/simulated/floor/wood,
 /area/horizon/medical/psych)
 "egL" = (
-/obj/machinery/atmospherics/pipe/simple/visible/black{
-	dir = 4
-	},
+/obj/machinery/atmospherics/pipe/manifold/visible/black,
 /turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
 "egP" = (
@@ -35854,6 +35832,9 @@
 	dir = 8
 	},
 /obj/effect/floor_decal/industrial/outline/yellow,
+/obj/machinery/atmospherics/portables_connector/fuel{
+	dir = 4
+	},
 /turf/simulated/floor/carpet/rubber,
 /area/horizon/engineering/atmos/turbine)
 "eJh" = (
@@ -39285,10 +39266,7 @@
 /turf/simulated/floor/tiled,
 /area/horizon/operations/mining_main/refinery)
 "fhJ" = (
-/obj/machinery/meter,
-/obj/machinery/atmospherics/pipe/manifold/visible/cyan{
-	dir = 4
-	},
+/obj/machinery/atmospherics/pipe/simple/visible/fuel,
 /turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
 "fhN" = (
@@ -47002,19 +46980,7 @@
 	},
 /area/centcom/control)
 "gmQ" = (
-/obj/machinery/atmospherics/binary/circulator{
-	anchored = 1;
-	dir = 4
-	},
-/obj/effect/floor_decal/industrial/outline_corner/yellow{
-	dir = 1
-	},
-/obj/effect/floor_decal/industrial/outline_segment/yellow{
-	dir = 4
-	},
-/obj/effect/floor_decal/industrial/outline_segment/yellow{
-	dir = 10
-	},
+/obj/machinery/atmospherics/pipe/simple/visible/black,
 /turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
 "gmT" = (
@@ -51174,17 +51140,6 @@
 /obj/effect/floor_decal/corner/yellow,
 /obj/effect/floor_decal/corner/yellow{
 	dir = 1
-	},
-/obj/effect/floor_decal/industrial/warning/corner{
-	dir = 1
-	},
-/obj/machinery/computer/general_air_control/large_tank_control/wall{
-	input_tag = "turbine_hot_in";
-	name = "Turbine Hot Loop Control";
-	output_tag = "turbine_hot_out";
-	sensors = list("turbine_sensor"="Turbine Combustion Sensor");
-	pixel_y = 28;
-	frequency = 1443
 	},
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/turbine)
@@ -56880,27 +56835,16 @@
 /turf/template_noop,
 /area/template_noop)
 "hBc" = (
-/obj/effect/floor_decal/corner/yellow{
-	dir = 1
-	},
-/obj/machinery/atmospherics/pipe/simple/visible/purple{
-	dir = 6
-	},
-/obj/machinery/computer/general_air_control/large_tank_control/wall{
-	input_tag = "turbine_fuel_in";
-	name = "Combustion Fuel Control";
-	output_tag = "turbine_fuel_out";
-	sensors = list("turbine_sensor"="Turbine Combustion Sensor");
-	pixel_y = 28;
-	frequency = 1443
-	},
-/obj/effect/floor_decal/corner/dark_blue{
+/obj/machinery/power/turbine{
 	dir = 4
 	},
-/obj/effect/floor_decal/industrial/warning/corner{
+/obj/machinery/atmospherics/pipe/simple/visible/black{
 	dir = 4
 	},
-/turf/simulated/floor/tiled/dark,
+/obj/structure/cable/yellow{
+	icon_state = "0-8"
+	},
+/turf/simulated/floor/reinforced/airless,
 /area/horizon/engineering/atmos/turbine)
 "hBf" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -64348,17 +64292,6 @@
 /mob/living/carbon/slime,
 /turf/simulated/floor/reinforced,
 /area/horizon/rnd/xenobiology)
-"iAk" = (
-/obj/machinery/atmospherics/pipe/simple/visible/green{
-	dir = 6
-	},
-/obj/structure/window/shuttle/scc_space_ship/cardinal,
-/obj/machinery/door/firedoor{
-	req_one_access = list(24,11,67,73);
-	dir = 4
-	},
-/turf/simulated/floor/plating,
-/area/horizon/engineering/atmos/turbine)
 "iAo" = (
 /obj/structure/table/reinforced/steel,
 /obj/item/paper_bin,
@@ -65955,9 +65888,6 @@
 /turf/simulated/floor/tiled,
 /area/horizon/security/brig)
 "iMa" = (
-/obj/machinery/atmospherics/valve{
-	name = "Thermal Relief Valve"
-	},
 /obj/structure/cable/yellow{
 	icon_state = "4-8"
 	},
@@ -66065,9 +65995,14 @@
 	},
 /area/centcom/spawning)
 "iMT" = (
-/obj/machinery/atmospherics/pipe/simple/visible/purple,
-/turf/simulated/wall/shuttle/scc_space_ship/cardinal,
-/area/horizon/engineering/atmos/turbine)
+/obj/structure/lattice/catwalk,
+/obj/structure/sign/securearea{
+	name = "\improper DANGER: HOT GAS sign";
+	pixel_y = -32;
+	desc = "A warning sign which reads \"DANGER: HOT GAS\"."
+	},
+/turf/space,
+/area/horizon/exterior)
 "iMW" = (
 /turf/simulated/wall/shuttle/unique/mercenary/small{
 	icon_state = "3,9"
@@ -66809,11 +66744,11 @@
 /turf/simulated/floor/tiled/dark,
 /area/horizon/service/hydroponics/hazard)
 "iRB" = (
-/obj/machinery/door/blast/regular{
-	id = "turbineexterior";
-	dir = 4
+/obj/machinery/atmospherics/valve,
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
 "iRU" = (
 /turf/simulated/floor/tiled/dark/full,
@@ -67503,11 +67438,12 @@
 /turf/simulated/floor/tiled,
 /area/horizon/hallway/primary/deck_2/fore)
 "iWI" = (
-/obj/machinery/meter,
-/obj/machinery/atmospherics/pipe/manifold/visible/black{
-	dir = 8
+/obj/effect/floor_decal/corner/dark_blue{
+	dir = 4
 	},
-/turf/simulated/floor/tiled/dark/full,
+/obj/effect/floor_decal/corner/yellow,
+/obj/machinery/atmospherics/pipe/simple/visible/fuel,
+/turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/turbine)
 "iWK" = (
 /obj/effect/decal/fake_object{
@@ -67758,8 +67694,9 @@
 /turf/unsimulated/floor,
 /area/antag/mercenary)
 "iYs" = (
-/obj/machinery/atmospherics/valve{
-	name = "Thermal Relief Valve"
+/obj/machinery/atmospherics/pipe/simple/visible/universal,
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
 	},
 /turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
@@ -73394,15 +73331,8 @@
 /turf/simulated/wall,
 /area/horizon/engineering/drone_fabrication)
 "jNd" = (
-/obj/machinery/atmospherics/pipe/simple/visible/green{
-	dir = 9
-	},
 /obj/structure/window/shuttle/scc_space_ship/cardinal,
-/obj/machinery/door/firedoor{
-	req_one_access = list(24,11,67,73);
-	dir = 4
-	},
-/turf/simulated/floor/plating,
+/turf/simulated/floor/reinforced,
 /area/horizon/engineering/atmos/turbine)
 "jNf" = (
 /obj/structure/tank_wall{
@@ -76093,13 +76023,9 @@
 /turf/unsimulated/floor,
 /area/centcom/legion/hangar5)
 "kdq" = (
-/obj/machinery/atmospherics/unary/vent_pump/siphon/on/atmos{
-	id_tag = "turbine_hot_out";
-	frequency = 1443;
-	use_power = 0
-	},
+/obj/machinery/atmospherics/unary/vent_pump/on,
 /turf/simulated/floor/reinforced/airless,
-/area/horizon/engineering/atmos/turbine)
+/area/horizon/exterior)
 "kdu" = (
 /obj/structure/railing/mapped,
 /obj/structure/railing/mapped{
@@ -88498,12 +88424,8 @@
 /turf/simulated/floor/tiled/white,
 /area/horizon/rnd/xenoarch/atrium)
 "lHu" = (
-/obj/machinery/atmospherics/pipe/simple/heat_exchanging{
-	dir = 5
-	},
-/obj/structure/lattice,
-/turf/space,
-/area/horizon/exterior)
+/turf/simulated/floor/reinforced,
+/area/horizon/engineering/atmos/turbine)
 "lHw" = (
 /obj/structure/closet/secure_closet/brig{
 	id = "cell_isolation"
@@ -99534,10 +99456,6 @@
 /obj/machinery/firealarm/north,
 /turf/simulated/floor/tiled,
 /area/horizon/hallway/primary/deck_2/central)
-"niO" = (
-/obj/machinery/atmospherics/pipe/simple/visible/cyan,
-/turf/simulated/wall/shuttle/scc_space_ship/cardinal,
-/area/horizon/engineering/atmos/turbine)
 "niR" = (
 /obj/structure/reagent_dispensers/fueltank,
 /obj/random/dirt_75,
@@ -102207,11 +102125,16 @@
 /turf/simulated/floor/tiled,
 /area/horizon/engineering/storage_eva)
 "nCQ" = (
-/obj/machinery/atmospherics/portables_connector{
+/obj/effect/floor_decal/corner/yellow{
 	dir = 1
 	},
-/obj/effect/floor_decal/industrial/outline/yellow,
-/turf/simulated/floor/tiled/dark/full,
+/obj/effect/floor_decal/corner/dark_blue{
+	dir = 8
+	},
+/obj/machinery/atmospherics/pipe/simple/visible/fuel{
+	dir = 4
+	},
+/turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/turbine)
 "nCR" = (
 /obj/machinery/light{
@@ -106232,8 +106155,8 @@
 /turf/simulated/floor/plating,
 /area/horizon/shuttle/intrepid/starboard_compartment)
 "ofd" = (
-/obj/machinery/atmospherics/pipe/simple/visible/yellow{
-	dir = 6
+/obj/machinery/atmospherics/pipe/simple/visible/fuel{
+	dir = 4
 	},
 /turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
@@ -109851,12 +109774,20 @@
 /turf/simulated/floor/carpet,
 /area/horizon/repoffice/consular_one)
 "oDa" = (
-/obj/machinery/atmospherics/pipe/simple/heat_exchanging{
-	dir = 6
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
 	},
-/obj/structure/lattice,
-/turf/space,
-/area/horizon/exterior)
+/obj/machinery/atmospherics/binary/pump/fuel{
+	dir = 4
+	},
+/obj/machinery/atmospherics/binary/pump{
+	dir = 8
+	},
+/obj/effect/floor_decal/industrial/loading{
+	dir = 4
+	},
+/turf/simulated/floor/reinforced,
+/area/horizon/engineering/atmos/turbine)
 "oDf" = (
 /obj/structure/table/rack,
 /obj/structure/window/reinforced{
@@ -113900,10 +113831,12 @@
 /turf/simulated/wall,
 /area/horizon/maintenance/deck_2/wing/port)
 "peT" = (
-/obj/machinery/atmospherics/pipe/manifold/visible/black{
-	dir = 1
+/obj/effect/floor_decal/corner/dark_blue{
+	dir = 4
 	},
-/turf/simulated/floor/tiled/dark/full,
+/obj/effect/floor_decal/corner/yellow,
+/obj/machinery/atmospherics/pipe/simple/visible/black,
+/turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/turbine)
 "peU" = (
 /obj/machinery/firealarm/west,
@@ -116704,17 +116637,6 @@
 "pyI" = (
 /turf/simulated/wall/shuttle/scc_space_ship/cardinal,
 /area/horizon/service/bar)
-"pyK" = (
-/obj/machinery/atmospherics/pipe/simple/visible/black{
-	dir = 4
-	},
-/obj/structure/window/shuttle/scc_space_ship/cardinal,
-/obj/machinery/door/firedoor{
-	req_one_access = list(24,11,67,73);
-	dir = 4
-	},
-/turf/simulated/floor/plating,
-/area/horizon/engineering/atmos/turbine)
 "pyM" = (
 /obj/machinery/light/small/emergency,
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -124018,6 +123940,15 @@
 	dir = 4
 	},
 /obj/effect/floor_decal/corner/yellow,
+/obj/machinery/atmospherics/pipe/simple/visible/black{
+	dir = 6
+	},
+/obj/machinery/atmospherics/pipe/simple/visible/fuel{
+	dir = 5
+	},
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/turbine)
 "qzR" = (
@@ -124055,16 +123986,24 @@
 /turf/simulated/floor/tiled/white,
 /area/horizon/medical/pharmacy)
 "qAe" = (
-/obj/machinery/atmospherics/pipe/simple/visible/green,
-/obj/structure/window/shuttle/scc_space_ship/cardinal,
-/obj/effect/landmark/entry_point/port{
-	name = "port, atmospherics"
-	},
-/obj/machinery/door/firedoor{
-	req_one_access = list(24,11,67,73);
+/obj/machinery/atmospherics/pipe/simple/visible/black{
 	dir = 4
 	},
-/turf/simulated/floor/plating,
+/obj/machinery/atmospherics/pipe/simple/visible/fuel{
+	dir = 4
+	},
+/obj/machinery/door/airlock/hatch{
+	dir = 4
+	},
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/obj/machinery/access_button{
+	pixel_y = 32;
+	pixel_x = -6;
+	dir = 8
+	},
+/turf/simulated/floor/reinforced,
 /area/horizon/engineering/atmos/turbine)
 "qAi" = (
 /obj/effect/floor_decal/corner/mauve/diagonal,
@@ -126039,8 +125978,7 @@
 /turf/simulated/floor/tiled/dark,
 /area/horizon/rnd/xenoarch/hallway/elevator)
 "qMK" = (
-/obj/machinery/meter,
-/obj/machinery/atmospherics/pipe/manifold/visible/green,
+/obj/machinery/atmospherics/valve,
 /turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
 "qMP" = (
@@ -133682,18 +133620,19 @@
 /turf/simulated/floor/tiled/dark/full/airless,
 /area/horizon/command/bridge/controlroom)
 "rNe" = (
-/obj/machinery/atmospherics/binary/circulator{
-	anchored = 1;
-	dir = 8
+/obj/machinery/igniter{
+	id = "turbine_ignite"
 	},
-/obj/effect/floor_decal/industrial/outline_corner/yellow,
-/obj/effect/floor_decal/industrial/outline_segment/yellow{
-	dir = 8
+/obj/machinery/atmospherics/pipe/simple/visible/black{
+	dir = 4
 	},
-/obj/effect/floor_decal/industrial/outline_segment/yellow{
-	dir = 5
+/obj/machinery/atmospherics/pipe/simple/visible/fuel{
+	dir = 9
 	},
-/turf/simulated/floor/tiled/dark/full,
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/turf/simulated/floor/reinforced/airless,
 /area/horizon/engineering/atmos/turbine)
 "rNm" = (
 /obj/structure/heavy_vehicle_frame,
@@ -136514,12 +136453,12 @@
 /turf/simulated/floor,
 /area/horizon/maintenance/deck_3/crewlounge)
 "sgt" = (
-/obj/machinery/atmospherics/pipe/simple/heat_exchanging{
-	dir = 10
+/obj/machinery/door/blast/regular{
+	id = "atmos_turbine";
+	name = "Turbine Emergency Ventilatory blast door"
 	},
-/obj/structure/lattice,
-/turf/space,
-/area/horizon/exterior)
+/turf/simulated/floor/reinforced/airless,
+/area/horizon/engineering/atmos/turbine)
 "sgw" = (
 /obj/structure/table/standard,
 /obj/machinery/firealarm/east,
@@ -141710,8 +141649,12 @@
 	dir = 4
 	},
 /obj/effect/floor_decal/corner/yellow,
-/obj/machinery/atmospherics/pipe/simple/visible/black{
+/obj/machinery/atmospherics/pipe/manifold/visible/black{
 	dir = 4
+	},
+/obj/machinery/embedded_controller/radio/airlock/access_controller{
+	dir = 8;
+	pixel_x = 22
 	},
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/turbine)
@@ -144017,11 +143960,10 @@
 /turf/simulated/floor/tiled/dark,
 /area/horizon/maintenance/deck_2/main/starboard)
 "teR" = (
-/obj/machinery/atmospherics/pipe/simple/visible/purple,
+/obj/machinery/atmospherics/pipe/simple/visible/fuel,
 /obj/structure/cable/yellow{
 	icon_state = "2-4"
 	},
-/obj/machinery/meter,
 /turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
 "teW" = (
@@ -149184,7 +149126,10 @@
 /turf/simulated/floor/tiled,
 /area/horizon/hallway/primary/deck_1/central)
 "tNR" = (
-/obj/machinery/atmospherics/pipe/simple/visible/purple,
+/obj/machinery/atmospherics/pipe/manifold/visible/fuel{
+	dir = 1
+	},
+/obj/machinery/meter,
 /turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
 "tNV" = (
@@ -149236,7 +149181,9 @@
 /turf/simulated/floor/plating,
 /area/horizon/engineering/atmos/air)
 "tOz" = (
-/obj/machinery/atmospherics/pipe/simple/visible/cyan,
+/obj/machinery/atmospherics/pipe/manifold/visible/fuel{
+	dir = 1
+	},
 /turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
 "tOD" = (
@@ -159194,6 +159141,13 @@
 	dir = 4
 	},
 /obj/effect/floor_decal/corner/yellow,
+/obj/machinery/atmospherics/pipe/simple/visible/fuel{
+	dir = 10
+	},
+/obj/machinery/computer/terminal/turbine_computer{
+	dir = 8;
+	id = "atmos_turbine"
+	},
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/turbine)
 "vgA" = (
@@ -160688,9 +160642,10 @@
 /turf/simulated/floor/tiled,
 /area/horizon/security/equipment)
 "vrR" = (
-/obj/machinery/atmospherics/pipe/simple/visible/yellow{
-	dir = 9
+/obj/machinery/atmospherics/pipe/simple/visible/fuel{
+	dir = 4
 	},
+/obj/machinery/atmospherics/pipe/simple/visible/black,
 /turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
 "vrS" = (
@@ -163242,41 +163197,11 @@
 /turf/simulated/floor/tiled,
 /area/horizon/hallway/primary/deck_2/starboard)
 "vKH" = (
-/obj/machinery/button/remote/blast_door{
-	dir = 1;
-	id = "turbineinterior";
-	name = "Interior Blast Door";
-	pixel_x = 6;
-	pixel_y = 22;
-	req_access = list(24)
-	},
-/obj/machinery/button/remote/blast_door{
-	dir = 1;
-	id = "turbineexterior";
-	name = "Exterior Blast Door";
-	pixel_y = 22;
-	pixel_x = -6;
-	req_access = list(24)
-	},
-/obj/machinery/button/remote/airlock{
-	dir = 1;
-	id = "turbine_combustion";
-	name = "Door Bolt Control";
-	pixel_y = 32;
-	req_access = list(24);
-	specialfunctions = 4
-	},
 /obj/effect/floor_decal/corner/dark_blue{
 	dir = 4
 	},
 /obj/effect/floor_decal/corner/yellow{
 	dir = 1
-	},
-/obj/effect/floor_decal/industrial/warning{
-	dir = 1
-	},
-/obj/machinery/atmospherics/pipe/simple/visible/purple{
-	dir = 9
 	},
 /turf/simulated/floor/tiled/dark,
 /area/horizon/engineering/atmos/turbine)
@@ -172038,8 +171963,11 @@
 /turf/simulated/wall/shuttle/scc_space_ship/cardinal,
 /area/horizon/engineering/atmos/propulsion)
 "wRA" = (
-/obj/machinery/atmospherics/pipe/simple/visible/cyan,
-/turf/simulated/floor/reinforced/airless,
+/obj/machinery/atmospherics/pipe/simple/visible/universal,
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/turf/simulated/floor/tiled/dark/full,
 /area/horizon/engineering/atmos/turbine)
 "wRC" = (
 /obj/structure/table/wood,
@@ -174983,11 +174911,8 @@
 /turf/simulated/floor/tiled/white,
 /area/horizon/rnd/chemistry)
 "xkJ" = (
-/obj/machinery/atmospherics/pipe/simple/heat_exchanging{
-	dir = 9
-	},
-/obj/structure/lattice,
-/turf/space,
+/obj/structure/foamedmetal,
+/turf/simulated/wall/shuttle/scc_space_ship/cardinal,
 /area/horizon/exterior)
 "xkO" = (
 /obj/structure/table/rack,
@@ -223555,7 +223480,7 @@ cOB
 eVV
 xZk
 dVC
-ujG
+nCQ
 ujG
 ujG
 chW
@@ -223812,7 +223737,7 @@ lzd
 vLB
 brl
 mDq
-pZs
+ofd
 pZs
 pZs
 pZs
@@ -224069,7 +223994,7 @@ qWw
 lbw
 brl
 elL
-pZs
+ofd
 pZs
 pZs
 pZs
@@ -224326,7 +224251,7 @@ brl
 brl
 brl
 gFU
-pZs
+ofd
 pZs
 pZs
 pZs
@@ -224582,12 +224507,12 @@ brl
 brl
 brl
 brl
-hBc
+mDq
 tNR
-tNR
+fhJ
 teR
-dSb
-dSb
+wRA
+iRB
 dSb
 llG
 iSI
@@ -224835,16 +224760,16 @@ eSV
 eSV
 eSV
 tDE
-iRB
+tDE
 ctx
-bPt
-iMT
+cKu
+brl
 vKH
 ofd
-dCk
+pZs
 iMa
-iWI
-fMn
+pZs
+pZs
 pZs
 vji
 vNw
@@ -225092,18 +225017,18 @@ eSV
 eSV
 eSV
 tDE
-iRB
-mSx
+rSL
+tDE
 kdq
 cUA
 bSv
 vrR
 gmQ
 bWI
-rNe
-peT
-bUf
-nCQ
+qMK
+fMn
+pZs
+pZs
 iDl
 brl
 egE
@@ -225349,10 +225274,10 @@ eSV
 eSV
 eSV
 tDE
-iRB
-ecJ
-wRA
-niO
+rSL
+tDE
+cKu
+brl
 btE
 tOz
 fhJ
@@ -225606,17 +225531,17 @@ eSV
 eSV
 eSV
 tDE
-brl
-brl
+rSL
+iMT
 brl
 brl
 gPd
 vgt
-qzK
+iWI
 qzK
 csn
 sNR
-qzK
+peT
 dkB
 brl
 brl
@@ -225869,10 +225794,10 @@ tDE
 brl
 brl
 brl
-iAk
+jNd
 qAe
 jNd
-pyK
+brl
 brl
 brl
 brl
@@ -226124,13 +226049,13 @@ rSL
 rSL
 qyQ
 tDE
-agm
-sRg
-dfr
+qyQ
+brl
+lHu
 oDa
 lHu
-dfr
 sRg
+xkJ
 rEc
 fLP
 jMM
@@ -226382,12 +226307,12 @@ dow
 swu
 swu
 tDE
-oDa
-aJU
-aJU
-aJU
-xkJ
+brl
+bUf
+dfr
+bUf
 sRg
+xkJ
 rEc
 bgD
 kMN
@@ -226639,12 +226564,12 @@ fBq
 rSL
 rSL
 tDE
-sgt
-aJU
-aJU
-aJU
-lHu
+brl
+bPt
+rNe
+mSx
 sRg
+xkJ
 rEc
 fLP
 woP
@@ -226896,12 +226821,12 @@ fBq
 swu
 swu
 tDE
-oDa
-aJU
-aJU
-aJU
-xkJ
+brl
+brl
+ecJ
+brl
 sRg
+xkJ
 rEc
 bgD
 fLP
@@ -227153,12 +227078,12 @@ fBq
 rSL
 rSL
 tDE
-sgt
-aJU
-aJU
-aJU
-lHu
+brl
+brl
+hBc
+brl
 sRg
+xkJ
 rEc
 bgD
 bgD
@@ -227410,11 +227335,11 @@ fBq
 swu
 swu
 tDE
-oDa
-aJU
-aJU
-aJU
-xkJ
+brl
+brl
+agm
+brl
+sRg
 sRg
 sRg
 xNA
@@ -227667,11 +227592,11 @@ fBq
 rSL
 rSL
 tDE
+brl
+brl
 sgt
-aJU
-aJU
-aJU
-lHu
+brl
+sRg
 tDE
 tDE
 tDE
@@ -227924,11 +227849,11 @@ fBq
 swu
 swu
 tDE
-oDa
+swu
 aJU
+swu
 aJU
-aJU
-xkJ
+sRg
 tDE
 tDE
 tDE
@@ -228181,11 +228106,11 @@ fBq
 rSL
 rSL
 tDE
-sgt
-aJU
-aJU
-aJU
-lHu
+rSL
+rSL
+swu
+rSL
+sRg
 sRg
 swu
 swu
@@ -228438,11 +228363,11 @@ fBq
 swu
 swu
 tDE
-oDa
-aJU
-aJU
-aJU
-xkJ
+swu
+swu
+swu
+swu
+swu
 tDE
 tDE
 tDE
@@ -228695,11 +228620,11 @@ fBq
 rSL
 rSL
 tDE
-sgt
-aJU
-aJU
-aJU
-lHu
+rSL
+rSL
+swu
+rSL
+rSL
 tDE
 tDE
 tDE
@@ -228952,11 +228877,11 @@ fBq
 swu
 swu
 tDE
-oDa
-aJU
-aJU
-aJU
-xkJ
+swu
+swu
+swu
+swu
+swu
 sRg
 swu
 swu
@@ -229209,11 +229134,11 @@ fBq
 rSL
 rSL
 tDE
-sgt
-aJU
-aJU
-aJU
-lHu
+rSL
+rSL
+swu
+rSL
+rSL
 tDE
 tDE
 tDE
@@ -229467,10 +229392,10 @@ swu
 swu
 qyQ
 sRg
-sgt
-xkJ
-sgt
-xkJ
+swu
+swu
+swu
+swu
 tDE
 tDE
 tDE
