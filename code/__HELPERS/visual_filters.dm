@@ -34,20 +34,27 @@
 	if(filter_data && filter_data[name])
 		return filters[filter_data.Find(name)]
 
-/atom/proc/remove_filter(name_or_names)
+/// Removes the passed filter, or multiple filters, if supplied with a list.
+/datum/proc/remove_filter(name_or_names)
+	ASSERT(isatom(src) || isimage(src))
 	if(!filter_data)
 		return
 
-	var/found = FALSE
+	var/atom/atom_cast = src // filters only work with images or atoms.
 	var/list/names = islist(name_or_names) ? name_or_names : list(name_or_names)
-
-	for(var/name in names)
-		if(filter_data[name])
-			filter_data -= name
-			found = TRUE
-
-	if(found)
-		update_filters()
+	. = FALSE
+	var/list/new_data = list()
+	var/list/new_cache = list()
+	for (var/index in 1 to length(filter_data))
+		var/list/filter_info = filter_data[index]
+		if (!(filter_info["name"] in names))
+			new_data += list(filter_info)
+			new_cache += filter_cache[index]
+	filter_data = new_data
+	filter_cache = new_cache
+	if (update)
+		atom_cast.filters = filter_cache
+	return .
 
 /atom/proc/clear_filters()
 	filter_data = null

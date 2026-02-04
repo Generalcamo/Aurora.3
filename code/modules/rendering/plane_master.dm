@@ -1,21 +1,31 @@
+// I hate this place
+INITIALIZE_IMMEDIATE(/atom/movable/screen/plane_master)
+
 /atom/movable/screen/plane_master
 	screen_loc = "CENTER"
 	icon_state = "blank"
 	appearance_flags = PLANE_MASTER|NO_CLIENT_COLOR
 	blend_mode = BLEND_OVERLAY
 	plane = LOWEST_EVER_PLANE
+	/// Will be sent to the debug ui as a description for each plane
+	/// Also useful as a place to explain to coders how/why your plane works, and what it's meant to do
+	/// Plaintext and basic html are fine to use here.
+	/// I'll bonk you if I find you putting "lmao stuff" in here, make this useful.
+	var/documentation = ""
 	var/show_alpha = 255
 	var/hide_alpha = 0
 
 	//--rendering relay vars--
-	///integer: what plane we will relay this planes render to
-	var/render_relay_plane = RENDER_PLANE_GAME
+	/// list of planes we will relay this plane's render to
+	var/list/render_relay_planes = list(RENDER_PLANE_GAME)
 	///bool: Whether this plane should get a render target automatically generated
 	var/generate_render_target = TRUE
 	///integer: blend mode to apply to the render relay in case you dont want to use the plane_masters blend_mode
 	var/blend_mode_override
-	///reference: current relay this plane is utilizing to render
-	var/obj/render_plane_relay/relay
+	/// list of current relays this plane is utilizing to render
+	var/list/atom/movable/render_plane_relay/relays = list()
+	/// if render relays have already been generated
+	var/relays_generated = FALSE
 
 /atom/movable/screen/plane_master/proc/Show(override)
 	alpha = override || show_alpha
@@ -94,22 +104,29 @@
  * This is then used to alpha mask the lighting plane.
  */
 
-///Contains all lighting objects
-/atom/movable/screen/plane_master/lighting
-	name = "lighting plane master"
+///Contains all turf lighting
+/atom/movable/screen/plane_master/turf_lighting
+	name = "Turf Lighting"
+	documentation = "Contains all lighting drawn to turfs. Not so complex, draws directly onto the lighting plate."
 	plane = LIGHTING_PLANE
-	blend_mode_override = BLEND_MULTIPLY
+	appearance_flags = PLANE_MASTER|NO_CLIENT_COLOR
+	render_relay_planes = list(RENDER_PLANE_TURF_LIGHTING)
+	blend_mode_override = BLEND_ADD
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 
-/atom/movable/screen/plane_master/lighting/backdrop(mob/mymob)
-	. = ..()
-	mymob.overlay_fullscreen("lighting_backdrop", /atom/movable/screen/fullscreen/lighting_backdrop/backplane)
-	mymob.overlay_fullscreen("lighting_backdrop_lit_secondary", /atom/movable/screen/fullscreen/lighting_backdrop/lit_secondary)
-
-/atom/movable/screen/plane_master/lighting/Initialize()
-	. = ..()
-	add_filter("emissives", 1, alpha_mask_filter(render_source = EMISSIVE_RENDER_TARGET, flags = MASK_INVERSE))
-	add_filter("object_lighting", 2, alpha_mask_filter(render_source = O_LIGHTING_VISUAL_RENDER_TARGET, flags = MASK_INVERSE))
+/// This will not work through multiz, because of a byond bug with BLEND_MULTIPLY
+/// Bug report is up, waiting on a fix
+/atom/movable/screen/plane_master/o_light_visual
+	name = "Overlight light visual"
+	documentation = "Holds overlay lighting objects, or the sort of lighting that's a well, overlay stuck to something.\
+		<br>Exists because lighting updating is really slow, and movement needs to feel smooth.\
+		<br>We draw to the game plane, and mask out space for ourselves on the lighting plane so any color we have has the chance to display."
+	plane = O_LIGHTING_VISUAL_PLANE
+	appearance_flags = PLANE_MASTER|NO_CLIENT_COLOR
+	render_target = O_LIGHTING_VISUAL_RENDER_TARGET
+	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	blend_mode = BLEND_ADD
+	render_relay_planes = list(RENDER_PLANE_LIGHTING)
 /**
  * Handles emissive overlays and emissive blockers.
  */

@@ -197,6 +197,12 @@ do { \
 		0, 0, 0, 1           \
 	)                        \
 
+/// The amount of lumcount on a tile for it to be considered dark (used to determine reading and nyctophobia)
+#define LIGHTING_TILE_IS_DARK 0.2
+
+/// Weight of overlay lighting, in percentage of contribution towards total light
+#define OVERLAY_LIGHTING_WEIGHT 0.4
+
 #define LIGHTING_NO_UPDATE 0
 #define LIGHTING_VIS_UPDATE 1
 #define LIGHTING_CHECK_UPDATE 2

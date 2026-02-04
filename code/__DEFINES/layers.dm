@@ -168,9 +168,13 @@
 
 #define BALLOON_CHAT_PLANE 110
 
+/// Lighting objects that are "free floating"
 #define O_LIGHTING_VISUAL_PLANE 120
 #define O_LIGHTING_VISUAL_LAYER 16
-#define O_LIGHTING_VISUAL_RENDER_TARGET "O_LIGHT_VISUAL_PLANE"
+#define O_LIGHTING_VISUAL_RENDER_TARGET "*O_LIGHT_VISUAL_PLANE"
+
+/// Render plate used by overlay lighting to mask turf lights
+#define TURF_LIGHTING_PLATE 130
 
 #define LIGHTING_PRIMARY_LAYER 15	//The layer for the main lights of the station
 #define LIGHTING_PRIMARY_DIMMER_LAYER 15.1	//The layer that dims the main lights of the station
