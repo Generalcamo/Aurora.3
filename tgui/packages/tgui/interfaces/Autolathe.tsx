@@ -1,13 +1,14 @@
-import { round } from '../../common/math';
 import { BooleanLike } from '../../common/react';
 import { capitalizeAll } from '../../common/string';
 import { useBackend, useLocalState } from '../backend';
 import {
   Box,
   Button,
+  Collapsible,
   Input,
   LabeledList,
   NoticeBox,
+  NumberInput,
   ProgressBar,
   Section,
   Stack,
@@ -22,6 +23,8 @@ export type AutolatheData = {
   material_efficiency: number;
   build_time: number;
   materials: Material[];
+  total_material_amount: number;
+  total_material_capacity: number;
   recipes: Recipe[];
   categories: string[];
   queue: QueueItem[];
@@ -31,7 +34,6 @@ export type AutolatheData = {
 type Material = {
   material: string;
   stored: number;
-  max_capacity: number;
 };
 
 type Recipe = {
@@ -69,35 +71,50 @@ export const Autolathe = (props, context) => {
           <Stack.Item>
             <Section fill title="Materials">
               <LabeledList>
-                {data.materials.map((material) => (
-                  <LabeledList.Item
-                    key={material.material}
-                    label={
-                      <Box bold fontSize={1.4}>
-                        {capitalizeAll(material.material)}
-                      </Box>
-                    }
+                <LabeledList.Item label="Total Materials">
+                  <ProgressBar
+                    value={data.total_material_capacity}
+                    minValue={0}
+                    maxValue={data.total_material_capacity}
+                    ranges={{
+                      good: [
+                        data.total_material_capacity * 0.75,
+                        data.total_material_capacity,
+                      ],
+                      average: [
+                        data.total_material_capacity * 0.3,
+                        data.total_material_capacity * 0.75,
+                      ],
+                      bad: [0, data.total_material_capacity * 0.3],
+                    }}
                   >
-                    <ProgressBar
-                      ranges={{
-                        good: [
-                          material.max_capacity * 0.75,
-                          material.max_capacity,
-                        ],
-                        average: [
-                          material.max_capacity * 0.3,
-                          material.max_capacity * 0.75,
-                        ],
-                        bad: [0, material.max_capacity * 0.3],
-                      }}
-                      value={round(material.stored, 1)}
-                      maxValue={material.max_capacity}
-                      minValue={0}
-                    >
-                      {material.stored} / {material.max_capacity}
-                    </ProgressBar>
-                  </LabeledList.Item>
-                ))}
+                    {data.total_material_capacity +
+                      '/' +
+                      data.total_material_capacity +
+                      ' cm³'}
+                  </ProgressBar>
+                </LabeledList.Item>
+                <LabeledList.Item>
+                  {data.materials.length > 0 && (
+                    <Collapsible title="Materials">
+                      <LabeledList>
+                        {data.materials.map((material) => (
+                          <MaterialRow
+                            key={material.material}
+                            material={material}
+                            materialsmax={data.total_material_capacity}
+                            onRelease={(amount) =>
+                              act('materialEject', {
+                                materialName: material.material,
+                                amount: material.stored,
+                              })
+                            }
+                          />
+                        ))}
+                      </LabeledList>
+                    </Collapsible>
+                  )}
+                </LabeledList.Item>
               </LabeledList>
             </Section>
           </Stack.Item>
@@ -345,5 +362,86 @@ export const QueueData = (props, context) => {
         )}
       </LabeledList>
     </Section>
+  );
+};
+
+const MaterialRow = (props, context) => {
+  const { material, materialsmax, onRelease } = props;
+
+  const [amount, setAmount] = useLocalState(
+    context,
+    'amount' + material.name,
+    1,
+  );
+
+  const amountAvailable = Math.floor(material.amount);
+  return (
+    <LabeledList.Item key={material.id}>
+      <Table width="100%">
+        <Table.Row>
+          <Table.Cell>{capitalizeAll(material.name)}</Table.Cell>
+          <Table.Cell textAlign="right">
+            <Box mr={2} color="label" inline>
+              {material.sheets_amount} sheets
+            </Box>
+          </Table.Cell>
+          <Table.Cell collapsing textAlign="right">
+            <Button
+              disabled={material.sheets_amount < 1}
+              content="x1"
+              onClick={() => onRelease(1)}
+            />
+            <Button
+              disabled={material.sheets_amount < 5}
+              content="x5"
+              onClick={() => onRelease(5)}
+            />
+            <Button
+              disabled={material.sheets_amount < 10}
+              content="x10"
+              onClick={() => onRelease(10)}
+            />
+            <Button
+              disabled={material.sheets_amount < 25}
+              content="x25"
+              onClick={() => onRelease(25)}
+            />
+          </Table.Cell>
+          <Table.Cell collapsing textAlign="right">
+            <NumberInput
+              width="32px"
+              step={1}
+              stepPixelSize={5}
+              minValue={1}
+              maxValue={material.sheets_amount}
+              value={amount}
+              onChange={(e, value) => setAmount(value)}
+            />
+            <Button
+              disabled={material.sheets_amount < 1}
+              content="Release"
+              onClick={() => onRelease(amount)}
+            />
+          </Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell colspan="4">
+            <ProgressBar
+              style={{
+                transform: 'scaleX(-1) scaleY(1)',
+              }}
+              value={materialsmax - material.mineral_amount}
+              maxValue={materialsmax}
+              color="black"
+              backgroundColor={material.matcolour}
+            >
+              <div style={{ transform: 'scaleX(-1)' }}>
+                {material.mineral_amount + ' cm³'}
+              </div>
+            </ProgressBar>
+          </Table.Cell>
+        </Table.Row>
+      </Table>
+    </LabeledList.Item>
   );
 };

@@ -15,16 +15,10 @@ ABSTRACT_TYPE(/obj/machinery/fabricator)
 	var/fabricator_class = FABRICATOR_CLASS_GENERAL
 	/// List of stored materials.
 	var/list/stored_material = list()
-	/// List of material capacities. Should not be modified directly, use [var/list/base_storage_capacity] instead.
-	var/list/storage_capacity = list()
+	/// Material capacity. Should not be modified directly, use [var/base_storage_capacity] instead.
+	var/storage_capacity
 	/// Base storage capacity, which is modified by default by the amount and tier of matter bins.
-	var/list/base_storage_capacity = list(
-		DEFAULT_WALL_MATERIAL = 25000,
-		MATERIAL_ALUMINIUM = 25000,
-		MATERIAL_GLASS = 12500,
-		MATERIAL_PLASTIC = 12500,
-		MATERIAL_PHORON = 12500
-	)
+	var/base_storage_capacity = SHEET_MATERIAL_AMOUNT * 20
 	/// Current category to show for this fabricator
 	var/show_category = "All"
 
@@ -67,7 +61,7 @@ ABSTRACT_TYPE(/obj/machinery/fabricator)
 /obj/machinery/fabricator/upgrade_hints(mob/user, distance, is_adjacent)
 	. += ..()
 	. += "- Upgraded <b>matter bins</b> will increase material storage capacity."
-	. += SPAN_NOTICE("	- The current storage limit per material type is <b>[storage_capacity[DEFAULT_WALL_MATERIAL] / 2000]</b> sheets")
+	. += SPAN_NOTICE("	- The current storage limit per material type is <b>[storage_capacity / SHEET_MATERIAL_AMOUNT]</b> sheets")
 	. += "- Upgraded <b>micro lasers</b> will improve material use efficiency."
 	. += SPAN_NOTICE("	- The current material cost reduction is <b>[round((1 - mat_efficiency) * 100)]%</b>")
 	. += "- Upgraded <b>manipulators</b> will increase the fabrication speed."
@@ -77,19 +71,6 @@ ABSTRACT_TYPE(/obj/machinery/fabricator)
 	wires = new(src)
 	print_loc = src
 	stored_material = list()
-	for(var/mat in base_storage_capacity)
-		stored_material[mat] = 0
-
-		// Update global type to string cache.
-		if(!stored_substances_to_names[mat])
-			if(ispath(mat, /material))
-				var/material/mat_instance = mat
-				mat_instance = SSmaterials.get_material_by_name(initial(mat_instance.name))
-				if(istype(mat_instance))
-					stored_substances_to_names[mat] = mat_instance.display_name
-			else if(ispath(mat, /singleton/reagent))
-				var/singleton/reagent/reg = mat
-				stored_substances_to_names[mat] = initial(reg.name)
 	update_icon()
 	. = ..()
 
@@ -268,8 +249,7 @@ ABSTRACT_TYPE(/obj/machinery/fabricator)
 		man_rating += M.rating
 	for(var/obj/item/stock_parts/micro_laser/L in component_parts)
 		las_rating += L.rating
-	for(var/mat in base_storage_capacity)
-		storage_capacity[mat] = mb_rating * base_storage_capacity[mat]
+	storage_capacity = mb_rating * base_storage_capacity
 	mat_efficiency = 1.1 - (las_rating * 0.1) // Normally, price is 1.25 the amount of material, so this shouldn't go higher than 0.8. Maximum rating of parts is 3
 	build_time_multiplier = initial(build_time_multiplier) * man_rating
 
