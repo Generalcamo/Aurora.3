@@ -65,13 +65,18 @@ jobs:
         if: steps.value_holder.outputs.ACTIONS_ENABLED
         run: |
           tools/bootstrap/python tools/changelog/ss13_genchangelog.py html/changelogs
-      - name: Commit & Push
+      - name: Commit
         env:
           PR_NUMBER: ${{ steps.pr.outputs.pull_request_number }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Changelogs"
           git diff --quiet --exit-code && echo "No changes found, abort." && exit 0
-          git commit -m "Automatic changelog generation for PR #$PR_NUMBER [ci skip]" -a
-          git push
+          git add html/changelogs
+          git commit -m "Automatic changelog generation for PR #$PR_NUMBER [ci skip]" -a || true
         if: ${{ steps.cl_files.outputs.cl_files != '0' }}
+      - name: "Push"
+        if: ${{ steps.cl_files.outputs.cl_files != '0' }}
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.BOT_TOKEN_AURORA || secrets.GITHUB_TOKEN }}

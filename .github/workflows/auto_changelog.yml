@@ -43,5 +43,10 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "Changelogs"
           git diff --quiet --exit-code && echo "No changes found, abort." && exit 0
-          git commit -m "Automatic changelog generation [ci skip]" -a
-          git push
+          git add html/changelogs
+          git commit -m "Automatic changelog compile [ci skip]" -a || true
+      - name: "Push"
+        if: steps.value_holder.outputs.ACTIONS_ENABLED
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.BOT_TOKEN_AURORA || secrets.GITHUB_TOKEN }}
