@@ -37,7 +37,7 @@ jobs:
           sudo apt-get install  dos2unix
       - name: Compile CL
         run: |
-          python tools/ss13_genchangelog.py html/changelogs
+          python tools/changelog/ss13_genchangelog.py html/changelogs
       - name: Commit & Push
         run: |
           git config --local user.email "action@github.com"
