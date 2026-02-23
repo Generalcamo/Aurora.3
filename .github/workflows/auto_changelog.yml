@@ -1,10 +1,10 @@
-name: Compile changelogs
+name: Compile changelog
 
 permissions:
-  contents: write # required to push the updated changelog commit
+  contents: read
 
 on:
-  workflow_dispatch: # this workflow can only be manually triggered, see make_changelogs.yml for full flow
+  workflow_dispatch: # this workflow can only be manually triggered, see update_changelog.yml for full flow
 
 jobs:
   CompileCL:
@@ -13,13 +13,12 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Otherwise, we will fail to push refs
-          ref: dev
           token: ${{ secrets.BOT_TOKEN_AURORA }}
       - name: Python setup
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        uses: actions/setup-python@v1
         with:
           python-version: "3.x"
       - name: Install depends

@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   MakeCL:
-    name: "Make changelogs"
+    name: "Make Changelogs"
     permissions:
       contents: write # required to push the changelog chunk yml commit
     runs-on: ubuntu-24.04
@@ -39,6 +39,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Get PR number
         id: pr
         run: |
@@ -67,16 +68,10 @@ jobs:
       - name: Commit
         env:
           PR_NUMBER: ${{ steps.pr.outputs.pull_request_number }}
-        if: steps.value_holder.outputs.ACTIONS_ENABLED
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Changelogs"
           git diff --quiet --exit-code && echo "No changes found, abort." && exit 0
-          git pull origin master
-          git add html/changelogs
-          git commit -m "Automatic changelog generation for PR #$PR_NUMBER [ci skip]" -a || true
-      - name: "Push"
+          git commit -m "Automatic changelog generation for PR #$PR_NUMBER [ci skip]" -a
+          git push
         if: ${{ steps.cl_files.outputs.cl_files != '0' }}
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.BOT_TOKEN_AURORA || secrets.GITHUB_TOKEN }}
