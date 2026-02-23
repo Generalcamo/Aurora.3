@@ -1,12 +1,18 @@
 name: "Build Changelog"
 on:
-  schedule:
-    - cron: "0 0 * * *"
-  workflow_dispatch:
+  push:
+    branches:
+      - auto_changelog
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
-  compile:
-    name: "Compile changelogs"
+  MakeCL:
+    name: "Make changelogs"
+    permissions:
+      contents: write # required to push the changelog chunk yml commit
     runs-on: ubuntu-24.04
     steps:
       - name: "Check for BOT_TOKEN_AURORA secret and pass true to output if it exists to be checked by later steps"
@@ -21,7 +27,7 @@ jobs:
         if: steps.value_holder.outputs.ACTIONS_ENABLED
         uses: actions/setup-python@v1
         with:
-          python-version: '3.x'
+          python-version: "3.x"
       - name: "Install deps"
         if: steps.value_holder.outputs.ACTIONS_ENABLED
         run: |
@@ -32,22 +38,45 @@ jobs:
         if: steps.value_holder.outputs.ACTIONS_ENABLED
         uses: actions/checkout@v4
         with:
-          fetch-depth: 25
-          persist-credentials: false
+          fetch-depth: 0
+      - name: Get PR number
+        id: pr
+        run: |
+          PR_NUM=$(gh pr list --search ${{ github.sha }} --state merged --json number -q '.[] | .number' || echo "")
+          echo "PR number: $PR_NUM"
+          echo "pull_request_number=$PR_NUM" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Make
+        env:
+          BOT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_PR: "${{ steps.pr.outputs.pull_request_number }}"
+        if: ${{ steps.pr.outputs.pull_request_number != '' }}
+        run: python tools/changelog/generate_cl.py
+      - name: List
+        id: cl_files
+        run: |
+          CL_FILES=$(ls html/changelogs | grep -vwE 'example.yml|__CHANGELOG_README.txt' | wc -l || '0')
+          echo "Number of changelog files: $CL_FILES"
+          echo "cl_files=$CL_FILES" >> $GITHUB_OUTPUT
+        if: ${{ steps.pr.outputs.pull_request_number != '' }}
       - name: "Compile"
         if: steps.value_holder.outputs.ACTIONS_ENABLED
         run: |
-          tools/bootstrap/python tools/GenerateChangelog/ss13_genchangelog.py html/changelogs
+          tools/bootstrap/python tools/changelog/ss13_genchangelog.py html/changelogs
       - name: Commit
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.pull_request_number }}
         if: steps.value_holder.outputs.ACTIONS_ENABLED
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Changelogs"
+          git diff --quiet --exit-code && echo "No changes found, abort." && exit 0
           git pull origin master
           git add html/changelogs
-          git commit -m "Automatic changelog compile [ci skip]" -a || true
+          git commit -m "Automatic changelog generation for PR #$PR_NUMBER [ci skip]" -a || true
       - name: "Push"
-        if: steps.value_holder.outputs.ACTIONS_ENABLED
+        if: ${{ steps.cl_files.outputs.cl_files != '0' }}
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.BOT_TOKEN_AURORA || secrets.GITHUB_TOKEN }}
