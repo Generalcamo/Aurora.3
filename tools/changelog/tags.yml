@@ -2,12 +2,11 @@ tags:
   bugfix: bugfix
   wip: wip
   qol: qol
-  soundadd: soundadd
-  sounddel: sounddel
   rscadd: rscadd
   rscdel: rscdel
-  imageadd: imageadd
-  imagedel: imagedel
+  sound: sound
+  image: image
+  map: map
   spellcheck: spellcheck
   experiment: experiment
   balance: balance
@@ -16,6 +15,21 @@ tags:
   config: config
   admin: admin
   server: server
-  sound: sound
-  image: image
-  map: map
+
+defaults:
+  bugfix: fixed a few things
+  wip: implemented WIP things
+  qol: made some things easier to use
+  rscadd: added new things
+  rscdel: removed old things
+  sound: added/modified/removed audio or sound effects
+  image: added/modified/removed some icons or images
+  map: added/modified/removed map content
+  spellcheck: fixed a few typos
+  experiment: implemented an experimental thingy
+  balance: rebalanced something
+  code_imp: improved some internal code
+  refactor: refactored some internal code
+  config: changed some config setting
+  admin: messed with admin stuff
+  server: something server ops should know
