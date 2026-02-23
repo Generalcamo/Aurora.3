@@ -105,3 +105,4 @@
 	#warn Consider switching to VSCode editor instead, where you can press Ctrl+Shift+B to build.
 	#error Not compiling in a supported environment! Use Visual Studio Code or BUILD.bat!
 #endif
+
