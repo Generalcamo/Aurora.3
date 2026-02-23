@@ -12,12 +12,20 @@ jobs:
       contents: write # required to push the updated changelog commit
     runs-on: ubuntu-22.04
     steps:
+      - name: "Check for BOT_TOKEN_AURORA secret and pass true to output if it exists to be checked by later steps"
+        id: value_holder
+        env:
+          ENABLER_SECRET: ${{ secrets.BOT_TOKEN_AURORA }}
+        run: |
+          unset SECRET_EXISTS
+          if [ -n "$ENABLER_SECRET" ]; then SECRET_EXISTS=true ; fi
+          echo "ACTIONS_ENABLED=$SECRET_EXISTS" >> $GITHUB_OUTPUT
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Otherwise, we will fail to push refs
           ref: master
-          token: ${{ secrets.BOT_TOKEN_AURORA }}
+          persist-credentials: false
       - name: Python setup
         uses: actions/setup-python@v1
         with:
