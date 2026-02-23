@@ -23,17 +23,6 @@ jobs:
           unset SECRET_EXISTS
           if [ -n "$ENABLER_SECRET" ]; then SECRET_EXISTS=true ; fi
           echo "ACTIONS_ENABLED=$SECRET_EXISTS" >> $GITHUB_OUTPUT
-      - name: "Setup python"
-        if: steps.value_holder.outputs.ACTIONS_ENABLED
-        uses: actions/setup-python@v1
-        with:
-          python-version: "3.x"
-      - name: "Install deps"
-        if: steps.value_holder.outputs.ACTIONS_ENABLED
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install pyyaml
-          sudo apt-get install  dos2unix
       - name: "Checkout"
         if: steps.value_holder.outputs.ACTIONS_ENABLED
         uses: actions/checkout@v4
@@ -48,24 +37,35 @@ jobs:
           echo "pull_request_number=$PR_NUM" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Make
+      - name: "Setup python"
+        if: ${{ steps.pr.outputs.pull_request_number != '' }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.x"
+      - name: "Install deps"
+        if: ${{ steps.pr.outputs.pull_request_number != '' }}
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+          sudo apt-get install  dos2unix
+      - name: Make CL
         env:
           BOT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_PR: "${{ steps.pr.outputs.pull_request_number }}"
         if: ${{ steps.pr.outputs.pull_request_number != '' }}
         run: python tools/changelog/generate_cl.py
-      - name: List
+      - name: List CL files
         id: cl_files
         run: |
           CL_FILES=$(ls html/changelogs | grep -vwE 'example.yml|__CHANGELOG_README.txt' | wc -l || '0')
           echo "Number of changelog files: $CL_FILES"
           echo "cl_files=$CL_FILES" >> $GITHUB_OUTPUT
         if: ${{ steps.pr.outputs.pull_request_number != '' }}
-      - name: "Compile"
+      - name: "Compile CL"
         if: steps.value_holder.outputs.ACTIONS_ENABLED
         run: |
           tools/bootstrap/python tools/changelog/ss13_genchangelog.py html/changelogs
-      - name: Commit
+      - name: Commit & Push
         env:
           PR_NUMBER: ${{ steps.pr.outputs.pull_request_number }}
         run: |
