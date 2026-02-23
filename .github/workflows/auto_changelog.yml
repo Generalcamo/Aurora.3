@@ -1,7 +1,7 @@
 name: Compile changelogs
 
 permissions:
-  contents: read
+  contents: write # required to push the updated changelog commit
 
 on:
   workflow_dispatch: # this workflow can only be manually triggered, see make_changelogs.yml for full flow

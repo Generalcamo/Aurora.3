@@ -2,7 +2,7 @@ name: "Build Changelog"
 on:
   push:
     branches:
-      - master
+      - auto_changelog
 
 concurrency:
   group: ${{ github.workflow }}
