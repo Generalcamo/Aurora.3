@@ -1,0 +1,21 @@
+tags:
+  bugfix: bugfix
+  wip: wip
+  qol: qol
+  soundadd: soundadd
+  sounddel: sounddel
+  rscadd: rscadd
+  rscdel: rscdel
+  imageadd: imageadd
+  imagedel: imagedel
+  spellcheck: spellcheck
+  experiment: experiment
+  balance: balance
+  code_imp: code_imp
+  refactor: refactor
+  config: config
+  admin: admin
+  server: server
+  sound: sound
+  image: image
+  map: map
