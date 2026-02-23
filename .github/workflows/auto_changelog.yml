@@ -1,7 +1,7 @@
-name: Compile changelog
+name: Compile Changelog
 
 permissions:
-  contents: write
+  contents: read
 
 on:
   workflow_dispatch: # this workflow can only be manually triggered, see update_changelog.yml for full flow
@@ -41,7 +41,7 @@ jobs:
       - name: Commit & Push
         run: |
           git config --local user.email "action@github.com"
-          git config --local user.name "Changelogs""
+          git config --local user.name "Changelogs"
           git diff --quiet --exit-code && echo "No changes found, abort." && exit 0
           git commit -m "Automatic changelog generation [ci skip]" -a
           git push
