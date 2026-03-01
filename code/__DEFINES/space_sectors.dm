@@ -27,13 +27,14 @@
 #define SECTOR_XANU					"Xanu"				// Xanu Prime is here
 #define SECTOR_BURZSIA				"Burzsia" 			//Burzsia I and II are here
 #define SECTOR_HANEUNIM				"Haneunim"			//Haneunim and its gravity well, Konyang is found here
-#define ALL_COALITION_SECTORS	list(SECTOR_COALITION, SECTOR_XANU, SECTOR_WEEPING_STARS, SECTOR_ARUSHA, SECTOR_LIBERTYS_CRADLE, SECTOR_BURZSIA, SECTOR_HANEUNIM)
+#define ALL_COALITION_SECTORS	list(SECTOR_COALITION, SECTOR_XANU, SECTOR_WEEPING_STARS, SECTOR_ARUSHA, SECTOR_LIBERTYS_CRADLE, SECTOR_BURZSIA, SECTOR_HANEUNIM, SECTOR_AL_MAQDISI)
 
 //Light's edge, which should have unique properties all around
 #define SECTOR_LIGHTS_EDGE			"Light's Edge"	//For the area of Light's Edge that is somewhat inhabited
+#define SECTOR_AL_MAQDISI			"Al-Maqdisi"	//The Republic of Assunzione is here
 #define SECTOR_LEMURIAN_SEA			"Lemurian Sea"	//For the actual black void area
 #define SECTOR_LEMURIAN_SEA_FAR		"Lemurian Sea (Uncharted)"	//For the actual black void area
-#define ALL_VOID_SECTORS		list(SECTOR_LIGHTS_EDGE, SECTOR_LEMURIAN_SEA, SECTOR_LEMURIAN_SEA_FAR)
+#define ALL_VOID_SECTORS		list(SECTOR_LIGHTS_EDGE, SECTOR_AL_MAQDISI, SECTOR_LEMURIAN_SEA, SECTOR_LEMURIAN_SEA_FAR)
 
 //Crescent Expanse & Beyond
 #define SECTOR_CRESCENT_EXPANSE_EAST		"Crescent Expanse (East)" // CoC/Alliance surveyors can appear here
