@@ -183,7 +183,7 @@
 			wash(M)
 			process_heat(M)
 		for (var/atom/movable/G in src.loc)
-			G.clean_blood()
+			G.wash(CLEAN_WASH)
 
 /obj/machinery/shower/attackby(obj/item/attacking_item, mob/user)
 	if(attacking_item.type == /obj/item/analyzer)
@@ -232,7 +232,7 @@
 	if(QDELETED(arrived))
 		return
 
-	INVOKE_ASYNC(src, PROC_REF(wash), arrived)
+	INVOKE_ASYNC(src, PROC_REF(wash_atom), arrived)
 	if(ismob(arrived))
 		mobpresent += 1
 		process_heat(arrived)
@@ -247,7 +247,7 @@
 		mobpresent -= 1
 
 //Yes, showers are super powerful as far as washing goes.
-/obj/machinery/shower/proc/wash(atom/movable/O)
+/obj/machinery/shower/proc/wash_atom(atom/movable/O)
 	if(!on)
 		return
 
@@ -255,18 +255,10 @@
 	W.create_reagents(spray_amount)
 	W.reagents.add_reagent(/singleton/reagent/water, spray_amount)
 	W.set_up(O, spray_amount)
-
-	if(ishuman(O))
-		var/mob/living/carbon/human/H = O
-		H.wash()
-
-	if(isobj(O))
-		var/obj/object = O
-		object.clean()
+	O.wash(CLEAN_WASH)
 
 	if(isturf(loc))
 		var/turf/tile = loc
-		tile.clean_blood()
 		tile.remove_cleanables()
 
 /obj/machinery/shower/process()
@@ -276,7 +268,7 @@
 	if(!mobpresent)
 		return
 	for(var/mob/living/L in loc)
-		wash(L) // Why was it not here before?
+		wash_atom(L) // Why was it not here before?
 		process_heat(L)
 
 /obj/machinery/shower/proc/wash_floor()
@@ -366,7 +358,7 @@
 	if(!Adjacent(user))
 		return		//Person has moved away from the sink
 
-	user.clean_blood()
+	user.wash(CLEAN_WASH)
 	user.visible_message( \
 		SPAN_NOTICE("[user] washes their hands using \the [src]."), \
 		SPAN_NOTICE("You wash your hands using \the [src]."))
@@ -492,7 +484,7 @@
 	if(!I) return 								//Item's been destroyed while washing
 	if(user.get_active_hand() != I) return		//Person has switched hands or the item in their hands
 
-	I.clean_blood()
+	I.wash(CLEAN_WASH)
 	user.visible_message( \
 		SPAN_NOTICE("[user] washes \a [I] using \the [src]."), \
 		SPAN_NOTICE("You wash \a [I] using \the [src]."))

@@ -57,7 +57,8 @@
 	var/slot_id
 	/// Required for inventory/screen overlays.
 	var/list/object_overlays = list()
-	var/color_changed = FALSE
+	/// Id of any currently running timers that set our color matrix
+	var/color_timer_id
 
 /atom/movable/screen/inventory/MouseEntered()
 	..()
@@ -86,16 +87,17 @@
 		AddOverlays(object_overlays)
 
 /atom/movable/screen/inventory/proc/set_color_for(var/set_color, var/set_time)
-	if(color_changed)
+	if(color_timer_id)
 		return
-	var/old_color = color
-	color = set_color
-	color_changed = TRUE
-	addtimer(CALLBACK(src, PROC_REF(set_color_to), old_color), set_time)
+	add_atom_color(set_color, TEMPORARY_COLOR_PRIORITY)
+	color_timer_id = addtimer(CALLBACK(src, PROC_REF(reset_color), color), set_time)
+
+/atom/movable/screen/inventory/proc/reset_color(var/old_color)
+	color_timer_id = null
+	remove_atom_color(TEMPORARY_COLOR_PRIORITY, old_color)
 
 /atom/movable/screen/inventory/proc/set_color_to(var/set_color)
-	color = set_color
-	color_changed = FALSE
+	add_atom_color(set_color, FIXED_COLOR_PRIORITY)
 
 /atom/movable/screen/close
 	name = "close"

@@ -446,7 +446,16 @@
 
 	vomit.reagents.add_reagent(/singleton/reagent/acid/stomach, 5)
 
-/atom/proc/clean_blood()
+/**
+ * Wash this atom
+ *
+ * This will clean it off any temporary stuff like blood. Override this in your item to add custom cleaning behavior.
+ * Returns true if any washing was necessary and thus performed
+ * Arguments:
+ * * clean_types: any of the CLEAN_ constants
+ * Returns: A bitflag if it successfully cleaned something: e.g. COMPONENT_CLEANED, or NONE if not.
+ */
+/atom/proc/wash(clean_types)
 	SHOULD_CALL_PARENT(TRUE)
 	SHOULD_NOT_SLEEP(TRUE)
 
@@ -458,8 +467,14 @@
 		blood_DNA = null
 		return TRUE
 
+	// Basically "if has washable coloration"
+	if(length(atom_colors) >= WASHABLE_COLOR_PRIORITY && atom_colors[WASHABLE_COLOR_PRIORITY])
+		remove_atom_color(WASHABLE_COLOR_PRIORITY)
+		return COMPONENT_CLEANED
+	return NONE
+
 /atom/proc/on_rag_wipe(var/obj/item/reagent_containers/glass/rag/R)
-	clean_blood()
+	wash(CLEAN_SCRUB)
 	R.reagents.splash(src, 1)
 
 /atom/proc/get_global_map_pos()

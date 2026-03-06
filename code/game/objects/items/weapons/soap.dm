@@ -88,7 +88,7 @@
 			clean_msg = FALSE
 		playsound(loc, 'sound/effects/mop.ogg', 25, 1)
 		if (do_after(user, 2.5 SECONDS, do_flags = DO_DEFAULT & ~DO_USER_SAME_HAND))
-			target.clean_blood()
+			target.wash(CLEAN_WASH)
 			if(clean_msg)
 				to_chat(user, SPAN_NOTICE("You scrub \the [target.name] out."))
 			if(istype(target, /turf) || istype(target, /obj/effect/decal/cleanable) || istype(target, /obj/effect/overlay))

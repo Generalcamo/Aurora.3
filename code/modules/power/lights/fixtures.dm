@@ -646,7 +646,7 @@
 			brightness_color = default_color
 			update(0)
 
-/obj/machinery/light/clean()
+/obj/machinery/light/wash()
 	. = ..()
 	brightness_color = initial(brightness_color)
 	update()

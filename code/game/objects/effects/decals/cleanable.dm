@@ -14,8 +14,8 @@
 /obj/effect/decal/cleanable/proc/post_sweep(var/mob/user)
 	return
 
-/obj/effect/decal/cleanable/clean_blood(var/ignore = 0)
-	if(!ignore)
+/obj/effect/decal/cleanable/wash(clean_types)
+	if(clean_types & CLEAN_TYPE_LIGHT_DECAL)
 		qdel(src)
 		return
 	..()

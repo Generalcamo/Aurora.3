@@ -31,7 +31,7 @@
 		basecolor = COLOR_LUMINOL
 		update_icon()
 
-/obj/effect/decal/cleanable/blood/clean_blood()
+/obj/effect/decal/cleanable/blood/wash(clean_types)
 	fluorescent = 0
 	if(invisibility != 100)
 		set_invisibility(100)

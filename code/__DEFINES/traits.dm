@@ -224,3 +224,9 @@
 
 /// Unlinks gliding from movement speed, meaning that there will be a delay between movements rather than a single move movement between tiles
 #define TRAIT_NO_GLIDE "no_glide"
+
+/// Trait acquired from being painted a certain color
+#define ATOM_COLOR_TRAIT "atom_color"
+
+///Used for managing KEEP_TOGETHER in [/atom/var/appearance_flags]
+#define TRAIT_KEEP_TOGETHER "keep-together"

@@ -31,8 +31,8 @@
 
 /obj/outfit/admin/ert/kataphract/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
 	if(H?.w_uniform)
-		H.w_uniform.color = pick("#42b360", "#b68029", "#5574c2")
-		H.w_uniform.accent_color = H.w_uniform.color
+		H.w_uniform.add_atom_color(pick("#42b360", "#b68029", "#5574c2"), FIXED_COLOR_PRIORITY)
+		H.w_uniform.accent_color = H.w_uniform.is_atom_color()
 	if(H?.shoes)
 		var/obj/item/clothing/shoes/magboots/hegemony/boots = new(H)
 		H.equip_to_slot_if_possible(boots, slot_shoes)
@@ -72,9 +72,9 @@
 
 	var/uniform_colour = pick("#42b360", "#b68029", "#5574c2")
 	if(H?.w_uniform)
-		H.w_uniform.color = uniform_colour
+		H.w_uniform.add_atom_color(uniform_colour, FIXED_COLOR_PRIORITY)
 	if(H?.shoes)
-		H.shoes.color = uniform_colour
+		H.shoes.add_atom_color(uniform_colour, FIXED_COLOR_PRIORITY)
 		var/obj/item/clothing/shoes/magboots/hegemony/boots = new(H)
 		H.equip_to_slot_if_possible(boots, slot_shoes)
 
@@ -109,7 +109,7 @@
 
 /obj/outfit/admin/ert/kataphract/specialist/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
 	if(H?.w_uniform)
-		H.w_uniform.color = pick("#42b360", "#b68029", "#5574c2")
+		H.w_uniform.add_atom_color(pick("#42b360", "#b68029", "#5574c2"), FIXED_COLOR_PRIORITY)
 	if(H?.shoes)
 		var/obj/item/clothing/shoes/magboots/hegemony/boots = new(H)
 		H.equip_to_slot_if_possible(boots, slot_shoes)
@@ -123,7 +123,7 @@
 
 /obj/outfit/admin/ert/kataphract/leader/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
 	if(H?.w_uniform)
-		H.w_uniform.color = pick("#42b360", "#b68029", "#5574c2")
+		H.w_uniform.add_atom_color(pick("#42b360", "#b68029", "#5574c2"), FIXED_COLOR_PRIORITY)
 	if(H?.shoes)
 		var/obj/item/clothing/shoes/magboots/hegemony/boots = new(H)
 		H.equip_to_slot_if_possible(boots, slot_shoes)

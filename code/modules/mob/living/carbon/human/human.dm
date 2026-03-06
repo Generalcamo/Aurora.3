@@ -1398,10 +1398,10 @@
 		return
 	return md5(dna.uni_identity)
 
-/mob/living/carbon/human/clean_blood(var/clean_feet)
-	.=..()
+/mob/living/carbon/human/wash(clean_types, clean_feet)
+	. = ..()
 	if(gloves)
-		if(gloves.clean_blood())
+		if(gloves.wash(clean_types))
 			update_inv_gloves(1)
 		gloves.germ_level = 0
 	else

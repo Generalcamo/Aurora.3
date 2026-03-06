@@ -62,3 +62,8 @@
 
 ///from base of atom/set_opacity(): (new_opacity)
 #define COMSIG_ATOM_SET_OPACITY "atom_set_opacity"
+
+/// From /atom/proc/update_atom_color() : (color_changed)
+#define COMSIG_ATOM_COLOR_UPDATED "atom_color_updated"
+	/// Cancels update_icon call in case you are somehow forced to call it manually to prevent dupe calls
+	#define COMPONENT_CANCEL_COLOR_APPEARANCE_UPDATE (1<<0)

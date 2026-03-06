@@ -1,6 +1,6 @@
 /datum/client_color
 	var/client_color = "" //Any client.color-valid value
-	var/priority = 1
+	var/priority = CLIENT_COLOR_FILTER_PRIORITY
 	var/override = FALSE //If set to override we will stop multiplying the moment we get here. NOTE: Priority remains, if your override is on position 4, the other 3 will still have a say.
 	var/disability = FALSE
 
@@ -84,32 +84,32 @@
 
 /datum/client_color/monochrome
 	client_color = list(0.33, 0.33, 0.33, 0.33, 0.33, 0.33, 0.33, 0.33, 0.33)
-	priority = 100
+	priority = CLIENT_COLOR_FILTER_PRIORITY
 
 //Similar to monochrome but shouldn't look as flat, same priority
 /datum/client_color/noir
 	client_color = list(0.299, 0.299, 0.299, 0.587, 0.587, 0.587, 0.114, 0.114, 0.114)
-	priority = 200
+	priority = CLIENT_COLOR_FILTER_PRIORITY
 
 /datum/client_color/thirdeye
 	client_color = list(0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.05, 0.05, 0.05)
-	priority = 300
+	priority = CLIENT_COLOR_IMPORTANT_PRIORITY
 
 /datum/client_color/vaurca
 	client_color = list(0.793, 0.297, 0, 0.297, 0.539, 0, 0, 0, 0)
-	priority = 100
+	priority = CLIENT_COLOR_FILTER_PRIORITY
 
 /datum/client_color/deuteranopia
 	client_color = list(0.47, 0.38, 0.15, 0.54, 0.31, 0.15, 0, 0.3, 0.7)
-	priority = 100
+	priority = CLIENT_COLOR_FILTER_PRIORITY
 
 /datum/client_color/protanopia
 	client_color = list(0.51, 0.4, 0.12, 0.49, 0.41, 0.12, 0, 0.2, 0.76)
-	priority = 100
+	priority = CLIENT_COLOR_FILTER_PRIORITY
 
 /datum/client_color/tritanopia
 	client_color = list(0.95, 0.07, 0, 0, 0.44, 0.52, 0.05, 0.49, 0.48)
-	priority = 100
+	priority = CLIENT_COLOR_FILTER_PRIORITY
 
 /datum/client_color/berserk
 	client_color = list(0.793, 0.4, 0.4, 0.793, 0.4, 0.4, 0, 0, 0)
@@ -118,3 +118,6 @@
 
 /datum/client_color/oversaturated/New()
 	client_color = color_saturation(40)
+
+/datum/client_color/temp
+	priority = CLIENT_COLOR_TEMPORARY_PRIORITY

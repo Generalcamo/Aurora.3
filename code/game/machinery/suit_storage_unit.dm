@@ -368,11 +368,11 @@
 		if(i==3) //End of the cycle
 			if(!src.issuperUV)
 				if(src.HELMET)
-					HELMET.clean_blood()
+					HELMET.wash(CLEAN_ALL)
 				if(src.SUIT)
-					SUIT.clean_blood()
+					SUIT.wash(CLEAN_ALL)
 				if(src.MASK)
-					MASK.clean_blood()
+					MASK.wash(CLEAN_ALL)
 			else //It was supercycling, destroy everything
 				if(src.HELMET)
 					src.HELMET = null

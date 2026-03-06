@@ -198,7 +198,7 @@
 	..()
 	shatter()
 
-/obj/item/light/clean()
+/obj/item/light/wash()
 	. = ..()
 	brightness_color = initial(brightness_color)
 	update()

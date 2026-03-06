@@ -96,7 +96,7 @@
 		icon_supported_species_tags = new_adaption_cache
 
 // Aurora forensics port.
-/obj/item/clothing/clean_blood()
+/obj/item/clothing/wash(clean_types)
 	. = ..()
 	LAZYCLEARLIST(gunshot_residue)
 
@@ -1019,7 +1019,7 @@
 /obj/item/clothing/shoes/clothing_class()
 	return "shoes"
 
-/obj/item/clothing/shoes/clean_blood()
+/obj/item/clothing/shoes/wash(clean_types)
 	. = ..()
 	track_footprint = 0
 

@@ -76,7 +76,7 @@
 		var/mob/living/L = AM
 		if(!istype(oldloc, /turf/simulated/floor/exoplanet/water))
 			to_chat(L, SPAN_WARNING("You get drenched in water from entering \the [src]!"))
-		wash(L)
+		wash_atom(L)
 	..()
 
 /turf/simulated/floor/exoplanet/water/Exited(atom/movable/AM, atom/newloc)
@@ -174,17 +174,11 @@
 	icon = 'icons/turf/flooring/exoplanet/moghes.dmi'
 	icon_state = "water"
 
-/turf/simulated/floor/exoplanet/water/proc/wash(atom/movable/O)
+/turf/simulated/floor/exoplanet/water/proc/wash_atom(atom/movable/O)
 
-	if(ishuman(O))
-		var/mob/living/carbon/human/H = O
-		H.wash()
-
-	if(isobj(O))
-		var/obj/object = O
-		object.clean()
+	O.wash(CLEAN_WASH)
 
 	if(isturf(loc))
 		var/turf/tile = loc
-		tile.clean_blood()
+		//tile.wash(clean_types)
 		tile.remove_cleanables()

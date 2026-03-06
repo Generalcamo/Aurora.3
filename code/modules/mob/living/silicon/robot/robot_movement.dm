@@ -30,7 +30,7 @@
 			var/obj/item/robot_module/janitor/J = module
 			var/turf/tile = get_turf(src)
 			if(isturf(tile) && J.mopping)
-				tile.clean_blood()
+				tile.wash(CLEAN_SCRUB)
 				if(istype(tile, /turf/simulated))
 					var/turf/simulated/S = tile
 					S.dirt = FALSE
@@ -46,23 +46,23 @@
 							qdel(O)
 					else if(istype(A, /obj/item))
 						var/obj/item/cleaned_item = A
-						cleaned_item.clean_blood()
+						cleaned_item.wash(CLEAN_SCRUB)
 					else if(istype(A, /mob/living/carbon/human))
 						var/mob/living/carbon/human/cleaned_human = A
 						if(cleaned_human.lying)
 							if(cleaned_human.head)
-								cleaned_human.head.clean_blood()
+								cleaned_human.head.wash(CLEAN_SCRUB)
 								cleaned_human.update_inv_head(0)
 							if(cleaned_human.wear_suit)
-								cleaned_human.wear_suit.clean_blood()
+								cleaned_human.wear_suit.wash(CLEAN_SCRUB)
 								cleaned_human.update_inv_wear_suit(0)
 							else if(cleaned_human.w_uniform)
-								cleaned_human.w_uniform.clean_blood()
+								cleaned_human.w_uniform.wash(CLEAN_SCRUB)
 								cleaned_human.update_inv_w_uniform(0)
 							if(cleaned_human.shoes)
-								cleaned_human.shoes.clean_blood()
+								cleaned_human.shoes.wash(CLEAN_SCRUB)
 								cleaned_human.update_inv_shoes(0)
-							cleaned_human.clean_blood(1)
+							cleaned_human.wash(CLEAN_SCRUB, TRUE)
 							to_chat(cleaned_human, SPAN_WARNING("\The [src] runs its bottom mounted bristles all over you!"))
 
 	if(client)

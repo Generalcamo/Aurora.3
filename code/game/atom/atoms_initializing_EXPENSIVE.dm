@@ -122,6 +122,10 @@
 		stack_trace("Warning: [src]([type]) initialized multiple times!")
 	flags_1 |= INITIALIZED_1
 
+	//atom color stuff
+	if(color)
+		add_atom_color(color, FIXED_COLOR_PRIORITY)
+
 	if(LAZYLEN(reagents_to_add))
 		if(!reagents)
 			create_reagents(0)

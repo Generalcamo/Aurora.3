@@ -116,7 +116,7 @@
 		if(do_after(user, 120))
 			user.visible_message("\The [user] finishes brushing off \the [A]!")
 			reagents.splash(A, 5)
-			A.clean_blood()
+			A.wash(CLEAN_SCRUB)
 
 /obj/item/reagent_containers/toothbrush/green
 	icon_state = "toothbrush_g"

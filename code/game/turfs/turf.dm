@@ -589,7 +589,7 @@
 //expects an atom containing the reagents used to clean the turf
 /turf/proc/clean(atom/source, mob/user)
 	if(source.reagents.has_reagent(/singleton/reagent/water, 1) || source.reagents.has_reagent(/singleton/reagent/spacecleaner, 1))
-		clean_blood()
+		wash(CLEAN_WASH)
 
 		for(var/obj/effect/O in src)
 			if(istype(O, /obj/effect/decal/cleanable))
@@ -796,7 +796,7 @@
 	for(var/obj/effect/O in src)
 		if(istype(O,/obj/effect/rune) || istype(O,/obj/effect/decal/cleanable))
 			qdel(O)
-	clean_blood()
+	wash(CLEAN_ALL)
 
 /turf/proc/IgniteTurf(power, fire_color)
 	return

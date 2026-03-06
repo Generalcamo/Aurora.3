@@ -59,7 +59,7 @@
 	update_icon()
 	sleep(200)
 	for(var/atom/A in contents)
-		A.clean_blood()
+		A.wash(CLEAN_SCRUB)
 
 	for(var/obj/item/I in contents)
 		I.decontaminate()

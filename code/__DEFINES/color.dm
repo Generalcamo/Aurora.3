@@ -1,3 +1,28 @@
+//different types of atom colorations
+/// Only used by rare effects like greentext coloring mobs and when admins varedit color
+#define ADMIN_COLOR_PRIORITY 1
+/// e.g. purple effect of the revenant on a mob, black effect when mob electrocuted
+#define TEMPORARY_COLOR_PRIORITY 2
+/// Color splashed onto an atom (e.g. paint on turf)
+#define WASHABLE_COLOR_PRIORITY 3
+/// Color inherent to the atom (e.g. blob color)
+#define FIXED_COLOR_PRIORITY 4
+///how many colour priority levels there are.
+#define COLOR_PRIORITY_AMOUNT 4
+/// If this is a plain atom color
+#define ATOM_COLOR_TYPE_NORMAL "normal"
+/// If this is a color filter
+#define ATOM_COLOR_TYPE_FILTER "filter"
+// Indexes for color arrays
+#define ATOM_COLOR_VALUE_INDEX 1
+#define ATOM_COLOR_TYPE_INDEX 2
+#define ATOM_PRIORITY_COLOR_FILTER "atom_priority_color"
+#define ATOM_PRIORITY_COLOR_FILTER_PRIORITY -1
+/// Multiply pixel's saturation by color's saturation. Paints accents while keeping dim areas dim.
+#define SATURATION_MULTIPLY "multiply"
+/// Always affects the original pixel's saturation and lightness.
+#define SATURATION_OVERRIDE "always"
+
 #define COLOR_BLACK            "#000000"
 #define COLOR_NAVY_BLUE        "#000080"
 #define COLOR_GREEN            "#008000"
@@ -61,6 +86,7 @@
 #define COLOR_CLOSET_GOLD      "#6d6133"
 #define COLOR_DARK_RED         "#9d2300"
 #define COLOR_CRIMSON          "#990C0C"
+#define COLOR_CULT_RED "#960000"
 #define COLOR_BOTTLE_GREEN     "#1f6b4f"
 #define COLOR_PALE_BTL_GREEN   "#57967f"
 #define COLOR_SLATE            "#708090"
@@ -190,3 +216,19 @@
 #define COLOR_THEME_SLIMECORE "#4FB259"
 #define COLOR_THEME_OPERATIVE "#B8221F"
 #define COLOR_THEME_CLOCKWORK "#CFBA47"
+
+// Client color priorities
+
+#define CLIENT_COLOR_GLASSES_PRIORITY 1 // Lowest there is, used by glasses
+#define CLIENT_COLOR_HELMET_PRIORITY 2 // Same but for helmets
+#define CLIENT_COLOR_ORGAN_PRIORITY 3 // For heads and organs
+#define CLIENT_COLOR_FILTER_PRIORITY 4 // Filters which should go ontop of previous ones
+#define CLIENT_COLOR_TEMPORARY_PRIORITY 5 // Temporary flashing effects
+#define CLIENT_COLOR_IMPORTANT_PRIORITY 6 // Gameplay important hints signifying antag status or near-death, should be always shown
+#define CLIENT_COLOR_OVERRIDE_PRIORITY 7 // For effects that are meant to mask all others for technical reasons
+
+
+#define CM_COLOR_SAT_MIN 0.6
+#define CM_COLOR_SAT_MAX 0.7
+#define CM_COLOR_LUM_MIN 0.65
+#define CM_COLOR_LUM_MAX 0.75

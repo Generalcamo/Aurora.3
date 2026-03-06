@@ -335,11 +335,6 @@
 /obj/proc/set_pixel_offsets()
 	return
 
-//wash an object
-/obj/proc/clean()
-	clean_blood()
-	color = initial(color)
-
 /obj/proc/output_spoken_message(var/message, var/message_verb = "transmits", var/display_overhead = TRUE, var/overhead_time = 2 SECONDS)
 	audible_message("\The <b>[src.name]</b> [message_verb], \"[message]\"")
 	if(display_overhead)

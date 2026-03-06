@@ -863,7 +863,7 @@ GLOBAL_LIST_INIT(slot_flags_enumeration, list(
 		return TRUE
 	return FALSE
 
-/obj/item/clean_blood()
+/obj/item/wash(clean_types)
 	. = ..()
 	if(blood_overlay)
 		CutOverlays(blood_overlay, ATOM_ICON_CACHE_ALL)

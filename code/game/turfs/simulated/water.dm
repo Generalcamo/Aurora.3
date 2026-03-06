@@ -127,7 +127,7 @@
 	reagents.add_reagent(/singleton/reagent/water, 2)
 	clean(src)
 	for(var/mob/living/L in src)
-		wash(L)
+		wash_atom(L)
 	if(!numobjects)
 		STOP_PROCESSING(SSprocessing, src)
 
@@ -140,22 +140,15 @@
 	return ..()
 
 // Taken from shower
-/turf/simulated/floor/beach/water/proc/wash(atom/movable/O as obj|mob)
+/turf/simulated/floor/beach/water/proc/wash_atom(atom/movable/O)
 
 	var/obj/effect/effect/water/W = new(O)
 	W.create_reagents(100)
 	W.reagents.add_reagent(/singleton/reagent/water, 100)
 	W.set_up(O, 100)
 
-	if(ishuman(O))
-		var/mob/living/carbon/human/H = O
-		H.wash()
-
-	if(isobj(O))
-		var/obj/object = O
-		object.clean()
+	O.wash(CLEAN_WASH)
 
 	if(isturf(loc))
 		var/turf/tile = loc
-		tile.clean_blood()
 		tile.remove_cleanables()

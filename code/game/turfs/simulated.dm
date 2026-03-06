@@ -160,9 +160,9 @@
 		CutOverlays(wet_overlay, ATOM_ICON_CACHE_PROTECTED)
 		wet_overlay = null
 
-/turf/simulated/clean_blood()
+/turf/simulated/wash(clean_types)
 	for(var/obj/effect/decal/cleanable/blood/B in contents)
-		B.clean_blood()
+		B.wash(clean_types)
 	..()
 
 /turf/simulated/clean(atom/source, mob/user)

@@ -262,30 +262,31 @@
 		if(islist(back))
 			back = pick(back)
 		var/obj/item/storage/backpack/B = new back(H)
+		var/bag_color
 		if (H.backbag == OUTFIT_SATCHEL_ALT || H.backbag == OUTFIT_RUCKSACK || H.backbag == OUTFIT_POCKETBOOK)
 			switch (H.backbag_color)
 				if (OUTFIT_NOTHING)
-					B.color = null
+					bag_color = null
 				if (OUTFIT_BLUE)
-					B.color  = "#2f4f81"
+					bag_color  = "#2f4f81"
 				if (OUTFIT_GREEN)
-					B.color  = "#353727"
+					bag_color  = "#353727"
 				if (OUTFIT_NAVY)
-					B.color  = "#2a303b"
+					bag_color  = "#2a303b"
 				if (OUTFIT_TAN)
-					B.color  = "#524a3e"
+					bag_color  = "#524a3e"
 				if (OUTFIT_KHAKI)
-					B.color  = "#baa481"
+					bag_color  = "#baa481"
 				if (OUTFIT_BLACK)
-					B.color  = "#212121"
+					bag_color  = "#212121"
 				if (OUTFIT_OLIVE)
-					B.color  = "#544f3d"
+					bag_color  = "#544f3d"
 				if (OUTFIT_AUBURN)
-					B.color = "#512828"
+					bag_color = "#512828"
 				if (OUTFIT_BROWN)
-					B.color = "#3d2711"
+					bag_color = "#3d2711"
 		else
-			B.color = null
+			bag_color = null
 		switch(H.backbag_strap)
 			if(OUTFIT_NOTHING)
 				B.alpha_mask = "hidden"
@@ -295,6 +296,7 @@
 				B.alpha_mask = "normal"
 			if(OUTFIT_THICK)
 				B.alpha_mask = null
+		B.add_atom_color(bag_color, FIXED_COLOR_PRIORITY)
 		if(isvaurca(H, TRUE))
 			H.equip_or_collect(B, slot_r_hand)
 		else
