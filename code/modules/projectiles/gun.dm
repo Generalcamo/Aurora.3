@@ -175,7 +175,7 @@
 	var/has_safety = TRUE
 	/// Whether the gun's safety is currently engaged.
 	var/safety_state = TRUE
-	var/image/safety_overlay
+	var/mutable_appearance/safety_overlay
 
 	/// If TRUE, applies the user's ID iff_faction to the projectile. As of 2025/11, code making use of this is not currently implemented.
 	var/iff_capable = FALSE
@@ -266,8 +266,8 @@
 	if(has_safety)
 		CutOverlays(safety_overlay, ATOM_ICON_CACHE_PROTECTED)
 		safety_overlay = null
-		if(!isturf(loc)) // In a mob, holster or bag or something
-			safety_overlay = image(gun_gui_icons,"[safety()]")
+		if(ismob(loc))
+			safety_overlay = mutable_appearance(gun_gui_icons,"[safety()]")
 			AddOverlays(safety_overlay, ATOM_ICON_CACHE_PROTECTED)
 
 	if(is_wieldable)
@@ -770,15 +770,26 @@
 
 // Safety Procs
 
-/obj/item/gun/proc/toggle_safety(var/mob/user)
+/obj/item/gun/proc/toggle_safety(mob/user, silent=FALSE)
+	if(!has_safety)
+		return FALSE
+
+	// only checks for first level storage e.g pockets, hands, suit storage, belts, nothing in containers
+	if(!in_contents_of(user))
+		return FALSE
+
 	safety_state = !safety_state
 	update_icon()
 	if(user)
 		balloon_alert(user, "safety [safety_state ? "on" : "off"].")
+		if(silent)
+			return TRUE
 		if(!safety_state)
-			playsound(src, safetyon_sound, 30, 1)
+			playsound(src, safetyon_sound, 30, TRUE)
 		else
-			playsound(src, safetyoff_sound, 30, 1)
+			playsound(src, safetyoff_sound, 30, TRUE)
+
+	return TRUE
 
 /obj/item/gun/verb/toggle_safety_verb()
 	set src in usr
