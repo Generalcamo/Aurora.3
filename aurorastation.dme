@@ -488,6 +488,7 @@
 #include "code\datums\components\local_network.dm"
 #include "code\datums\components\orbiter.dm"
 #include "code\datums\components\overlay_lighting.dm"
+#include "code\datums\components\twohanded.dm"
 #include "code\datums\components\armor\_armor.dm"
 #include "code\datums\components\armor\synthetic_armor.dm"
 #include "code\datums\components\base_name\base_name.dm"

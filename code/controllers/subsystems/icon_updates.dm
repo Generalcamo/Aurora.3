@@ -103,7 +103,11 @@ SUBSYSTEM_DEF(icon_update)
  * Updates the atom's icon based on current state(s).
  */
 /atom/proc/update_icon()
-	SHOULD_NOT_SLEEP(TRUE)
+	SIGNAL_HANDLER
+	SHOULD_CALL_PARENT(TRUE)
+
+	SEND_SIGNAL(src, COMSIG_ATOM_UPDATE_ICON)
+
 	return
 
 /**
