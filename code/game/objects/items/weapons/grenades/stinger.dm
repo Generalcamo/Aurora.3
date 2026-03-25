@@ -41,18 +41,18 @@
 		P.range = shard_range
 		P.name = "rubber ball"
 
-		P.preparePixelProjectile(T, get_turf(source))
+		P.aim_projectile(T, get_turf(source))
 		P.firer = source
 		P.fired_from = source
 		P.fire()
 
-		if(can_cover)
-			for(var/mob/living/M in O)
-				if(M.lying && isturf(get_turf(source)))
-					P.process_hit(get_turf(M), M)
-				else
-					if(prob(20))
-						P.process_hit(get_turf(M), M)
+		//if(can_cover)
+		//	for(var/mob/living/M in O)
+		//		if(M.lying && isturf(get_turf(source)))
+		//			P.process_hit(get_turf(M), M)
+		//		else
+		//			if(prob(20))
+		//				P.process_hit(get_turf(M), M)
 
 /obj/item/grenade/stinger/prime()
 	..()

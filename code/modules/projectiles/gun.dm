@@ -514,12 +514,12 @@ ABSTRACT_TYPE(/obj/item/gun)
 			var/acc = burst_accuracy[min(i, burst_accuracy.len)]
 			var/disp = dispersion[min(i, dispersion.len)]
 
-			P.accuracy = accuracy + acc
+			P.accuracy_mod = accuracy + acc
 			P.spread += disp
 
 			P.suppressed =  suppressed
 
-			P.preparePixelProjectile(target, get_turf(src))
+			P.aim_projectile(target, get_turf(src))
 			P.fired_from = src
 			P.fire()
 
@@ -680,7 +680,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 		else if(mob.shock_stage > 70)
 			added_spread = 15
 
-	P.preparePixelProjectile(target, src, deviation = added_spread)
+	P.aim_projectile(target, src, deviation = added_spread)
 	P.firer = user
 	P.fired_from = src
 	P.def_zone = target_zone

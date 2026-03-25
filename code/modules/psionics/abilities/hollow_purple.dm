@@ -61,7 +61,7 @@
 	armor_penetration = 1000
 	penetrating = 100
 	range = 250
-	accuracy = 100
+	//accuracy = 100
 	anti_materiel_potential = 100
 	damage_type = DAMAGE_BRUTE
 

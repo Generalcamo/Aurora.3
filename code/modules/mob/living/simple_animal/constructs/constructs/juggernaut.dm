@@ -48,6 +48,6 @@
 
 				// redirect the projectile
 				hitting_projectile.firer = src
-				hitting_projectile.old_style_target(locate(new_x, new_y, hitting_projectile.z))
+				hitting_projectile.aim_projectile(locate(new_x, new_y, hitting_projectile.z), src)
 
 			return BULLET_ACT_FORCE_PIERCE // complete projectile permutation

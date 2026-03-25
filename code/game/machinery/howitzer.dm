@@ -320,7 +320,7 @@ ABSTRACT_TYPE(/obj/machinery/howitzer)
 		stack_trace("Unable to locate the target, somehow.")
 		return
 
-	shot_projectile.preparePixelProjectile(target, get_turf(src))
+	shot_projectile.aim_projectile(target, get_turf(src))
 	shot_projectile.firer = src
 	shot_projectile.fired_from = src
 	shot_projectile.fire()

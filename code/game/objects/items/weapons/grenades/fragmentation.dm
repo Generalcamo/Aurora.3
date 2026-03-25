@@ -15,7 +15,7 @@
 		P.range = shard_range
 		P.name = "shrapnel"
 
-		P.preparePixelProjectile(T, get_turf(source))
+		P.aim_projectile(T, get_turf(source))
 		P.firer = source
 		P.fired_from = source
 		P.fire()

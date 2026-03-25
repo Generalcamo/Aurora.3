@@ -36,7 +36,7 @@
 	damage_type = DAMAGE_BURN
 	pass_flags = PASSTABLE | PASSGRILLE | PASSRAILING
 	range = 40
-	accuracy = 100
+	//accuracy = 100
 
 	muzzle_type = /obj/effect/projectile/muzzle/tesla
 	tracer_type = /obj/effect/projectile/tracer/tesla

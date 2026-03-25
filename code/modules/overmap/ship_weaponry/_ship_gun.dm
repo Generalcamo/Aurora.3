@@ -259,7 +259,7 @@
 		SA.heading = barrel.dir
 	SA.forceMove(projectile)
 	var/turf/target = get_step(projectile, barrel.dir)
-	projectile.preparePixelProjectile(target, firing_turf)
+	projectile.aim_projectile(target, firing_turf)
 	projectile.fired_from = barrel
 	projectile.fire()
 	return TRUE

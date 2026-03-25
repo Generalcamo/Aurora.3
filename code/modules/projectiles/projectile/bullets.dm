@@ -580,7 +580,7 @@
 
 	light_impact_range = 1
 
-/obj/projectile/bullet/peac/shrapnel/preparePixelProjectile(atom/target, atom/source, list/modifiers, deviation)
+/obj/projectile/bullet/peac/shrapnel/aim_projectile(atom/target, atom/source, list/modifiers, deviation)
 	. = ..()
 	range = get_dist(firer, original)
 
@@ -605,7 +605,7 @@
 		P.range_step = 3
 		P.range = 15
 		P.name = "shrapnel"
-		P.preparePixelProjectile(T, src)
+		P.aim_projectile(T, src)
 		P.firer = src
 		P.fired_from = src
 		P.fire()

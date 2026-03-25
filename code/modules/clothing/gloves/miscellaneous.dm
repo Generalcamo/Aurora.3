@@ -406,7 +406,7 @@
 			user.visible_message(SPAN_DANGER("\The [user] crackles with energy!"))
 			var/obj/projectile/beam/tesla/LE = new (T)
 
-			LE.preparePixelProjectile(A, user)
+			LE.aim_projectile(A, user)
 			LE.firer = user
 			LE.fired_from = src
 			LE.def_zone = user.zone_sel? user.zone_sel.selecting : null

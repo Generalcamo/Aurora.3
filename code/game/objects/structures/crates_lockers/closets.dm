@@ -355,7 +355,7 @@
 
 	if(hitting_projectile.penetrating || istype(hitting_projectile, /obj/projectile/bullet))
 		for(var/mob/living/L in contents)
-			hitting_projectile.Impact(L)
+			hitting_projectile.impact(L)
 
 	damage(proj_damage)
 

@@ -149,7 +149,7 @@
 		return
 
 	var/obj/projectile/comet_expulsion/our_comet = new(source)
-	our_comet.preparePixelProjectile(target, source)
+	our_comet.aim_projectile(target, source)
 	our_comet.original = target
 
 	// Get the angle to hit our target directly.

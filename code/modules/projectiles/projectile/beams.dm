@@ -425,7 +425,7 @@
 	//For projectiles name is only shown in onhit messages, so its more of a layman's description
 	//of what the projectile looks like
 	damage = 3.5 //Very weak
-	accuracy = 4 //Guided by magic, unlikely to miss
+	//accuracy = 4 //Guided by magic, unlikely to miss
 	eyeblur = 0 //Not bright or blinding
 	var/mob/living/ignore
 

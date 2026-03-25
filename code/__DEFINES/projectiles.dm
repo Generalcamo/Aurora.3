@@ -56,3 +56,18 @@
 
 #define RETURN_POINT_VECTOR(ATOM, ANGLE, SPEED) (new /datum/point/vector(ATOM, null, null, null, null, ANGLE, SPEED))
 #define RETURN_POINT_VECTOR_INCREMENT(ATOM, ANGLE, SPEED, AMT) (new /datum/point/vector(ATOM, null, null, null, null, ANGLE, SPEED, AMT))
+
+/// Queued for impact deletion (simple qdel)
+#define PROJECTILE_IMPACT_DELETE "impact_delete"
+/// Queued for range deletion (on_range call)
+#define PROJECTILE_RANGE_DELETE "range_delete"
+
+/// Projectile either hasn't impacted anything, or pierced through the target
+#define PROJECTILE_IMPACT_PASSED "impact_passed"
+/// Projectile has been "deleted" before bullet_act call has occured
+#define PROJECTILE_IMPACT_INTERRUPTED "impact_interrupted"
+/// Projectile has successfully impacted something and is scheduled for deletion
+#define PROJECTILE_IMPACT_SUCCESSFUL "impact_successful"
+
+/// For how long projectile tracers linger
+#define PROJECTILE_TRACER_DURATION 0.3 SECONDS

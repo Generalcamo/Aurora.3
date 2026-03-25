@@ -32,7 +32,7 @@ If the spell_projectile is seeking, it will update its target every process and 
 			var/obj/projectile/spell_projectile/SP = projectile
 			SP.carried = src //casting is magical
 
-		projectile.preparePixelProjectile(target, user)
+		projectile.aim_projectile(target, user)
 		projectile.firer = user
 		projectile.fired_from = user
 		projectile.fire()

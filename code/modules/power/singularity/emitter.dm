@@ -200,7 +200,7 @@
 		var/obj/projectile/beam/emitter/A = get_emitter_beam()
 		A.damage = round(power_per_shot / EMITTER_DAMAGE_POWER_TRANSFER)
 
-		A.preparePixelProjectile(get_step(src, dir), get_turf(src))
+		A.aim_projectile(get_step(src, dir), get_turf(src))
 		A.fired_from = src
 		A.fire()
 		shot_counter++

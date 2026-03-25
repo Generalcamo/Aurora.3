@@ -10,7 +10,7 @@
 		trace.obj_flags = obj_flags
 	trace.pass_flags = pass_flags
 
-	trace.preparePixelProjectile(target, firer)
+	trace.aim_projectile(target, firer)
 	trace.firer = firer
 
 	return trace.fire()

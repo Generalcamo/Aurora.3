@@ -779,6 +779,7 @@
 	last_fired = FALSE
 
 /obj/machinery/porta_turret/proc/shootAt(var/target)
+
 	//any emagged turrets will shoot extremely fast! This not only is deadly, but drains a lot power!
 	if(last_fired || !raised)	//prevents rapid-fire shooting, unless it's been emagged
 		return
@@ -811,7 +812,7 @@
 	//If the target is grabbing someone then the turret smartly aims for extremities
 	A.def_zone = get_exposed_defense_zone(target)
 	//Shooting Code:
-	A.preparePixelProjectile(target, T)
+	A.aim_projectile(target, T)
 	A.firer = src
 	A.fired_from = src
 	A.fire()
