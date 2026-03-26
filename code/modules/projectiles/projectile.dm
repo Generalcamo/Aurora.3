@@ -103,15 +103,7 @@ ABSTRACT_TYPE(/obj/projectile)
 	var/hit_threshhold = PROJECTILE_HIT_THRESHHOLD_LAYER
 
 	/// How many tiles we pass in a single SSprojectiles tick
-	var/speed = 1.25
-
-	/// This var is multiplied by SSprojectiles.global_pixel_speed to get how many pixels
-	/// the projectile moves during each iteration of the movement loop
-	///
-	/// If you want to make a fast-moving projectile, you should keep this equal to 1 and
-	/// reduce the value of `speed`. If you want to make a slow-moving projectile, make
-	/// `speed` a modest value like 1 and set this to a low value like 0.2.
-	var/pixel_speed_multiplier = 1
+	var/speed = 2
 
 	/// The current angle of the projectile. Initially null, so if the arg is missing from [/fire()], we can calculate it from firer and target as fallback.
 	var/angle
@@ -306,9 +298,8 @@ ABSTRACT_TYPE(/obj/projectile)
 	STOP_PROCESSING(SSprojectiles, src)
 	firer = null
 	original = null
-	if(movement_vector)
-		QDEL_NULL(movement_vector)
-	QDEL_NULL(beam_points)
+	QDEL_NULL(movement_vector)
+	QDEL_LIST_ASSOC(beam_points)
 	QDEL_NULL(last_point)
 	return ..()
 
@@ -358,7 +349,7 @@ ABSTRACT_TYPE(/obj/projectile)
  * * Returns [BULLET_ACT_BLOCK] if we were hit but sustained no effects (blocked it). Note, Being "blocked" =/= "blocked is 100".
  * * Returns [BULLET_ACT_FORCE_PIERCE] to have the projectile keep going instead of "hitting", as if we were not hit at all.
  */
-/obj/projectile/proc/on_hit(atom/target, blocked = 0, var/def_zone = null)
+/obj/projectile/proc/on_hit(atom/target, blocked = 0, pierce_hit, var/def_zone = null)
 	SHOULD_CALL_PARENT(TRUE)
 
 	if(fired_from)
@@ -1027,7 +1018,7 @@ ABSTRACT_TYPE(/obj/projectile)
 /obj/projectile/proc/move_animate(animate_x, animate_y, animate_time = world.tick_lag, deleting = FALSE)
 	return FALSE
 
-/obj/projectile/proc/fire(angle, atom/direct_target)
+/obj/projectile/proc/fire(fire_angle, atom/direct_target)
 	LAZYINITLIST(impacted)
 	if(firer)
 		RegisterSignal(firer, COMSIG_QDELETING, PROC_REF(firer_deleted))
@@ -1048,14 +1039,14 @@ ABSTRACT_TYPE(/obj/projectile)
 		if(QDELETED(src))
 			return
 	var/turf/starting = get_turf(src)
-	if(isnum(angle))
-		set_angle(angle)
+	if(isnum(fire_angle))
+		set_angle(fire_angle)
 	else if(isnull(angle)) //Try to resolve through offsets if there's no angle set.
 		if(isnull(xo) || isnull(yo))
 			stack_trace("WARNING: Projectile [type] deleted due to being unable to resolve a target after angle was null!")
 			qdel(src)
 			return
-		var/turf/target = locate(clamp(starting + xo, 1, world.maxx), clamp(starting + yo, 1, world.maxy), starting.z)
+		var/turf/target = locate(clamp(starting.x + xo, 1, world.maxx), clamp(starting.y + yo, 1, world.maxy), starting.z)
 		set_angle(get_angle(src, target))
 	if(spread)
 		set_angle(angle + (rand() - 0.5) * spread)
@@ -1323,14 +1314,14 @@ ABSTRACT_TYPE(/obj/projectile)
  */
 /proc/calculate_projectile_angle_and_pixel_offsets(atom/source, atom/target, modifiers)
 	var/angle = 0
-	var/p_x = LAZYACCESS(modifiers, ICON_X) ? text2num(LAZYACCESS(modifiers, ICON_X)) : world.icon_size / 2 // ICON_(X|Y) are measured from the bottom left corner of the icon.
-	var/p_y = LAZYACCESS(modifiers, ICON_Y) ? text2num(LAZYACCESS(modifiers, ICON_Y)) : world.icon_size / 2 // This centers the target if modifiers aren't passed.
+	var/p_x = LAZYACCESS(modifiers, ICON_X) ? text2num(LAZYACCESS(modifiers, ICON_X)) : ICON_SIZE_X / 2 // ICON_(X|Y) are measured from the bottom left corner of the icon.
+	var/p_y = LAZYACCESS(modifiers, ICON_Y) ? text2num(LAZYACCESS(modifiers, ICON_Y)) : ICON_SIZE_Y / 2 // This centers the target if modifiers aren't passed.
 
 	if(target)
 		var/turf/source_loc = get_turf(source)
 		var/turf/target_loc = get_turf(target)
-		var/dx = ((target_loc.x - source_loc.x) * world.icon_size) + (target.pixel_x - source.pixel_x) + (p_x - (world.icon_size / 2))
-		var/dy = ((target_loc.y - source_loc.y) * world.icon_size) + (target.pixel_y - source.pixel_y) + (target.pixel_z - source.pixel_z) + (p_y - (world.icon_size / 2))
+		var/dx = ((target_loc.x - source_loc.x) * ICON_SIZE_X) + (target.pixel_x - source.pixel_x) + (p_x - (ICON_SIZE_X / 2))
+		var/dy = ((target_loc.y - source_loc.y) * ICON_SIZE_Y) + (target.pixel_y - source.pixel_y) + (p_y - (ICON_SIZE_Y / 2))
 		if(!dx && !dy)
 			angle = dir2angle(source.dir)
 		else
@@ -1351,16 +1342,14 @@ ABSTRACT_TYPE(/obj/projectile)
 	/// Split Y+Pixel_Y up into list(Y, Pixel_Y)
 	var/list/screen_loc_Y = splittext(screen_loc_params[2],":")
 
-	var/tx = (text2num(screen_loc_X[1]) - 1) * world.icon_size + text2num(screen_loc_X[2])
-	/// We are here trying to lower our target location by the firing source's visual offset
-	/// So visually things make a nice straight line while properly accounting for actual physical position
-	var/ty = (text2num(screen_loc_Y[1]) - 1) * world.icon_size + text2num(screen_loc_Y[2]) - source.pixel_z
+	var/tx = (text2num(screen_loc_X[1]) - 1) * ICON_SIZE_X + text2num(screen_loc_X[2])
+	var/ty = (text2num(screen_loc_Y[1]) - 1) * ICON_SIZE_Y + text2num(screen_loc_Y[2])
 
 	/// Calculate the "resolution" of screen based on client's view and world's icon size. This will work if the user can view more tiles than average.
 	var/list/screenview = view_to_pixels(user.client.view)
 
 	var/ox = round(screenview[1] / 2) - user.client.pixel_x //"origin" x
-	var/oy = round(screenview[2] / 2) - user.client.pixel_y - source.pixel_z //"origin" y
+	var/oy = round(screenview[2] / 2) - user.client.pixel_y //"origin" y
 	angle = ATAN2(tx - oy, ty - ox)
 	return list(angle, p_x, p_y)
 

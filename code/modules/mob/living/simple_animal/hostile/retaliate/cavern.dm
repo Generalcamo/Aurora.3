@@ -67,7 +67,7 @@
 	else
 		..()
 
-/obj/projectile/beam/cavern/on_hit(atom/target, blocked, def_zone)
+/obj/projectile/beam/cavern/on_hit(atom/target, blocked, pierce_hit, def_zone)
 	. = ..()
 
 	if(ishuman(target))

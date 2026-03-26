@@ -20,15 +20,16 @@
 		P.fired_from = source
 		P.fire()
 
-		if(can_cover)
-			for(var/mob/living/M in O)
-				//lying on a frag grenade while the grenade is on the ground causes you to absorb most of the shrapnel.
-				//you will most likely be dead, but others nearby will be spared the fragments that hit you instead.
-				if(M.lying && isturf(get_turf(source)))
-					P.process_hit(get_turf(M), M)
-				else
-					if(prob(20))
-						P.process_hit(get_turf(M), M)
+// TODO: FIX
+//		if(can_cover)
+//			for(var/mob/living/M in O)
+//				//lying on a frag grenade while the grenade is on the ground causes you to absorb most of the shrapnel.
+//				//you will most likely be dead, but others nearby will be spared the fragments that hit you instead.
+//				if(M.lying && isturf(get_turf(source)))
+//					P.process_hit(get_turf(M), M)
+//				else
+//					if(prob(20))
+//						P.process_hit(get_turf(M), M)
 
 //Fragmentation grenade projectile
 /obj/projectile/bullet/pellet/fragment

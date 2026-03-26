@@ -201,7 +201,8 @@
 
 		var/acc = burst_accuracy[min(i, burst_accuracy.len)]
 		var/disp = dispersion[min(i, dispersion.len)]
-		process_accuracy(projectile, user, target, acc, disp)
+		//TODO: FIX
+		//process_accuracy(projectile, user, target, acc, disp)
 
 		if(pointblank)
 			process_point_blank(projectile, user, target)

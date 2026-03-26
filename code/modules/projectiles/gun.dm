@@ -61,6 +61,82 @@ ABSTRACT_TYPE(/obj/item/gun)
 	zoomdevicename = "scope"
 	light_system = DIRECTIONAL_LIGHT
 
+/**
+ * Muzzle Vars
+ */
+	///Effect for the muzzle flash of the gun.
+	var/obj/effect/overlay/vis/muzzle_flash/muzzle_flash
+	///Icon state of the muzzle flash effect.
+	var/muzzleflash_iconstate
+	///Brightness of the muzzle flash effect.
+	var/muzzle_flash_lum = 3
+	///Color of the muzzle flash effect.
+	var/muzzle_flash_color = COLOR_WARM_YELLOW
+
+/**
+ * Operation Vars
+ */
+	///The mob holding the gun
+	VAR_PRIVATE/mob/living/gun_user
+
+/**
+ * STAT VARS
+ */
+
+	///Multiplier. Increased and decreased through attachments. Multiplies the projectile's accuracy by this number.
+	var/accuracy_mult = 1
+	///same var as above but for unwielded firing.
+	var/accuracy_mult_unwielded = 1
+	///Same as above, for damage.
+	var/damage_mult = 1
+	///Same as above, for damage bleed (falloff)
+	var/damage_falloff_mult = 1
+
+	///How much the bullet currently scattered when last fired.
+	var/scatter = 4
+	///How much the bullet scatters when fired while unwielded.
+	var/scatter_unwielded = 12
+	///Maximum scatter (when wielded)
+	var/max_scatter = 360
+	///Maximum scatter when not wielded
+	var/max_scatter_unwielded = 360
+	///How much scatter decays every decisecond (when wielded)
+	var/scatter_decay = 0
+	///How much scatter decays every decisecond (when not wielded)
+	var/scatter_decay_unwielded = 0
+	///How much scatter increases per shot
+	var/scatter_increase = 0
+	///How much scatter increases per shot when wielded
+	var/scatter_increase_unwielded = 0
+	///Multiplier. Increases or decreases how much bonus scatter is added when burst firing, based off burst size
+	var/burst_scatter_mult = 1
+	///Additive number added to accuracy_mult.
+	var/burst_accuracy_bonus = 0
+
+	// AURORA SNOWFLAKE
+
+	/// Accuracy is measured in tiles. +1 accuracy means that everything is effectively one tile closer for the purpose of miss chance, -1 means the opposite. launchers are not supported, at the moment.
+	var/accuracy = 0
+	/// The higher this number, the more accurate this weapon is when fired from the off-hand.
+	var/offhand_accuracy = 0
+	var/scoped_accuracy = null
+	/// Allows for different accuracies for each shot in a burst. Applied on top of accuracy.
+	var/list/burst_accuracy = list(0)
+	var/list/dispersion = list(0)
+
+	// END AURORA SNOWFLAKE
+
+	//projectile modifier vars. Recorded at the gun level for perf reasons
+
+	///Projectile accuracy is multiplied by the number
+	var/gun_accuracy_mult = 1
+	///Additive to projectile accuracy, after gun_accuracy_mult
+	var/gun_accuracy_mod = 0
+	///The actual scatter value of the fired projectile
+	var/gun_scatter = 0
+	///If specified, the gun can only fire in a cone forwards with an angle of this var
+	var/gun_fire_angle = null
+
 /*
  * Suppression vars
  */
@@ -109,15 +185,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 
 	/// Screen shake.
 	var/recoil = 0
-	var/muzzle_flash = 3
-	/// Accuracy is measured in tiles. +1 accuracy means that everything is effectively one tile closer for the purpose of miss chance, -1 means the opposite. launchers are not supported, at the moment.
-	var/accuracy = 0
-	/// The higher this number, the more accurate this weapon is when fired from the off-hand.
-	var/offhand_accuracy = 0
-	var/scoped_accuracy = null
-	/// Allows for different accuracies for each shot in a burst. Applied on top of accuracy.
-	var/list/burst_accuracy = list(0)
-	var/list/dispersion = list(0)
+	//var/muzzle_flash = 3
 	/// The weapon's reliability; impacts probability rolls for misfires/failures of different sorts. As of 2025/11, only implemented for science modular weapons.
 	var/reliability = 100
 
@@ -231,6 +299,8 @@ ABSTRACT_TYPE(/obj/item/gun)
 
 	if(isnull(scoped_accuracy))
 		scoped_accuracy = accuracy
+
+	muzzle_flash = new(src, muzzleflash_iconstate)
 
 	if (needspin)
 		if(!pin)
@@ -371,18 +441,18 @@ ABSTRACT_TYPE(/obj/item/gun)
 		PreFire(A,user,params) //They're using the new gun system, locate what they're aiming at.
 		return
 	else
-		Fire(A,user,params) //Otherwise, fire normally.
+		Fire(A,params) //Otherwise, fire normally.
 
 /obj/item/gun/attack(mob/living/target_mob, mob/living/user, target_zone)
 	if (target_mob == user && user.zone_sel.selecting == BP_MOUTH && !mouthshoot)
 		handle_suicide(user)
 	else if(user.a_intent != I_HURT && user.aiming && user.aiming.active) //if aim mode, don't pistol whip
 		if (user.aiming.aiming_at != target_mob)
-			PreFire(target_mob, user)
+			PreFire(target_mob)
 		else
-			Fire(target_mob, user, pointblank=1)
+			Fire(target_mob, pointblank=1)
 	else if(user.a_intent == I_HURT) //point blank shooting
-		Fire(target_mob, user, pointblank=1)
+		Fire(target_mob, pointblank=1)
 	else if(bayonet)
 		bayonet.attack(target_mob, user, target_zone)
 	else
@@ -404,7 +474,7 @@ ABSTRACT_TYPE(/obj/item/gun)
  */
 /obj/item/gun/proc/fire_checks(atom/target, mob/living/user, clickparams, pointblank=0, reflex=0)
 	if(!user || !target)
-		return FALSE
+		return
 
 	add_fingerprint(user)
 
@@ -439,14 +509,14 @@ ABSTRACT_TYPE(/obj/item/gun)
 	return TRUE
 
 /obj/item/gun/proc/Fire(atom/target, mob/living/user, clickparams, pointblank = 0, reflex = 0, var/accuracy_decrease = 0, is_offhand = 0)
-	if(!fire_checks(target,user,clickparams,pointblank,reflex))
+	if(!fire_checks(target,gun_user,clickparams,pointblank,reflex) || (!gun_user || istype(loc, /obj/item/integrated_circuit/manipulation/weapon_firing)))
 		return FALSE
 
-	if(!is_offhand && user.a_intent == I_HURT) // no recursion
-		var/obj/item/gun/SG = user.get_inactive_hand()
+	if(!is_offhand && gun_user.a_intent == I_HURT) // no recursion
+		var/obj/item/gun/SG = gun_user.get_inactive_hand()
 		if(istype(SG) && SG.w_class <= w_class)
 			var/decreased_accuracy = SG.w_class - SG.offhand_accuracy
-			addtimer(CALLBACK(SG, PROC_REF(Fire), target, user, clickparams, pointblank, reflex, decreased_accuracy, TRUE), 1)
+			addtimer(CALLBACK(SG, PROC_REF(Fire), target, clickparams, pointblank, reflex, decreased_accuracy, TRUE), 1)
 
 	/// The amount of extra degrees of firing arc the gun will have from the effects of a signal raised on the user.
 	var/dispersion_increase = 0
@@ -455,24 +525,24 @@ ABSTRACT_TYPE(/obj/item/gun)
 	//actually attempt to shoot
 	var/turf/targloc = get_turf(target) //cache this in case target gets deleted during shooting, e.g. if it was a securitron that got destroyed.
 	for(var/i in 1 to burst)
-		var/obj/projectile = consume_next_projectile(user)
+		var/obj/projectile = consume_next_projectile(gun_user)
 		if(!projectile)
-			handle_click_empty(user)
+			handle_click_empty(gun_user)
 			break
 
 		var/acc = burst_accuracy[min(i, burst_accuracy.len)] - accuracy_decrease
 		var/disp = dispersion[min(i, dispersion.len)] + dispersion_increase
-		process_accuracy(projectile, user, target, acc, disp)
+		//process_accuracy(projectile, user, target, acc, disp)
 
-		if(pointblank)
-			process_point_blank(projectile, user, target)
+		//if(pointblank)
+		//	process_point_blank(projectile, gun_user, target)
 
-		var/selected_zone = user.zone_sel ? user.zone_sel.selecting : BP_CHEST
-		if(process_projectile(projectile, user, target, selected_zone, clickparams))
+		var/selected_zone = gun_user.zone_sel ? gun_user.zone_sel.selecting : BP_CHEST
+		if(process_projectile(projectile, gun_user, target, selected_zone, clickparams))
 			var/show_emote = TRUE
 			if(i > 1 && burst_delay < 3 && burst < 5)
 				show_emote = FALSE
-			handle_post_fire(user, target, pointblank, reflex, show_emote)
+			handle_post_fire(gun_user, target, pointblank, reflex, show_emote)
 			update_icon()
 
 		if(i < burst)
@@ -489,59 +559,6 @@ ABSTRACT_TYPE(/obj/item/gun)
 	if (burst > 1 && burst_delay == 0) //Prevents guns with no burst delay (laser shotguns) from firing as fast as you can click.
 		shoot_time = fire_delay
 	user.setClickCooldown(shoot_time)
-
-/// Similar to the Fire() proc, but does not require a user, which is ideal for things like turrets.
-/obj/item/gun/proc/Fire_userless(atom/target)
-	if(!target)
-		return FALSE
-
-	if(world.time < next_fire_time)
-		return FALSE
-
-	var/shoot_time = get_appropriate_delay()
-	next_fire_time = world.time + shoot_time
-
-	var/turf/targloc = get_turf(target) //cache this in case target gets deleted during shooting, e.g. if it was a securitron that got destroyed.
-	for(var/i in 1 to burst)
-		var/obj/projectile = consume_next_projectile()
-		if(!projectile)
-			handle_click_empty()
-			break
-
-		if(isprojectile(projectile))
-			var/obj/projectile/P = projectile
-
-			var/acc = burst_accuracy[min(i, burst_accuracy.len)]
-			var/disp = dispersion[min(i, dispersion.len)]
-
-			P.accuracy_mod = accuracy + acc
-			P.spread += disp
-
-			P.suppressed =  suppressed
-
-			P.aim_projectile(target, get_turf(src))
-			P.fired_from = src
-			P.fire()
-
-			handle_post_fire() // should be safe to not include arguments here, as there are failsafes in effect (?)
-
-			var/prev_light = light_range
-			if (muzzle_flash)
-				set_light_range(muzzle_flash)
-				set_light_on(TRUE)
-				addtimer(CALLBACK(src, PROC_REF(reset_light_range), prev_light), 0.5 SECONDS)
-			update_icon()
-
-		if(i < burst)
-			sleep(burst_delay)
-
-		if(!target?.loc)
-			target = targloc
-
-	//update timing
-	next_fire_time = world.time + shoot_time
-
-	accuracy = initial(accuracy)	//Reset the gun's accuracy
 
 /// called by a timer to remove the light range from muzzle flash
 /obj/item/gun/proc/reset_light_range(lightrange)
@@ -586,12 +603,15 @@ ABSTRACT_TYPE(/obj/item/gun)
 					"You hear a [fire_sound_text]!"
 				)
 
-		if(muzzle_flash)
-			var/prev_light = light_range
-			if (muzzle_flash)
-				set_light_range(muzzle_flash)
-				set_light_on(TRUE)
-				addtimer(CALLBACK(src, PROC_REF(reset_light_range), prev_light), 0.5 SECONDS)
+		if(muzzle_flash && !muzzle_flash.applied)
+			handle_muzzle_flash(target)
+
+		//if(muzzle_flash)
+		//	var/prev_light = light_range
+		//	if (muzzle_flash)
+		//		set_light_range(muzzle_flash)
+		//		set_light_on(TRUE)
+		//		addtimer(CALLBACK(src, PROC_REF(reset_light_range), prev_light), 0.5 SECONDS)
 
 	if(recoil)
 		shake_camera(user, recoil + 1, recoil)
@@ -633,24 +653,24 @@ ABSTRACT_TYPE(/obj/item/gun)
 	P.damage *= damage_mult
 	P.point_blank = TRUE
 
-/obj/item/gun/proc/process_accuracy(obj/projectile, mob/user, atom/target, acc_mod, dispersion)
-	var/obj/projectile/P = projectile
-	if(!istype(P))
-		return //default behaviour only applies to true projectiles
+///obj/item/gun/proc/process_accuracy(obj/projectile, mob/user, atom/target, acc_mod, dispersion)
+//	var/obj/projectile/P = projectile
+//	if(!istype(P))
+//		return //default behaviour only applies to true projectiles
 
-	//Accuracy modifiers
-	P.accuracy = accuracy + acc_mod
-	P.spread += dispersion
+//	//Accuracy modifiers
+//	P.accuracy = accuracy + acc_mod
+//	P.spread += dispersion
 
-	//Increasing accuracy across the board, ever so slightly
-	P.accuracy += 1
+//	//Increasing accuracy across the board, ever so slightly
+//	P.accuracy += 1
 
-	//accuracy bonus from aiming
-	if (aim_targets && (target in aim_targets))
-		//If you aim at someone beforehead, it'll hit more often.
-		//Kinda balanced by fact you need like 2 seconds to aim
-		//As opposed to no-delay pew pew
-		P.accuracy += 2
+//	//accuracy bonus from aiming
+//	if (aim_targets && (target in aim_targets))
+//		//If you aim at someone beforehead, it'll hit more often.
+//		//Kinda balanced by fact you need like 2 seconds to aim
+//		//As opposed to no-delay pew pew
+//		P.accuracy += 2
 
 	var/datum/firemode/F
 	if(length(firemodes))
@@ -665,11 +685,28 @@ ABSTRACT_TYPE(/obj/item/gun)
 		P.accuracy -= one_hand_fa_penalty * 0.5
 		P.spread -= one_hand_fa_penalty * 0.5
 
+/obj/item/gun/proc/setup_bullet_accuracy()
+	SIGNAL_HANDLER
+
+	var/wielded_fire = FALSE
+	gun_accuracy_mod = 0
+	gun_scatter = 0
+
+	if(wielded)
+		wielded_fire = TRUE
+		gun_accuracy_mult = accuracy_mult
+	else
+		gun_accuracy_mult = accuracy_mult_unwielded
+
+	//if (aim_targets && (target in aim_targets))
+	//	gun_accuracy_mod += 2
+
+
 //does the actual launching of the projectile
 /obj/item/gun/proc/process_projectile(obj/projectile, mob/user, atom/target, target_zone, params)
 	var/obj/projectile/P = projectile
-	if(!istype(P))
-		return FALSE //default behaviour only applies to true projectiles
+	//if(!istype(P))
+	//	return FALSE //default behaviour only applies to true projectiles
 
 	//shooting while in shock
 	var/added_spread = 0
@@ -680,9 +717,16 @@ ABSTRACT_TYPE(/obj/item/gun)
 		else if(mob.shock_stage > 70)
 			added_spread = 15
 
-	P.aim_projectile(target, src, deviation = added_spread)
+	var/turf/startloc = get_turf(src)
+	P.starting = startloc
+	P.firer = user || src
+	P.fired_from = src
+	P.xo = target.x - startloc.x
+	P.yo = target.y - startloc.y
+	P.original = target
 	P.firer = user
 	P.fired_from = src
+	P.aim_projectile(target, src, params2list(params), deviation = added_spread)
 	P.def_zone = target_zone
 
 	return !P.fire()
@@ -927,10 +971,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 	if(istype(user, /mob/living))
 		var/mob/living/living_user = user
 		living_user.stop_aiming(src)
-
-	// so that mobs don't rest with the gun already wielded to bypass the firing delay updates
-	UnregisterSignal(user, COMSIG_MOB_RESTED)
-
+	clean_gun_user()
 	queue_icon_update()
 	//Unwields the item when dropped, deletes the offhand
 	update_maptext()
@@ -945,8 +986,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 	..()
 	queue_icon_update()
 	addtimer(CALLBACK(src, PROC_REF(update_maptext)), 1)
-	// so that mobs don't rest with the gun already wielded to bypass the firing delay updates
-	RegisterSignal(user, COMSIG_MOB_RESTED, PROC_REF(update_firing_delays))
+	set_gun_user(user)
 	if(is_wieldable)
 		unwield()
 
@@ -994,12 +1034,11 @@ ABSTRACT_TYPE(/obj/item/gun)
 	return FALSE
 
 /obj/item/gun/Destroy()
-	if (istype(pin))
-		QDEL_NULL(pin)
-	if(bayonet)
-		QDEL_NULL(bayonet)
-	if(istype(suppressor))
-		QDEL_NULL(suppressor)
+	QDEL_NULL(pin)
+	QDEL_NULL(bayonet)
+	QDEL_NULL(suppressor)
+	QDEL_NULL(muzzle_flash)
+	set_gun_user(null)
 	return ..()
 
 /**
@@ -1157,3 +1196,117 @@ ABSTRACT_TYPE(/obj/item/gun)
 		. = ""
 	. += "Burst: [burst]<br>"
 	. += "Reliability: [reliability]<br>"
+
+///Sets the gun user. This should -only- ever be called by picking up or dropping the gun. Or to clear out the user if null.
+/obj/item/gun/proc/set_gun_user(mob/user)
+	PROTECTED_PROC(TRUE)
+	if (user == gun_user)
+		return
+	if (gun_user)
+		UnregisterSignal(gun_user, list(COMSIG_MOB_RESTED,
+		COMSIG_QDELETING))
+
+	gun_user = user
+
+	setup_bullet_accuracy()
+
+	RegisterSignal(gun_user, COMSIG_MOB_RESTED, PROC_REF(update_firing_delays))
+	RegisterSignal(gun_user, COMSIG_QDELETING, PROC_REF(clean_gun_user))
+
+/// Getter for gun user, to prevent modification outside of the gun
+/obj/item/gun/proc/get_gun_user()
+	return gun_user
+
+///Null out gun user to prevent hard del
+/obj/item/gun/proc/clean_gun_user()
+	SIGNAL_HANDLER
+	set_gun_user(null)
+
+/obj/item/gun/proc/remove_muzzle_flash(atom/movable/flash_loc, obj/effect/overlay/vis/muzzle_flash/OldMuzzle)
+	if(!QDELETED(flash_loc))
+		flash_loc.remove_vis_contents(OldMuzzle)
+	OldMuzzle.applied = FALSE
+
+/obj/item/gun/proc/handle_muzzle_flash(atom/target)
+	var/atom/movable/flash_loc = gun_user || loc
+	var/prev_light = light_range
+	if(!light_on && (light_range <= muzzle_flash_lum))
+		set_light_range(muzzle_flash_lum)
+		set_light_color(muzzle_flash_color)
+		set_light_on(TRUE)
+		addtimer(CALLBACK(src, PROC_REF(reset_light_range), prev_light), 0.1 SECONDS)
+	//Offset the pixels.
+	var/firing_angle = get_angle(flash_loc, target)
+	switch(firing_angle)
+		if(0, 360)
+			muzzle_flash.pixel_x = 0
+			muzzle_flash.pixel_y = 13
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+		if(1 to 44)
+			muzzle_flash.pixel_x = round(6 * ((firing_angle) / 45))
+			muzzle_flash.pixel_y = 13
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+		if(45)
+			muzzle_flash.pixel_x = 13
+			muzzle_flash.pixel_y = 13
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+		if(46 to 89)
+			muzzle_flash.pixel_x = 13
+			muzzle_flash.pixel_y = round(6 * ((90 - firing_angle) / 45))
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+		if(90)
+			muzzle_flash.pixel_x = 13
+			muzzle_flash.pixel_y = 0
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+		if(91 to 134)
+			muzzle_flash.pixel_x = 13
+			muzzle_flash.pixel_y = round(-4 * ((firing_angle - 90) / 45))
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+		if(135)
+			muzzle_flash.pixel_x = 13
+			muzzle_flash.pixel_y = -10
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+		if(136 to 179)
+			muzzle_flash.pixel_x = round(4 * ((180 - firing_angle) / 45))
+			muzzle_flash.pixel_y = -12
+			muzzle_flash.layer = ABOVE_HUMAN_LAYER
+		if(180)
+			muzzle_flash.pixel_x = 0
+			muzzle_flash.pixel_y = -12
+			muzzle_flash.layer = ABOVE_HUMAN_LAYER
+		if(181 to 224)
+			muzzle_flash.pixel_x = round(-6 * ((firing_angle - 180) / 45))
+			muzzle_flash.pixel_y = -12
+			muzzle_flash.layer = ABOVE_HUMAN_LAYER
+		if(225)
+			muzzle_flash.pixel_x = -12
+			muzzle_flash.pixel_y = -12
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+		if(226 to 269)
+			muzzle_flash.pixel_x = -12
+			muzzle_flash.pixel_y = round(-12 * ((270 - firing_angle) / 45))
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+		if(270)
+			muzzle_flash.pixel_x = -12
+			muzzle_flash.pixel_y = 0
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+		if(271 to 313)
+			muzzle_flash.pixel_x = -12
+			muzzle_flash.pixel_y = round(8 * ((firing_angle - 270) / 45))
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+		if(315)
+			muzzle_flash.pixel_x = -12
+			muzzle_flash.pixel_y = 13
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+		if(316 to 359)
+			muzzle_flash.pixel_x = round(-12 * ((360 - firing_angle) / 45))
+			muzzle_flash.pixel_y = 13
+			muzzle_flash.layer = initial(muzzle_flash.layer)
+
+
+	muzzle_flash.transform = null
+	muzzle_flash.transform = turn(muzzle_flash.transform, firing_angle)
+	flash_loc.add_vis_contents(muzzle_flash)
+	muzzle_flash.applied = TRUE
+
+	addtimer(CALLBACK(src, PROC_REF(remove_muzzle_flash), flash_loc, muzzle_flash), 0.05 SECONDS)

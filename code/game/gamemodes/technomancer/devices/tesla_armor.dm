@@ -89,7 +89,7 @@
 /obj/item/clothing/suit/armor/tesla/proc/shoot_lightning(mob/target, power, lightning_type = /obj/projectile/beam/lightning)
 	var/obj/projectile/beam/lightning/lightning = new lightning_type(get_turf(src))
 	lightning.power = power
-	lightning.old_style_target(target)
+	lightning.aim_projectile(target, src)
 	lightning.fire()
 	visible_message(SPAN_DANGER("\The [src] strikes \the [target] with lightning!"))
 	playsound(src, 'sound/weapons/gaussrifle1.ogg', 75, 1)

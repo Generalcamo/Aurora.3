@@ -167,7 +167,7 @@
 		while(i)
 			var/obj/projectile/beam/lightning/energy_siphon/lightning = new(get_turf(source))
 			lightning.firer = user
-			lightning.old_style_target(user)
+			lightning.aim_projectile(user, source)
 			lightning.fire()
 			i--
 			sleep(3)

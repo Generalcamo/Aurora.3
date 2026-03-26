@@ -406,7 +406,7 @@ GLOBAL_LIST_INIT(golem_types, list(
 
 				// redirect the projectile
 				P.firer = H
-				P.old_style_target(locate(new_x, new_y, P.z))
+				P.aim_projectile(locate(new_x, new_y, P.z), src)
 
 			return BULLET_ACT_FORCE_PIERCE // complete projectile permutation
 
@@ -612,7 +612,7 @@ GLOBAL_LIST_INIT(golem_types, list(
 
 				// redirect the projectile
 				P.firer = H
-				P.old_style_target(locate(new_x, new_y, P.z))
+				P.aim_projectile(locate(new_x, new_y, P.z), src)
 
 			return BULLET_ACT_FORCE_PIERCE // complete projectile permutation
 

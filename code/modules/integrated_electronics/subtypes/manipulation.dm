@@ -79,7 +79,7 @@
 	if(!T)
 		return
 
-	installed_gun.Fire_userless(T)
+	installed_gun.Fire(T)
 
 /obj/item/integrated_circuit/manipulation/locomotion
 	name = "locomotion circuit"

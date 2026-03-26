@@ -78,8 +78,8 @@
 		target = src,
 		// This armor check only matters for the visuals and messages in on_hit(), it's not actually used to reduce damage since
 		// only living mobs use armor to reduce damage, but on_hit() is going to need the value no matter what is shot.
-		blocked = blocked,
-		pierce_hit = piercing_hit,
+		blocked = blocked//,
+		//pierce_hit = piercing_hit,
 	)
 
 /**

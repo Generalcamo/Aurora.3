@@ -119,3 +119,21 @@
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	anchored = TRUE
 	vis_flags = VIS_INHERIT_DIR
+
+/obj/effect/overlay/vis/muzzle_flash
+	icon = 'icons/effects/projectiles/muzzle.dmi'
+	icon_state = "muzzle_bullet"
+	appearance_flags = KEEP_APART|KEEP_TOGETHER|TILE_BOUND
+	var/applied = FALSE
+
+/obj/effect/overlay/vis/muzzle_flash/Initialize(mapload, new_icon_state)
+	. = ..()
+	if(new_icon_state)
+		icon_state = new_icon_state
+	update_icon()
+
+/obj/effect/overlay/vis/muzzle_flash/update_icon()
+	. = ..()
+	var/mutable_appearance/emissive = emissive_appearance(icon, icon_state, src, layer)
+	AddOverlays(emissive)
+

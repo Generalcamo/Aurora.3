@@ -10,7 +10,7 @@
 	icon = 'icons/obj/guns/ship/overmap_projectiles.dmi'
 	icon_state = "med_xray_salvo" //Eventually a spriter will make a sprite specific for this
 	speed = 1
-	pixel_speed_multiplier = 0.01
+	//pixel_speed_multiplier = 0.01
 	range = INFINITY
 
 /obj/projectile/comet_expulsion/can_hit_target(atom/target, direct_target = FALSE, ignore_loc = FALSE, cross_failed = FALSE)

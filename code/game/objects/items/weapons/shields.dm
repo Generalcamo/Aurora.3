@@ -209,7 +209,7 @@
 				P.firer = user
 				P.yo = new_y - curloc.y
 				P.xo = new_x - curloc.x
-				var/new_angle_s = P.Angle + rand(120,240)
+				var/new_angle_s = P.angle + rand(120,240)
 				while(new_angle_s > 180) // Translate to regular projectile degrees
 					new_angle_s -= 360
 				P.set_angle(new_angle_s)
