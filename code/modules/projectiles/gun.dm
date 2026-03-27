@@ -71,7 +71,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 	///Brightness of the muzzle flash effect.
 	var/muzzle_flash_lum = 3
 	///Color of the muzzle flash effect.
-	var/muzzle_flash_color = COLOR_WARM_YELLOW
+	var/muzzle_flash_color = COLOR_VERY_SOFT_YELLOW
 
 /**
  * Operation Vars
@@ -91,6 +91,14 @@ ABSTRACT_TYPE(/obj/item/gun)
 	var/damage_mult = 1
 	///Same as above, for damage bleed (falloff)
 	var/damage_falloff_mult = 1
+	/// Screen shake when the weapon is fired while unwielded.
+	var/recoil = 0
+	/// Screen shake when the weapon is fired while wielded.
+	var/recoil_wielded = 0
+	///a multiplier of the duration the recoil takes to go back to normal view, this is (recoil*recoil_backtime_multiplier)+1
+	var/recoil_backtime_multiplier = 2
+	///this is how much deviation the gun recoil can have, recoil pushes the screen towards the reverse angle you shot + some deviation which this is the max.
+	var/recoil_deviation = 22.5
 
 	///How much the bullet currently scattered when last fired.
 	var/scatter = 4
@@ -101,13 +109,13 @@ ABSTRACT_TYPE(/obj/item/gun)
 	///Maximum scatter when not wielded
 	var/max_scatter_unwielded = 360
 	///How much scatter decays every decisecond (when wielded)
-	var/scatter_decay = 0
+	var/scatter_decay = 0.5
 	///How much scatter decays every decisecond (when not wielded)
-	var/scatter_decay_unwielded = 0
+	var/scatter_decay_unwielded = 0.2
 	///How much scatter increases per shot
-	var/scatter_increase = 0
+	var/scatter_increase = 5
 	///How much scatter increases per shot when wielded
-	var/scatter_increase_unwielded = 0
+	var/scatter_increase_unwielded = 10
 	///Multiplier. Increases or decreases how much bonus scatter is added when burst firing, based off burst size
 	var/burst_scatter_mult = 1
 	///Additive number added to accuracy_mult.
@@ -140,15 +148,12 @@ ABSTRACT_TYPE(/obj/item/gun)
 /*
  * Suppression vars
  */
-
-	/// Does the gun have a suppressor attached, or should it be suppressed? This will modify firing messages to obscure their source, and change the firing sound to use suppressed_sound
-	var/suppressed = FALSE
+	/// If the gun is innately suppressed
+	var/innately_suppressed = FALSE
 	/// The suppressor item currently attached to the gun
 	var/obj/item/suppressor/suppressor
 	/// Whether the weapon can have a suppressor attached
 	var/can_suppress = FALSE
-	/// Whether the weapon can have a suppressor unattached
-	var/can_unsuppress = TRUE
 
 /*
  * Sound vars
@@ -183,8 +188,6 @@ ABSTRACT_TYPE(/obj/item/gun)
 	var/burst_delay = 1
 	var/move_delay = 0
 
-	/// Screen shake.
-	var/recoil = 0
 	//var/muzzle_flash = 3
 	/// The weapon's reliability; impacts probability rolls for misfires/failures of different sorts. As of 2025/11, only implemented for science modular weapons.
 	var/reliability = 100
@@ -209,6 +212,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 	var/knife_y_offset = 0
 
 	var/next_fire_time = 0
+	var/last_fire_time = 0
 
 	/// Index of the currently selected mode.
 	var/sel_mode = 1
@@ -219,11 +223,19 @@ ABSTRACT_TYPE(/obj/item/gun)
 
 	// Wielding information
 	var/fire_delay_wielded
-	var/recoil_wielded
 	var/accuracy_wielded
-	var/wielded = 0
+	/// True if the gun is wielded with two hands
+	var/wielded = FALSE
+	/// True if we are finished with the wield delay
+	var/fully_wielded = FALSE
+	///Slowdown for wielding
+	var/wield_slowdown = 2
+	///How long between wielding and firing in tenths of seconds
+	var/wield_delay = 4 SECONDS
+	///Storing value for above
+	var/wield_time = 0
 	var/needspin = TRUE
-	/// Can this weapon be dual-wielded?
+	/// Can this weapon be wielded, as in held with two hands?
 	var/is_wieldable = FALSE
 	var/wield_sound = SFX_WIELD
 	var/unwield_sound = null
@@ -301,6 +313,9 @@ ABSTRACT_TYPE(/obj/item/gun)
 		scoped_accuracy = accuracy
 
 	muzzle_flash = new(src, muzzleflash_iconstate)
+
+	if(innately_suppressed)
+		ADD_TRAIT(src, TRAIT_GUN_SUPPRESSED, GUN_TRAIT)
 
 	if (needspin)
 		if(!pin)
@@ -404,8 +419,9 @@ ABSTRACT_TYPE(/obj/item/gun)
 			return FALSE
 	if((M.is_clumsy()) && prob(40)) //Clumsy handling
 		var/obj/P = consume_next_projectile()
+		var/suppressed = HAS_TRAIT(src, TRAIT_GUN_SUPPRESSED)
 		if(P)
-			if(process_projectile(P, user, user, pick(BP_L_FOOT, BP_R_FOOT)))
+			if(process_projectile(P, user, null, user, pick(BP_L_FOOT, BP_R_FOOT), suppress_light = suppressed))
 				handle_post_fire(user, user)
 				user.visible_message(
 					SPAN_DANGER("\The [user] shoots [user.get_pronoun("himself")] in the foot with \the [src]!"),
@@ -512,7 +528,9 @@ ABSTRACT_TYPE(/obj/item/gun)
 	if(!fire_checks(target,gun_user,clickparams,pointblank,reflex) || (!gun_user || istype(loc, /obj/item/integrated_circuit/manipulation/weapon_firing)))
 		return FALSE
 
-	if(!is_offhand && gun_user.a_intent == I_HURT) // no recursion
+	var/firer = (istype(loc, /obj/item/integrated_circuit/manipulation/weapon_firing) && !gun_user) ? loc : gun_user
+
+	if(!is_offhand && gun_user?.a_intent == I_HURT) // no recursion
 		var/obj/item/gun/SG = gun_user.get_inactive_hand()
 		if(istype(SG) && SG.w_class <= w_class)
 			var/decreased_accuracy = SG.w_class - SG.offhand_accuracy
@@ -525,24 +543,28 @@ ABSTRACT_TYPE(/obj/item/gun)
 	//actually attempt to shoot
 	var/turf/targloc = get_turf(target) //cache this in case target gets deleted during shooting, e.g. if it was a securitron that got destroyed.
 	for(var/i in 1 to burst)
-		var/obj/projectile = consume_next_projectile(gun_user)
+		var/obj/projectile/projectile = consume_next_projectile(firer)
 		if(!projectile)
-			handle_click_empty(gun_user)
+			handle_click_empty(firer)
 			break
 
 		var/acc = burst_accuracy[min(i, burst_accuracy.len)] - accuracy_decrease
 		var/disp = dispersion[min(i, dispersion.len)] + dispersion_increase
 		//process_accuracy(projectile, user, target, acc, disp)
 
-		//if(pointblank)
-		//	process_point_blank(projectile, gun_user, target)
+		if(pointblank)
+			process_point_blank(projectile, firer, target)
 
-		var/selected_zone = gun_user.zone_sel ? gun_user.zone_sel.selecting : BP_CHEST
-		if(process_projectile(projectile, gun_user, target, selected_zone, clickparams))
+		var/selected_zone = gun_user?.zone_sel ? gun_user.zone_sel.selecting : BP_CHEST
+		var/suppressed = HAS_TRAIT(src, TRAIT_GUN_SUPPRESSED)
+		projectile.damage *= damage_mult
+		projectile.damage_falloff_tile *= max(0, damage_falloff_mult)
+		//projectile.accuracy = round((projectile.accuracy * max(0.1, gun_accuracy_mult)))
+		if(process_projectile(projectile, target, null, firer, selected_zone, clickparams, suppress_light = suppressed))
 			var/show_emote = TRUE
 			if(i > 1 && burst_delay < 3 && burst < 5)
 				show_emote = FALSE
-			handle_post_fire(gun_user, target, pointblank, reflex, show_emote)
+			handle_post_fire(firer, target, pointblank, reflex, show_emote)
 			update_icon()
 
 		if(i < burst)
@@ -588,7 +610,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 //called after successfully firing
 /obj/item/gun/proc/handle_post_fire(mob/user, atom/target, var/pointblank = FALSE, var/reflex = FALSE, var/playemote = TRUE)
 	play_fire_sound()
-	if(!suppressed)
+	if(!HAS_TRAIT(src, TRAIT_GUN_SUPPRESSED))
 		if(playemote)
 			if(reflex)
 				user.visible_message(
@@ -606,15 +628,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 		if(muzzle_flash && !muzzle_flash.applied)
 			handle_muzzle_flash(target)
 
-		//if(muzzle_flash)
-		//	var/prev_light = light_range
-		//	if (muzzle_flash)
-		//		set_light_range(muzzle_flash)
-		//		set_light_on(TRUE)
-		//		addtimer(CALLBACK(src, PROC_REF(reset_light_range), prev_light), 0.5 SECONDS)
-
-	if(recoil)
-		shake_camera(user, recoil + 1, recoil)
+	simulate_recoil(0, target)
 
 	if(ishuman(user) && user.invisibility == INVISIBILITY_LEVEL_TWO) //shooting will disable a rig cloaking device
 		var/mob/living/carbon/human/H = user
@@ -625,8 +639,8 @@ ABSTRACT_TYPE(/obj/item/gun)
 	update_icon()
 
 /obj/item/gun/proc/play_fire_sound()
-	if(suppressed)
-		playsound(loc, suppressed_sound, suppressed_volume, vary_fire_sound)
+	if(HAS_TRAIT(src, TRAIT_GUN_SUPPRESSED))
+		playsound(loc, suppressed_sound, suppressed_volume, vary_fire_sound, ignore_walls = FALSE)
 	else
 		playsound(loc, fire_sound, fire_sound_volume, vary_fire_sound, falloff_distance  = 0.5)
 
@@ -692,7 +706,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 	gun_accuracy_mod = 0
 	gun_scatter = 0
 
-	if(wielded)
+	if(fully_wielded)
 		wielded_fire = TRUE
 		gun_accuracy_mult = accuracy_mult
 	else
@@ -703,33 +717,36 @@ ABSTRACT_TYPE(/obj/item/gun)
 
 
 //does the actual launching of the projectile
-/obj/item/gun/proc/process_projectile(obj/projectile, mob/user, atom/target, target_zone, params)
-	var/obj/projectile/P = projectile
-	//if(!istype(P))
-	//	return FALSE //default behaviour only applies to true projectiles
+/atom/proc/process_projectile(obj/projectile/projectile_type, atom/target, sound, firer, target_zone, params, suppress_light = FALSE, list/ignore_targets = list())
+	if(!isnull(sound))
+		playsound(src, sound, vol = 100, vary = TRUE)
 
 	//shooting while in shock
 	var/added_spread = 0
-	if(iscarbon(user))
-		var/mob/living/carbon/mob = user
+	if(iscarbon(firer))
+		var/mob/living/carbon/mob = firer
 		if(mob.shock_stage > 120)
 			added_spread = 30
 		else if(mob.shock_stage > 70)
 			added_spread = 15
 
-	var/turf/startloc = get_turf(src)
-	P.starting = startloc
-	P.firer = user || src
-	P.fired_from = src
-	P.xo = target.x - startloc.x
-	P.yo = target.y - startloc.y
-	P.original = target
-	P.firer = user
-	P.fired_from = src
-	P.aim_projectile(target, src, params2list(params), deviation = added_spread)
-	P.def_zone = target_zone
+	added_spread += astype(src, /obj/item/gun)?.calculate_accuracy()
 
-	return !P.fire()
+	var/turf/startloc = get_turf(src)
+	var/obj/projectile/bullet = projectile_type
+
+	bullet.starting = startloc
+	for(var/atom/thing as anything in ignore_targets)
+		bullet.impacted[WEAKREF(thing)] = TRUE
+	bullet.firer = firer || src
+	bullet.fired_from = src
+	bullet.xo = target.x - startloc.x
+	bullet.yo = target.y - startloc.y
+	bullet.original = target
+	bullet.aim_projectile(target, src, params2list(params), added_spread)
+	bullet.def_zone = target_zone
+	bullet.fire(suppress_light = suppress_light)
+	return bullet
 
 //Suicide handling.
 /obj/item/gun/var/mouthshoot = FALSE //To stop people from suiciding twice... >.>
@@ -803,9 +820,9 @@ ABSTRACT_TYPE(/obj/item/gun)
 
 ///Handles removing the suppressor from the gun
 /obj/item/gun/proc/clear_suppressor()
-	if(!can_unsuppress)
+	if(innately_suppressed)
 		return
-	suppressed = FALSE
+	REMOVE_TRAIT(src, TRAIT_GUN_SUPPRESSED, GUN_TRAIT)
 	suppressor = null
 	update_icon()
 
@@ -866,7 +883,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 /obj/item/gun/proc/can_wield()
 	return FALSE
 
-/obj/item/gun/proc/toggle_wield(mob/user as mob)
+/obj/item/gun/proc/toggle_wield(mob/user)
 	if(!is_wieldable)
 		return
 	if(!istype(user.get_active_hand(), /obj/item/gun))
@@ -910,7 +927,9 @@ ABSTRACT_TYPE(/obj/item/gun)
 	update_firing_delays()
 
 	if(unwield_sound)
-		playsound(src.loc, unwield_sound, 50, 1)
+		playsound(src.loc, unwield_sound, 50, TRUE, ignore_walls = FALSE)
+
+	gun_user?.remove_movespeed_modifier(/datum/movespeed_modifier/gun)
 
 	update_icon()
 	update_held_icon()
@@ -921,10 +940,35 @@ ABSTRACT_TYPE(/obj/item/gun)
 	update_firing_delays()
 
 	if(wield_sound)
-		playsound(src.loc, wield_sound, 50, 1)
+		playsound(src.loc, wield_sound, 50, TRUE, ignore_walls = FALSE)
 
 	update_icon()
 	update_held_icon()
+
+	INVOKE_ASYNC(src, PROC_REF(do_wield))
+
+/obj/item/gun/proc/do_wield()
+	gun_user.add_or_update_variable_movespeed_modifier(/datum/movespeed_modifier/gun, multiplicative_slowdown = wield_slowdown)
+	wield_time = world.time + wield_delay
+	if(wield_time > 0)
+		if(do_after(
+			gun_user,
+			wield_delay,
+			gun_user,
+			DO_DEFAULT | DO_BOTH_CAN_TURN | DO_BOTH_CAN_MOVE,
+			extra_checks = CALLBACK(src, PROC_REF(is_wielded))
+			))
+			fully_wielded = TRUE
+			return TRUE
+		else
+			unwield()
+			return FALSE
+	else
+		fully_wielded = TRUE
+		return TRUE
+
+/obj/item/gun/proc/is_wielded()
+	return wielded
 
 #define LYING_DOWN_FIRE_DELAY_AND_RECOIL_STAT_MULTIPLIER 0.9 //If the mob is intentionally lying down, apply this as a bonus to the fire delay and recoil
 #define LYING_DOWN_ACCURACY_STAT_MULTIPLIER 1.1 //If the mob is intentionally lying down, apply this as a bonus to accuracy
@@ -1234,7 +1278,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 		set_light_range(muzzle_flash_lum)
 		set_light_color(muzzle_flash_color)
 		set_light_on(TRUE)
-		addtimer(CALLBACK(src, PROC_REF(reset_light_range), prev_light), 0.1 SECONDS)
+		addtimer(CALLBACK(src, PROC_REF(reset_light_range), prev_light), 3)
 	//Offset the pixels.
 	var/firing_angle = get_angle(flash_loc, target)
 	switch(firing_angle)
@@ -1309,4 +1353,34 @@ ABSTRACT_TYPE(/obj/item/gun)
 	flash_loc.add_vis_contents(muzzle_flash)
 	muzzle_flash.applied = TRUE
 
-	addtimer(CALLBACK(src, PROC_REF(remove_muzzle_flash), flash_loc, muzzle_flash), 0.05 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(remove_muzzle_flash), flash_loc, muzzle_flash), 0.2 SECONDS)
+
+/// Generates screenshake if the gun has recoil
+/obj/item/gun/proc/simulate_recoil(recoil_bonus = 0, atom/target)
+	if(!gun_user)
+		return TRUE
+	var/firing_angle = get_angle(gun_user.loc, target)
+	var/total_recoil = recoil_bonus
+	if(wielded)
+		total_recoil += recoil_wielded
+	else
+		total_recoil += recoil
+
+	// TODO: SKILLS REDUCE RECOIL
+
+	var/actual_angle = firing_angle + rand(-recoil_deviation, recoil_deviation) + 180
+	if(actual_angle > 360)
+		actual_angle -= 360
+	if(total_recoil > 0)
+		recoil_camera(gun_user, total_recoil + 1, (total_recoil * recoil_backtime_multiplier)+1, total_recoil, actual_angle)
+
+/obj/item/gun/proc/calculate_accuracy()
+	var/spread = 0
+	if(wielded)
+		scatter = clamp((scatter + scatter_increase) - ((world.time - last_fire_time - 1) * scatter_decay), -max_scatter, max_scatter)
+		spread += gun_scatter + scatter
+	else
+		scatter = clamp((scatter_unwielded + scatter_increase_unwielded) - ((world.time - last_fire_time - 1) * scatter_decay_unwielded), -max_scatter_unwielded, max_scatter_unwielded)
+		spread += gun_scatter + scatter_unwielded
+
+	return max(spread, 0)

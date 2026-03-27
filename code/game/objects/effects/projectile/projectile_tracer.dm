@@ -26,6 +26,15 @@
 	name = "beam"
 	icon = 'icons/effects/projectiles/tracer.dmi'
 
+/obj/effect/projectile/tracer/Initialize(mapload, ...)
+	. = ..()
+	update_icon()
+
+/obj/effect/projectile/tracer/update_icon()
+	. = ..()
+	var/mutable_appearance/emissive = emissive_appearance(icon, icon_state)
+	AddOverlays(emissive)
+
 /obj/effect/projectile/tracer/laser
 	name = "laser"
 	icon_state = "beam"

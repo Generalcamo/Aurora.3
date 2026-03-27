@@ -417,7 +417,18 @@ would spawn and follow the beaker, even if it is carried or thrown.
 	invisibility = 0
 	var/time_to_die = 10 SECONDS // Afer which, it will delete itself.
 
-/obj/effect/temporary_effect/Initialize()
+/obj/effect/temporary_effect/Initialize(mapload, set_time_to_die)
 	. = ..()
+	if(set_time_to_die)
+		time_to_die = set_time_to_die
 	if(time_to_die)
 		QDEL_IN(src, time_to_die)
+
+/obj/effect/temporary_effect/projectile_lighting
+	light_system = STATIC_LIGHT
+
+/obj/effect/temporary_effect/projectile_lighting/Initialize(mapload, set_time_to_die, color, range, intensity)
+	. = ..()
+	set_light(range, intensity, color)
+
+/obj/effect/temporary_effect/laser

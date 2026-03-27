@@ -155,8 +155,7 @@
 	origin_tech = list(TECH_COMBAT = 6, TECH_MATERIAL = 2)
 	caliber = "PGS"
 	recoil = 1
-	suppressed = TRUE
-	can_unsuppress = FALSE
+	innately_suppressed = TRUE
 	fire_sound = 'sound/weapons/gunshot/gunshot_light.ogg'
 	max_shells = 4
 	ammo_type = null

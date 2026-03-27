@@ -522,6 +522,22 @@ GLOBAL_LIST_INIT(organ_rel_size, list(
 
 #undef TILES_PER_SECOND
 
+///Makes a recoil-like animation on the mob camera.
+/proc/recoil_camera(mob/M, duration, backtime_duration, strength, angle)
+	if(!M?.client || (duration + backtime_duration) < 1)
+		return
+	var/client/C = M.client
+	var/max_x = strength*ICON_SIZE_X
+	var/max_y = strength*ICON_SIZE_Y
+	var/oldx = C.pixel_x
+	var/oldy = C.pixel_y
+
+	//get pixels to move the camera in an angle
+	var/mpx = sin(angle) * max_x
+	var/mpy = cos(angle) * max_y
+	animate(C, pixel_x = mpx - oldx, pixel_y = mpy - oldy, time = duration, flags = ANIMATION_RELATIVE)
+	animate(pixel_x = oldx, pixel_y = oldy, time = backtime_duration, easing = BACK_EASING)
+
 /proc/findname(msg)
 	for(var/mob/M in GLOB.mob_list)
 		if (M.real_name == "[msg]")

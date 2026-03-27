@@ -148,7 +148,7 @@
 	for(var/obj/item/laser_components/modifier/modifier in gun_mods)
 		switch(modifier.mod_type)
 			if(MOD_SILENCE)
-				suppressed = TRUE
+				ADD_TRAIT(src, TRAIT_GUN_SUPPRESSED, GUN_TRAIT)
 			if(MOD_NUCLEAR_CHARGE)
 				self_recharge = TRUE
 				criticality *= 2

@@ -217,8 +217,7 @@
 	accuracy = 1
 	offhand_accuracy = 1
 	caliber = ".45"
-	suppressed = TRUE
-	can_unsuppress = FALSE
+	innately_suppressed = TRUE
 	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2, TECH_ILLEGAL = 8)
 	load_method = MAGAZINE
 	magazine_type = /obj/item/ammo_magazine/c45m
@@ -302,7 +301,6 @@
 	accuracy = 1
 	offhand_accuracy = 2
 	caliber = "9mm"
-	suppressed = FALSE
 	can_suppress = TRUE
 	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2, TECH_ILLEGAL = 2)
 	fire_sound = 'sound/weapons/gunshot/gunshot_pistol.ogg'
@@ -428,8 +426,7 @@
 	desc = "A variant of the M8 solarian service pistol, this paticular variant comes with an integrated recoil compensator and are used by SIIB agents and operatives. Officially, this pistol does not exist."
 	icon_state = "m8-siib"
 	item_state = "m8-siib"
-	suppressed = FALSE
-	can_suppress = FALSE
+	innately_suppressed = TRUE
 
 /obj/item/gun/projectile/pistol/sol/siib/update_icon()
 	..()
@@ -553,7 +550,6 @@
 	fire_sound = 'sound/weapons/gunshot/gunshot_light.ogg'
 	load_method = MAGAZINE
 	fire_delay = ROF_PISTOL
-	suppressed = FALSE
 	can_suppress = TRUE
 	suppressor_x_offset = 9
 	suppressor_y_offset = 2

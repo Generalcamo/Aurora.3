@@ -1,6 +1,19 @@
 /obj/effect/projectile/impact
 	name = "beam impact"
 	icon = 'icons/effects/projectiles/impact.dmi'
+	light_system = MOVABLE_LIGHT
+	light_range = 2
+	light_power = 1
+
+/obj/effect/projectile/impact/Initialize(mapload, angle_override, p_x, p_y, color_override, scaling)
+	. = ..()
+	set_light_on(TRUE)
+	update_icon()
+
+/obj/effect/projectile/impact/update_icon()
+	. = ..()
+	var/mutable_appearance/emissive = emissive_appearance(icon, icon_state)
+	AddOverlays(emissive)
 
 /obj/effect/projectile/impact/laser
 	name = "laser impact"

@@ -134,6 +134,6 @@
 
 /obj/effect/overlay/vis/muzzle_flash/update_icon()
 	. = ..()
-	var/mutable_appearance/emissive = emissive_appearance(icon, icon_state, src, layer)
+	var/mutable_appearance/emissive = emissive_appearance(icon, icon_state)
 	AddOverlays(emissive)
 

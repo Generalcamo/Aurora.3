@@ -1,6 +1,19 @@
 /obj/effect/projectile/muzzle
 	name = "muzzle flash"
 	icon = 'icons/effects/projectiles/muzzle.dmi'
+	light_system = MOVABLE_LIGHT
+	light_range = 2
+	light_power = 1
+
+/obj/effect/projectile/muzzle/Initialize(mapload, angle_override, p_x, p_y, color_override, scaling)
+	. = ..()
+	set_light_on(TRUE)
+	update_icon()
+
+/obj/effect/projectile/muzzle/update_icon()
+	. = ..()
+	var/mutable_appearance/emissive = emissive_appearance(icon, icon_state)
+	AddOverlays(emissive)
 
 /obj/effect/projectile/muzzle/laser
 	icon_state = "muzzle_laser"

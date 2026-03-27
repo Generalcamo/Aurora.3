@@ -6,6 +6,17 @@
 	var/dx =(ICON_SIZE_X * end.x + end.pixel_x) - (ICON_SIZE_X * start.x + start.pixel_x)
 	return delta_to_angle(dx, dy)
 
+///Calculate the angle between two atoms, with a random scatter applied
+/proc/get_angle_with_scatter(atom/start, atom/end, scatter)
+	if(!start || !end)
+		return 0
+	var/dy =(ICON_SIZE_Y * end.y + end.pixel_y) - (ICON_SIZE_Y * start.y + start.pixel_y)
+	var/dx =(ICON_SIZE_X * end.x + end.pixel_x) - (ICON_SIZE_X * start.x + start.pixel_x)
+	var/angle = delta_to_angle(dx, dy)
+	scatter = ((rand(0, min(scatter, 45))) * (prob(50) ? 1 : -1)) //Up to 45 degrees deviation to either side.
+	return angle + scatter
+
+
 /// Calculate the angle produced by a pair of x and y deltas
 /proc/delta_to_angle(x, y)
 	if(!y)

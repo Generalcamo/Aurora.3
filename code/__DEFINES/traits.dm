@@ -224,3 +224,10 @@
 
 /// Unlinks gliding from movement speed, meaning that there will be a delay between movements rather than a single move movement between tiles
 #define TRAIT_NO_GLIDE "no_glide"
+
+// Gun traits
+/// Gun is suppressed, and will have a lower volume and no muzzle flash
+#define TRAIT_GUN_SUPPRESSED "suppressed"
+
+///Source is from gun handling
+#define GUN_TRAIT "gun"

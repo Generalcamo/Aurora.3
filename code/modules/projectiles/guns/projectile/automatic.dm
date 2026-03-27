@@ -42,7 +42,6 @@
 	caliber = ".45"
 	origin_tech = list(TECH_COMBAT = 5, TECH_MATERIAL = 2, TECH_ILLEGAL = 8)
 	ammo_type = /obj/item/ammo_casing/c45
-	suppressed = FALSE
 	can_suppress = TRUE
 	suppressor_x_offset = 10
 
@@ -70,7 +69,6 @@
 	allowed_magazines = list(/obj/item/ammo_magazine/a10mm)
 	auto_eject = 1
 	auto_eject_sound = 'sound/weapons/smg_empty_alarm.ogg'
-	suppressed = FALSE
 	can_suppress = TRUE
 	suppressor_x_offset = 11
 
@@ -119,7 +117,6 @@
 	origin_tech = list(TECH_COMBAT = 4, TECH_MATERIAL = 2)
 	fire_sound = 'sound/weapons/gunshot/gunshot_light.ogg'
 	load_method = MAGAZINE
-	suppressed = FALSE
 	can_suppress = TRUE
 	suppressor_x_offset = 10
 	suppressor_y_offset = 1
@@ -690,8 +687,7 @@ ABSTRACT_TYPE(/obj/item/gun/projectile/automatic/rifle)
 	magazine_type = /obj/item/ammo_magazine/submachinemag/assassin
 	allowed_magazines = list(/obj/item/ammo_magazine/submachinemag/assassin)
 	caliber = "6mm"
-	suppressed = TRUE
-	can_unsuppress = FALSE
+	innately_suppressed = TRUE
 	suppressor_x_offset = null
 	suppressor_y_offset = null
 	handle_casings = DELETE_CASINGS
@@ -1033,7 +1029,6 @@ ABSTRACT_TYPE(/obj/item/gun/projectile/automatic/rifle)
 	fire_sound = 'sound/weapons/gunshot/gunshot_light.ogg'
 	load_method = MAGAZINE
 	slot_flags = SLOT_BELT|SLOT_BACK|SLOT_S_STORE
-	suppressed = FALSE
 	is_wieldable = TRUE
 	accuracy_wielded = 2
 	can_suppress = TRUE

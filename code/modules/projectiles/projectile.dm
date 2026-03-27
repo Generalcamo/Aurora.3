@@ -12,6 +12,11 @@ ABSTRACT_TYPE(/obj/projectile)
 	movement_type = FLYING
 	blocks_emissive = EMISSIVE_BLOCK_GENERIC
 	layer = MOB_LAYER
+	light_system = MOVABLE_LIGHT
+	light_range = 0.5
+	light_power = 0.2
+	light_color = COLOR_VERY_SOFT_YELLOW
+	appearance_flags = KEEP_TOGETHER | DEFAULT_APPEARANCE_FLAGS | TILE_BOUND | LONG_GLIDE
 	///The sound this plays on impact.
 	var/hitsound = 'sound/weapons/pierce.ogg'
 	var/hitsound_wall = ""
@@ -1018,7 +1023,7 @@ ABSTRACT_TYPE(/obj/projectile)
 /obj/projectile/proc/move_animate(animate_x, animate_y, animate_time = world.tick_lag, deleting = FALSE)
 	return FALSE
 
-/obj/projectile/proc/fire(fire_angle, atom/direct_target)
+/obj/projectile/proc/fire(fire_angle, atom/direct_target, suppress_light = FALSE)
 	LAZYINITLIST(impacted)
 	if(firer)
 		RegisterSignal(firer, COMSIG_QDELETING, PROC_REF(firer_deleted))
@@ -1070,6 +1075,12 @@ ABSTRACT_TYPE(/obj/projectile)
 	if (!deletion_queued && !hitscan)
 		process_movement(max(FLOOR(speed, 1), 1), tile_limit = TRUE)
 
+	if(!suppress_light)
+		set_light_on(TRUE)
+		update_icon()
+	else
+		alpha = 64
+
 
 /obj/projectile/forceMove(atom/target)
 	if (!hitscan || isnull(beam_points))
@@ -1103,23 +1114,23 @@ ABSTRACT_TYPE(/obj/projectile)
 	if (muzzle_type && !spawned_muzzle)
 		spawned_muzzle = TRUE
 		var/datum/point/start_point = beam_points[1]
-		var/atom/movable/muzzle_effect = new muzzle_type(loc)
+		var/obj/effect/projectile/muzzle_effect = new muzzle_type(loc)
 		start_point.move_atom_to_src(muzzle_effect)
 		var/matrix/matrix = new
 		matrix.Turn(original_angle)
 		muzzle_effect.transform = matrix
 		muzzle_effect.color =  color
-		muzzle_effect.set_light(muzzle_flash_range, muzzle_flash_intensity, muzzle_flash_color_override || color)
+		muzzle_effect.set_light(muzzle_flash_range, muzzle_flash_intensity, muzzle_flash_color_override || muzzle_effect.light_color)
 		QDEL_IN(muzzle_effect, PROJECTILE_TRACER_DURATION)
 
 	if (impact_type && impact_visual)
-		var/atom/movable/impact_effect = new impact_type(loc)
+		var/obj/effect/projectile/impact_effect = new impact_type(loc)
 		last_point.move_atom_to_src(impact_effect)
 		var/matrix/matrix = new
 		matrix.Turn(angle)
 		impact_effect.transform = matrix
 		impact_effect.color =  color
-		impact_effect.set_light(impact_light_range, impact_light_intensity, impact_light_color_override || color)
+		impact_effect.set_light(impact_light_range, impact_light_intensity, impact_light_color_override || impact_effect.light_color)
 		QDEL_IN(impact_effect, PROJECTILE_TRACER_DURATION)
 
 /obj/projectile/proc/generate_tracer(datum/point/start_point, list/passed_turfs)
@@ -1148,7 +1159,7 @@ ABSTRACT_TYPE(/obj/projectile)
 		if (passed_turfs[light_turf])
 			continue
 		passed_turfs[light_turf] = TRUE
-		//QDEL_IN(new /obj/effect/abstract/projectile_lighting(light_turf, hitscan_light_color_override || color, hitscan_light_range, hitscan_light_intensity), PROJECTILE_TRACER_DURATION)
+		new /obj/effect/temporary_effect/projectile_lighting(light_turf, PROJECTILE_TRACER_DURATION, hitscan_light_color_override || tracer_effect.light_color, hitscan_light_range, hitscan_light_intensity)
 
 /**
  * Aims the projectile at a target.
@@ -1163,7 +1174,7 @@ ABSTRACT_TYPE(/obj/projectile)
  * - deviation: (Optional) How the trajectory should deviate from the target in degrees.
  *   - //Spread is FORCED!
  */
-/obj/projectile/proc/aim_projectile(atom/target, atom/source, list/modifiers = null, deviation = 0)
+/obj/projectile/proc/aim_projectile(atom/target, atom/source, list/modifiers = null, scatter = 0)
 	if(!(isnull(modifiers) || islist(modifiers)))
 		stack_trace("WARNING: Projectile [type] fired with non-list modifiers, likely was passed click params. Modifiers were the following: [modifiers]")
 		modifiers = null
@@ -1214,16 +1225,14 @@ ABSTRACT_TYPE(/obj/projectile)
 		var/list/calculated = calculate_projectile_angle_and_pixel_offsets(source, target_loc && target, modifiers)
 		p_x = calculated[2]
 		p_y = calculated[3]
+		var/deviation = (rand(0, min(scatter, 45))) * (prob(50) ? 1 : -1) //Up to 45 degrees deviation to either side.
 		set_angle(calculated[1] + deviation)
 		return TRUE
 
 	if(target_loc)
 		yo = target_loc.y - source_loc.y
 		xo = target_loc.x - source_loc.x
-		if(target_loc == source_loc)
-			set_angle(dir2angle(source_position.dir) + deviation)
-		else
-			set_angle(get_angle(src, target_loc) + deviation)
+		set_angle(get_angle_with_scatter(src, target_loc, scatter))
 		return TRUE
 
 	stack_trace("WARNING: Projectile [type] fired without a target or mouse parameters to aim with.")
@@ -1373,7 +1382,7 @@ ABSTRACT_TYPE(/obj/projectile)
 	set_angle(new_angle_s)
 
 /// Fire a projectile from this atom at another atom
-/atom/proc/fire_projectile(projectile_type, atom/target, sound, firer, list/ignore_targets = list())
+/atom/proc/fire_projectile(projectile_type, atom/target, sound, firer, list/ignore_targets = list(), suppress_light = FALSE)
 	if (!isnull(sound))
 		playsound(src, sound, vol = 100, vary = TRUE)
 
@@ -1388,7 +1397,7 @@ ABSTRACT_TYPE(/obj/projectile)
 	bullet.xo = target.x - startloc.x
 	bullet.original = target
 	bullet.aim_projectile(target, src)
-	bullet.fire()
+	bullet.fire(suppress_light = suppress_light)
 
 	return bullet
 

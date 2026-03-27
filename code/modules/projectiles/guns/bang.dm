@@ -23,7 +23,7 @@ ABSTRACT_TYPE(/obj/item/gun/bang)
 
 /obj/item/gun/bang/update_icon()
 	..()
-	if(suppressed)
+	if(HAS_TRAIT(src, TRAIT_GUN_SUPPRESSED))
 		var/mutable_appearance/MA = mutable_appearance('icons/obj/guns/attachments/suppressor.dmi', "suppressor")
 		if(suppressor_x_offset)
 			MA.pixel_x = suppressor_x_offset
@@ -92,7 +92,7 @@ ABSTRACT_TYPE(/obj/item/gun/bang)
 			balloon_alert(user, "doesn't fit!")
 			return
 
-		if(suppressed)
+		if(HAS_TRAIT(src, TRAIT_GUN_SUPPRESSED))
 			balloon_alert(user, "already has a suppressor!")
 			return
 
@@ -130,13 +130,13 @@ ABSTRACT_TYPE(/obj/item/gun/bang)
 //This stuff only exists to avoid suppressors from revealing a fake gun. Eventually, we should add a base-level attachments system to replace this mess
 ///Installs a new suppressor, assumes that the suppressor is already in the contents of src
 /obj/item/gun/bang/proc/install_suppressor(obj/item/suppressor/S)
-	suppressed = TRUE
+	ADD_TRAIT(src, TRAIT_GUN_SUPPRESSED, GUN_TRAIT)
 	w_class += S.w_class //Add our weight class to the item's weight class
 	suppressor = S
 	update_icon()
 
 /obj/item/gun/bang/clear_suppressor()
-	if(!can_unsuppress)
+	if(innately_suppressed)
 		return
 	if(istype(suppressor))
 		w_class -= suppressor.w_class

@@ -49,7 +49,7 @@ ABSTRACT_TYPE(/obj/item/gun/projectile)
 		. += SPAN_WARNING("It looks jammed.")
 	if(ammo_magazine)
 		. += "It has \a [ammo_magazine] loaded."
-	if(suppressed)
+	if(HAS_TRAIT(src, TRAIT_GUN_SUPPRESSED))
 		. += "It has a suppressor attached."
 	. += "Has [get_ammo()] round\s remaining."
 
@@ -70,7 +70,7 @@ ABSTRACT_TYPE(/obj/item/gun/projectile)
 
 /obj/item/gun/projectile/update_icon()
 	..()
-	if(suppressed)
+	if(HAS_TRAIT(src, TRAIT_GUN_SUPPRESSED) && !innately_suppressed)
 		var/mutable_appearance/MA = mutable_appearance('icons/obj/guns/attachments/suppressor.dmi', "suppressor")
 		if(suppressor_x_offset)
 			MA.pixel_x = suppressor_x_offset
@@ -252,7 +252,7 @@ ABSTRACT_TYPE(/obj/item/gun/projectile)
 			balloon_alert(user, "doesn't fit!")
 			return
 
-		if(suppressed)
+		if(HAS_TRAIT(src, TRAIT_GUN_SUPPRESSED))
 			balloon_alert(user, "already has a suppressor!")
 			return
 
@@ -337,13 +337,14 @@ ABSTRACT_TYPE(/obj/item/gun/projectile)
 
 ///Installs a new suppressor, assumes that the suppressor is already in the contents of src
 /obj/item/gun/projectile/proc/install_suppressor(obj/item/suppressor/S)
-	suppressed = TRUE
+	ADD_TRAIT(src, TRAIT_GUN_SUPPRESSED, GUN_TRAIT)
 	w_class += S.w_class //Add our weight class to the item's weight class
 	suppressor = S
+	S.forceMove(src)
 	update_icon()
 
 /obj/item/gun/projectile/clear_suppressor()
-	if(!can_unsuppress)
+	if(innately_suppressed)
 		return
 	if(istype(suppressor))
 		w_class -= suppressor.w_class
@@ -352,7 +353,9 @@ ABSTRACT_TYPE(/obj/item/gun/projectile)
 /obj/item/gun/projectile/AltClick(mob/user)
 	if(use_check_and_message(user))
 		return
-	if(suppressed && can_unsuppress)
+	if(innately_suppressed)
+		return
+	else if(HAS_TRAIT(src, TRAIT_GUN_SUPPRESSED))
 		balloon_alert(user, "[suppressor.name] removed")
 		user.put_in_hands(suppressor)
 		clear_suppressor()
