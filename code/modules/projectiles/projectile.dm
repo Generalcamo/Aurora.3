@@ -17,9 +17,13 @@ ABSTRACT_TYPE(/obj/projectile)
 	light_power = 0.2
 	light_color = COLOR_VERY_SOFT_YELLOW
 	appearance_flags = KEEP_TOGETHER | DEFAULT_APPEARANCE_FLAGS | TILE_BOUND | LONG_GLIDE
+	///The ammo data which holds most of the actual info
+	var/datum/ammo/ammo
 	///The sound this plays on impact.
 	var/hitsound = 'sound/weapons/pierce.ogg'
 	var/hitsound_wall = ""
+	///The sound this plays when missing a mob in one tile or less.
+	var/near_miss_sound = SFX_BULLET_FLYBY_FAST
 
 	/// Should be `resistance_flags` but we don't have it yet.
 	unacidable = TRUE
@@ -199,7 +203,7 @@ ABSTRACT_TYPE(/obj/projectile)
 	/// DAMAGE_BRUTE, DAMAGE_BURN, DAMAGE_TOXIN, DAMAGE_OXY, DAMAGE_CLONE, DAMAGE_PAIN are the only things that should be in here.
 	var/damage_type = DAMAGE_BRUTE
 
-	/// This will de-increment every step. When 0, it will deletze the projectile.
+	/// This will de-increment every step. When 0, it will delete the projectile.
 	var/range = 50
 	/// Original range upon being fired/reflected
 	var/maximum_range
@@ -271,9 +275,11 @@ ABSTRACT_TYPE(/obj/projectile)
 
 	var/incinerate = 0
 	/// Whether or not the projectile can embed itself in the mob
-	var/embed = 0
+	var/embed = FALSE
 	/// A flat bonus to the % chance to embed
 	var/embed_chance = 0
+	/// How much we want to drop the embed_chance value, if we can embed, per tile, for falloff purposes
+	var/embed_falloff_tile
 
 	/// For maiming. Factor that the recipiant will be maimed by the projectile (NOT OUT OF 100%.)
 	var/maim_rate = 0
@@ -312,6 +318,8 @@ ABSTRACT_TYPE(/obj/projectile)
 /obj/projectile/proc/reduce_range()
 	range--
 	pixels_moved_last_tile -= ICON_SIZE_ALL
+	if(embed_falloff_tile && embed)
+		embed_chance += embed_falloff_tile
 	if(damage_falloff_tile && damage >= 0)
 		damage += damage_falloff_tile
 	// if(stamina_falloff_tile && stamina >= 0)
@@ -717,6 +725,7 @@ ABSTRACT_TYPE(/obj/projectile)
  * This proc is a little high in overhead but allows us to not snowflake CanPass in living and other things.
  */
 /obj/projectile/proc/scan_moved_turf()
+	var/list/hit_mobs = list()
 	// Optimally, we scan: mobs --> objs --> turf for impact
 	// but, overhead is a thing and 2 for loops every time it moves is a no-go.
 	// realistically, since we already do select_target in impact, we can not do that
@@ -730,8 +739,18 @@ ABSTRACT_TYPE(/obj/projectile)
 		for(var/mob/M in loc) // so I guess we're STILL doing a for loop of mobs because living movement would otherwise have snowflake code for projectile CanPass
 			// so the snowflake vs performance is pretty arguable here
 			if(can_hit_target(M, M == original, TRUE))
+				hit_mobs += M
 				impact(M)
 				break
+		//Near miss handling
+		if(!near_miss_sound || (maximum_range <= range+2))
+			return
+		for(var/mob/misser in get_hearers_in_range(1, src))
+			if(!(misser.stat <= 1)) // Only conscious mobs should be getting this
+				continue
+			if(misser in hit_mobs)
+				continue
+			misser.playsound_local(get_turf(src), near_miss_sound, 75, TRUE)
 
 /**
  * Projectile crossed: When something enters a projectile's tile, make sure the projectile hits it if it should be hitting it.
@@ -1501,6 +1520,28 @@ ABSTRACT_TYPE(/obj/projectile)
 /image/proc/flick_remove_overlay(var/atom/A)
 	if(A)
 		A.overlays.Remove(src)
+
+/obj/projectile/proc/generate_bullet(ammo_datum, bonus_damage = 0, reagent_multiplier = 0)
+	ammo = ispath(ammo_datum) ? GLOB.ammo_list[ammo_datum] : ammo_datum
+	name = ammo.name
+	//point_blank_range = ammo.point_blank_range
+
+	///sets greyscale for the projectile if it has been specified by the ammo datum
+	//if (ammo.projectile_greyscale_config && ammo.projectile_greyscale_colors)
+	//	set_greyscale_config(ammo.projectile_greyscale_config)
+	//	set_greyscale_colors(ammo.projectile_greyscale_colors)
+
+	icon = ammo.icon
+	icon_state = ammo.icon_state
+	damage = ammo.damage + bonus_damage //Mainly for emitters.
+	armor_penetration = ammo.penetration
+	//accuracy   += ammo.accuracy
+	//accuracy   *= rand(95 - ammo.accuracy_variation, 105 + ammo.accuracy_variation) * 0.01 //Rand only works with integers.
+	damage_falloff_tile = ammo.damage_falloff
+	check_armor = ammo.armor_type
+	range = ammo.max_range
+	speed = ammo.shell_speed
+	hitscan = (ammo.ammo_behavior_flags & AMMO_HITSCAN)
 
 #undef MOVES_HITSCAN
 #undef MUZZLE_EFFECT_PIXEL_INCREMENT

@@ -427,6 +427,26 @@
 		'sound/weapons/empty/dryfire_plastic_03.ogg'
 	)
 
+/datum/sound_effect/bullet_flyby_fast
+	key = SFX_BULLET_FLYBY_FAST
+	file_paths = list(
+		'sound/weapons/flyby/fast/bullet_flyby_fast-01.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-02.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-03.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-04.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-05.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-06.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-07.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-08.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-09.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-10.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-11.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-12.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-13.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-14.ogg',
+		'sound/weapons/flyby/fast/bullet_flyby_fast-15.ogg'
+	)
+
 /datum/sound_effect/metal_slide_reload
 	key = SFX_RELOAD_METAL_SLIDE
 	file_paths = list(

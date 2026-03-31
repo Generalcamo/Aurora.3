@@ -150,6 +150,7 @@
 #define SFX_OUT_OF_AMMO_REVOLVER "out_of_ammo_revolver"
 #define SFX_OUT_OF_AMMO_RIFLE "out_of_ammo_rifle"
 #define SFX_OUT_OF_AMMO_SHOTGUN "out_of_ammo_shotgun"
+#define SFX_BULLET_FLYBY_FAST "bullet_flyby_fast"
 #define SFX_PAGE_TURN "page_turn"
 #define SFX_PICKAXE "pickaxe"
 #define SFX_PICKUP "pickup"

@@ -81,6 +81,8 @@
 
 #define istransparentturf(A) (HAS_TRAIT(A, TURF_Z_TRANSPARENT_TRAIT))
 
+#define isgun(A) istype(A, /obj/item/gun)
+
 /**
  * A common layered filter pattern for psionics. Helps with reducing the size of guard clauses.
  * Includes every psionic check for RECEIVING starting with the Zona Bovina, and ending with Psi-sensitivity.

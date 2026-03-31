@@ -1,3 +1,20 @@
+/particles/firing_smoke
+	icon = 'icons/effects/particles/smoke.dmi'
+	icon_state = list("smoke_1" = 1, "smoke_2" = 1, "smoke_3" = 2)
+	width = 500
+	height = 500
+	count = 20
+	spawning = 35
+	lifespan = 0.5 SECONDS
+	fade = 1.8 SECONDS
+	grow = 0.12
+	drift = generator("circle", 8, 8)
+	scale = 0.4
+	spin = generator("num", -20, 20)
+	velocity = list(50, 0)
+	friction = generator("num", 0.3, 0.6)
+	gravity = list(0, 0.95)
+
 /**
  * Defines a firing mode for a gun.
  *
@@ -69,9 +86,42 @@ ABSTRACT_TYPE(/obj/item/gun)
 	///Icon state of the muzzle flash effect.
 	var/muzzleflash_iconstate
 	///Brightness of the muzzle flash effect.
-	var/muzzle_flash_lum = 3
+	var/muzzle_flash_lum = 2
+	///Range of the muzzle flash effect
+	var/muzzle_flash_range = 1.5
 	///Color of the muzzle flash effect.
 	var/muzzle_flash_color = COLOR_VERY_SOFT_YELLOW
+	var/smokes = TRUE
+
+/**
+ * Bolt/Chamber Vars
+ */
+
+	///Message given to user on cocking.
+	var/cocked_message
+	///Message for a pump lock.
+	var/cock_locked_message
+	///Message for when the chamber is opened.
+	var/chamber_opened_message
+	///Message for when the chamber is closed.
+	var/chamber_closed_message
+	///The bolt type of the gun, affects quite a bit of functionality, see gun.dm in defines for bolt types: BOLT_TYPE_STANDARD; BOLT_TYPE_LOCKING; BOLT_TYPE_OPEN; BOLT_TYPE_NO_BOLT; BOLT_TYPE_CLIP
+	var/bolt_type = BOLT_TYPE_STANDARD
+	///length between individual racks
+	var/rack_delay = 5
+	///time of the most recent rack, used for cooldown purposes
+	VAR_FINAL/recent_rack = 0
+	/// Check if you are able to see if a weapon has a bullet loaded in or not.
+	var/hidden_chambered = FALSE
+
+/*
+ *  Reloading
+*/
+	var/obj/item/ammo_casing/chambered = null
+	///Whether the gun can be tacloaded by slapping a fresh magazine directly on it
+	var/tac_reloads = TRUE
+	///If we have the 'snowflake mechanic,' how long should it take to reload?
+	var/tactical_reload_delay = 1 SECONDS
 
 /**
  * Operation Vars
@@ -120,6 +170,27 @@ ABSTRACT_TYPE(/obj/item/gun)
 	var/burst_scatter_mult = 1
 	///Additive number added to accuracy_mult.
 	var/burst_accuracy_bonus = 0
+
+/*
+ *  HEAT MECHANIC VARS
+ *
+*/
+	/// heat on this gun. Behavior over 100 depends on overheat_type
+	VAR_FINAL/heat_amount = 0
+	/// How do we handle overheating?
+	var/overheat_type = OVERHEAT_HALT
+	///heat that we add every successful fire()
+	var/heat_per_fire = 0
+	///heat reduction per second
+	var/cool_amount = 5
+	///tracks overheat timer ref
+	var/overheat_timer
+	///multiplier on cool amount to determine overheat time
+	var/overheat_multiplier = 1.1
+	///image we create to keep track of heat
+	var/image/heat_bar/heat_meter
+	///If defined, will overlay this when overheating
+	var/mutable_appearance/barrel_overheat_image
 
 	// AURORA SNOWFLAKE
 
@@ -180,11 +251,12 @@ ABSTRACT_TYPE(/obj/item/gun)
 	drop_sound = 'sound/items/drop/gun.ogg'
 	pickup_sound = 'sound/items/pickup/gun.ogg'
 
+	/// how many shots per burst
 	var/burst = 1
 	var/can_autofire = FALSE
-	/// Delay after shooting before the gun can be used again
+	/// Delay after shooting before the gun can be used again when firing full-auto and semi-auto, and between bursts.
 	var/fire_delay = 6
-	/// Delay between shots, if firing in bursts
+	/// Delay between each shot in a burst. Not the delay between bursts
 	var/burst_delay = 1
 	var/move_delay = 0
 
@@ -229,9 +301,9 @@ ABSTRACT_TYPE(/obj/item/gun)
 	/// True if we are finished with the wield delay
 	var/fully_wielded = FALSE
 	///Slowdown for wielding
-	var/wield_slowdown = 2
-	///How long between wielding and firing in tenths of seconds
-	var/wield_delay = 4 SECONDS
+	var/wield_slowdown = 0.1
+	///How long between wielding and gaining wield bonuses in tenths of seconds
+	var/wield_delay = 0.4 SECONDS
 	///Storing value for above
 	var/wield_time = 0
 	var/needspin = TRUE
@@ -448,7 +520,11 @@ ABSTRACT_TYPE(/obj/item/gun)
 			return TRUE
 
 /obj/item/gun/afterattack(atom/A, mob/living/user, adjacent, params)
+	. = ..()
 	if(adjacent) return //A is adjacent, is the user, or is on the user's person
+
+	if(!A)
+		return
 
 	if(!user.aiming)
 		user.aiming = new(user)
@@ -627,6 +703,49 @@ ABSTRACT_TYPE(/obj/item/gun)
 
 		if(muzzle_flash && !muzzle_flash.applied)
 			handle_muzzle_flash(target)
+
+	if(smokes)
+		var/firing_angle = get_angle(user, target)
+		var/x_component = sin(firing_angle) * 20
+		var/y_component = cos(firing_angle) * 20
+		var/obj/effect/temporary_effect/gun_smoke = new(get_turf(src), 0.5 SECONDS)
+		gun_smoke.particles = new /particles/firing_smoke
+		gun_smoke.particles.velocity = list(x_component, y_component)
+		switch(firing_angle)
+			if(0, 360)
+				gun_smoke.particles.position = list(0, 13)
+			if(1 to 44)
+				gun_smoke.particles.position = list(round(6 * ((firing_angle) / 45)), 13)
+			if(45)
+				gun_smoke.particles.position = list(13, 13)
+			if(46 to 89)
+				gun_smoke.particles.position = list(13, round(6 * ((90 - firing_angle) / 45)))
+			if(90)
+				gun_smoke.particles.position = list(13, 0)
+			if(91 to 134)
+				gun_smoke.particles.position = list(13, round(-4 * ((firing_angle - 90) / 45)))
+			if(135)
+				gun_smoke.particles.position = list(13, -10)
+			if(136 to 179)
+				gun_smoke.particles.position = list(round(4 * ((180 - firing_angle) / 45)), -12)
+			if(180)
+				gun_smoke.particles.position = list(0, -12)
+			if(181 to 224)
+				gun_smoke.particles.position = list(round(-6 * ((firing_angle - 180) / 45)), -12)
+			if(225)
+				gun_smoke.particles.position = list(-12, -12)
+			if(226 to 269)
+				gun_smoke.particles.position = list(-12, round(-12 * ((270 - firing_angle) / 45)))
+			if(270)
+				gun_smoke.particles.position = list(-12, 0)
+			if(271 to 313)
+				gun_smoke.particles.position = list(-12, round(8 * ((firing_angle - 270) / 45)))
+			if(315)
+				gun_smoke.particles.position = list(-12, 13)
+			if(316 to 359)
+				gun_smoke.particles.position = list(round(-12 * ((360 - firing_angle) / 45)), 13)
+		addtimer(VARSET_CALLBACK(gun_smoke.particles, count, 0), 5)
+		addtimer(VARSET_CALLBACK(gun_smoke.particles, drift, 0), 3)
 
 	simulate_recoil(0, target)
 
@@ -1247,7 +1366,8 @@ ABSTRACT_TYPE(/obj/item/gun)
 	if (user == gun_user)
 		return
 	if (gun_user)
-		UnregisterSignal(gun_user, list(COMSIG_MOB_RESTED,
+		UnregisterSignal(gun_user, list(
+		COMSIG_MOB_RESTED,
 		COMSIG_QDELETING))
 
 	gun_user = user
@@ -1275,8 +1395,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 	var/atom/movable/flash_loc = gun_user || loc
 	var/prev_light = light_range
 	if(!light_on && (light_range <= muzzle_flash_lum))
-		set_light_range(muzzle_flash_lum)
-		set_light_color(muzzle_flash_color)
+		set_light(muzzle_flash_range, muzzle_flash_lum, muzzle_flash_color)
 		set_light_on(TRUE)
 		addtimer(CALLBACK(src, PROC_REF(reset_light_range), prev_light), 3)
 	//Offset the pixels.

@@ -6,8 +6,6 @@
 	var/obj/projectile/test/trace = new /obj/projectile/test(get_turf(firer)) //Making the test....
 
 	//Set the flags and pass flags to that of the real projectile...
-	if(!isnull(obj_flags))
-		trace.obj_flags = obj_flags
 	trace.pass_flags = pass_flags
 
 	trace.aim_projectile(target, firer)

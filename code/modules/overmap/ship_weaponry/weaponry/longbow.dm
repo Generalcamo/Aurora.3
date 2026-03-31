@@ -18,9 +18,9 @@
 	var/penetrated = FALSE
 
 /obj/projectile/ship_ammo/longbow/fire_projectile(projectile_type, atom/target, sound, firer, list/ignore_targets)
-	if(ammo.impact_type == SHIP_AMMO_IMPACT_AP)
+	if(ship_ammo.impact_type == SHIP_AMMO_IMPACT_AP)
 		penetrating = 1
-	if(ammo.impact_type == SHIP_AMMO_IMPACT_BUNKERBUSTER)
+	if(ship_ammo.impact_type == SHIP_AMMO_IMPACT_BUNKERBUSTER)
 		penetrating = 3
 	. = ..()
 
@@ -31,7 +31,7 @@
 		M.visible_message(SPAN_DANGER("<font size=5>\The [src] blows [M] apart and punches straight through!</font>"))
 		M.gib()
 	if(isturf(target) || isobj(target))
-		switch(ammo.impact_type)
+		switch(ship_ammo.impact_type)
 			if(SHIP_AMMO_IMPACT_AP)
 				if(!penetrated)
 					target.ex_act(1)

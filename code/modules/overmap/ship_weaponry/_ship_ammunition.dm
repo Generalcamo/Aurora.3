@@ -226,12 +226,11 @@
 	//accuracy = 100
 	projectile_piercing = PASSMOB|PASSDOORS|PASSGLASS|PASSCLOSEDTURF|PASSWINDOW|PASSMACHINE|PASSBLOB|PASSFLAPS|PASSVEHICLE //It's a ship weapon let it try to penetrate everything.
 	pierce_decay_damage = 0.95  //Ship weapon projectiles don't lose much damage on pierce by default, but this can be set per projectile.
-	var/obj/item/ship_ammunition/ammo
-	var/primed = FALSE
+	var/obj/item/ship_ammunition/ship_ammo	var/primed = FALSE
 	var/hit_target = FALSE //First target we hit. Used to report if a hit was successful.
 
 /obj/projectile/ship_ammo/Destroy()
-	ammo = null
+	ship_ammo = null
 	hit_target = null
 	return ..()
 
@@ -243,9 +242,9 @@
 				H.playsound_local(null, 'sound/effects/explosionfar.ogg', 25)
 				shake_camera(H, 2, 2)
 		..()
-	if(ammo.touch_map_edge(z))
-		ammo.original_projectile = src
-		forceMove(ammo)
+	if(ship_ammo.touch_map_edge(z))
+		ship_ammo.original_projectile = src
+		forceMove(ship_ammo)
 
 /obj/projectile/ship_ammo/on_hit(atom/target, blocked, def_zone, var/is_landmark_hit = FALSE) //is_landmark_hit is TRUE when we hit a landmark on a visitable non-ship overmap object.
 	if(target && !hit_target)
@@ -256,19 +255,19 @@
 			"target_area" = get_area(target),
 			"coordinates" = "[target.x], [target.y], [target.z]"
 		)
-		if(ammo && ammo.origin)
-			ammo.origin.signal_hit(hit_data)
+		if(ship_ammo && ship_ammo.origin)
+			ship_ammo.origin.signal_hit(hit_data)
 	return ..()
 
 /obj/projectile/ship_ammo/proc/on_translate(var/turf/entry_turf, var/target_turf) //This proc is called when the projectile enters a new ship's overmap zlevel.
-	if(ammo.burst)
-		for(var/i = 1 to ammo.burst)
-			var/turf/new_turf = get_random_turf_in_range(entry_turf, ammo.burst + rand(0, ammo.burst),  0, TRUE, FALSE)
+	if(ship_ammo.burst)
+		for(var/i = 1 to ship_ammo.burst)
+			var/turf/new_turf = get_random_turf_in_range(entry_turf, ship_ammo.burst + rand(0, ship_ammo.burst),  0, TRUE, FALSE)
 			var/obj/projectile/ship_ammo/pellet = new type
 			pellet.forceMove(new_turf)
-			pellet.ammo = new ammo.type
-			pellet.ammo.origin = ammo.origin
-			pellet.ammo.impact_type = ammo.impact_type
+			pellet.ship_ammo = new ship_ammo.type
+			pellet.ship_ammo.origin = ship_ammo.origin
+			pellet.ship_ammo.impact_type = ship_ammo.impact_type
 			pellet.dir = dir
 			var/turf/front_turf = get_step(pellet, pellet.dir)
 			pellet.aim_projectile(target_turf, front_turf)

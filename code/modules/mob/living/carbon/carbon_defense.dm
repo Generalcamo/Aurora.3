@@ -34,12 +34,12 @@
 		return .
 
 	//Carbon have blood, so when hit with sufficient force, they bleed; this shows the effect of bleeding when hit by a projectile
-	if(hitting_projectile.damage_type == DAMAGE_BRUTE && hitting_projectile.damage > 5) //weak hits shouldn't make you gush blood
+	if(!(species?.flags & NO_BLOOD))
 		var/splatter_color = COLOR_HUMAN_BLOOD
-		if (src.species && src.get_blood_color())
+		if (species && src.get_blood_color())
 			splatter_color = src.get_blood_color()
 
-		var/splatter_dir = hitting_projectile.starting ? get_dir(hitting_projectile.starting, get_turf(src)) : dir
+		var/splatter_dir = !isnull(hitting_projectile.angle) ? hitting_projectile.angle : dir
 		new /obj/effect/temp_visual/dir_setting/bloodsplatter(get_turf(src), splatter_dir, splatter_color)
 
 	var/mob/living/carbon/human/H
@@ -70,6 +70,11 @@
 
 			sleeping = 0
 			willfully_sleeping = FALSE
+
+/mob/living/carbon/projectile_hit()
+	if(iszombie(src))
+		return BULLET_ACT_FORCE_PIERCE
+	return ..()
 
 /mob/living/carbon/standard_weapon_hit_effects(obj/item/I, mob/living/user, var/effective_force, var/hit_zone)
 	var/show_ssd

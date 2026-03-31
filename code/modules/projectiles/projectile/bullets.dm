@@ -1,6 +1,7 @@
 /obj/projectile/bullet
 	name = "bullet"
 	icon_state = "bullet"
+	icon = null
 	damage = 60
 	damage_type = DAMAGE_BRUTE
 	impact_sounds = list(BULLET_IMPACT_MEAT = SOUNDS_BULLET_MEAT, BULLET_IMPACT_METAL = SOUNDS_BULLET_METAL)
@@ -171,6 +172,7 @@
 /obj/projectile/bullet/pistol
 	damage = 20
 	armor_penetration = 15
+	icon_state = "bullet_small"
 
 /obj/projectile/bullet/pistol/polymer
 	damage = 12
@@ -212,6 +214,7 @@
 
 /obj/projectile/bullet/shotgun/beanbag		//because beanbags are not bullets
 	name = "beanbag"
+	icon_state = "beanbag"
 	check_armor = MELEE
 	damage = 10
 	agony = 60
@@ -229,6 +232,7 @@
 
 /obj/projectile/bullet/tracking
 	name = "tracking shot"
+	icon_state = "dart"
 	damage = 20
 	embed_chance = 60 // this thing was designed to embed, so it has a 80% base chance to embed (damage + this flat increase)
 	agony = 20
@@ -250,6 +254,7 @@
 //Overall less damage than slugs in exchange for more damage at very close range and more embedding
 /obj/projectile/bullet/pellet/shotgun
 	name = "pellet"
+	icon_state = "pellets"
 	damage = 25
 	pellets = 3
 	range_step = 1

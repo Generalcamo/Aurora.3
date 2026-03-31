@@ -157,9 +157,9 @@
 
 /obj/projectile/ship_ammo/bruiser/real/on_hit(atom/target, blocked, def_zone, is_landmark_hit)
 	. = ..()
-	if(ammo.impact_type == SHIP_AMMO_IMPACT_HE)
+	if(ship_ammo.impact_type == SHIP_AMMO_IMPACT_HE)
 		explosion(target, 3, 6, 8)
-	if(ammo.impact_type == SHIP_AMMO_IMPACT_AP)
+	if(ship_ammo.impact_type == SHIP_AMMO_IMPACT_AP)
 		explosion(target, 0, 2, 4)
 
 /obj/projectile/ship_ammo/bruiser/real/beehive/on_hit(atom/target, blocked, def_zone, is_landmark_hit)
