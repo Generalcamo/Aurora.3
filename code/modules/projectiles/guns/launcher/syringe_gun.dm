@@ -96,6 +96,7 @@
 	next = null
 
 /obj/item/gun/launcher/syringe/unique_action(mob/living/user)
+	. = ..()
 	if(next)
 		user.visible_message("[user] unlatches and carefully relaxes the bolt on [src].", SPAN_WARNING("You unlatch and carefully relax the bolt on [src], unloading the spring."))
 		playsound(src.loc, 'sound/weapons/blade_close.ogg', 50, 1)

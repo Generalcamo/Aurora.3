@@ -229,5 +229,14 @@
 /// Gun is suppressed, and will have a lower volume and no muzzle flash
 #define TRAIT_GUN_SUPPRESSED "suppressed"
 
+/// Gun is currently burst firing. Prevents chambering, magazine changes, etc.
+#define TRAIT_GUN_BURST_FIRING "burst_firing"
+
+/// The gun's safety is active
+#define TRAIT_GUN_SAFETY "safety"
+
+/// The gun's bolt is locked
+#define TRAIT_GUN_BOLT_LOCKED "bolt_locked"
+
 ///Source is from gun handling
 #define GUN_TRAIT "gun"

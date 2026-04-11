@@ -9,7 +9,6 @@ ABSTRACT_TYPE(/obj/item/gun/projectile)
 	var/caliber = "357"		//determines which casings will fit
 	var/handle_casings = EJECT_CASINGS	//determines how spent casings should be handled
 	var/load_method = SINGLE_CASING|SPEEDLOADER //1 = Single shells, 2 = box or quick loader, 3 = magazine
-	var/obj/item/ammo_casing/chambered = null
 
 	//For SINGLE_CASING or SPEEDLOADER guns
 	var/max_shells = 0			//the number of casings that will fit inside
@@ -122,8 +121,7 @@ ABSTRACT_TYPE(/obj/item/gun/projectile)
 			return FALSE
 	return TRUE
 
-/obj/item/gun/projectile/proc/process_chambered()
-	if (!chambered) return
+/obj/item/gun/projectile/proc/process_chambered(empty_chamber = TRUE, from_firing = TRUE, chamber_next_round = TRUE, atom/shooter)
 
 	// Aurora forensics port, gunpowder residue.
 	if(chambered.leaves_residue)
@@ -151,6 +149,36 @@ ABSTRACT_TYPE(/obj/item/gun/projectile)
 	if(handle_casings != HOLD_CASINGS)
 		chambered = null
 
+	else if (chamber_next_round && (ammo_magazine?.max_ammo > 1))
+		chamber_round()
+
+///Used to chamber a new round and eject the old one
+/obj/item/gun/projectile/proc/chamber_round(keep_bullet = FALSE)
+	if (chambered || !ammo_magazine)
+		return
+	if (ammo_magazine.ammo_count())
+		if(handle_casings != HOLD_CASINGS)
+			chambered = ammo_magazine.get_round(FALSE)
+		else
+			chambered = ammo_magazine.get_round(keep_bullet || bolt_type == BOLT_TYPE_NO_BOLT)
+		if (bolt_type != BOLT_TYPE_OPEN)
+			chambered.forceMove(src)
+
+/obj/item/gun/projectile/unique_action(mob/user)
+	. = ..()
+	if((bolt_type == BOLT_TYPE_LOCKING || bolt_type == BOLT_TYPE_CLIP) && HAS_TRAIT(src, TRAIT_GUN_BOLT_LOCKED))
+		drop_bolt(user)
+		return
+
+///Drops the bolt from a locked position
+/obj/item/gun/projectile/proc/drop_bolt(mob/user = null, chamber_new_round = TRUE)
+	playsound(src, null, null, FALSE)
+	if (user)
+		to_chat(user, SPAN_NOTICE("You drop the [bolt_wording] of \the [src]."))
+	if(chamber_new_round)
+		chamber_round()
+	REMOVE_TRAIT(src, TRAIT_GUN_BOLT_LOCKED, GUN_TRAIT)
+	update_icon()
 
 //Attempts to load A into src, depending on the type of thing being loaded and the load_method
 //Maybe this should be broken up into separate procs for each load method?

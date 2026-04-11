@@ -173,7 +173,6 @@ ABSTRACT_TYPE(/obj/item/gun)
 
 /*
  *  HEAT MECHANIC VARS
- *
 */
 	/// heat on this gun. Behavior over 100 depends on overheat_type
 	VAR_FINAL/heat_amount = 0
@@ -184,7 +183,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 	///heat reduction per second
 	var/cool_amount = 5
 	///tracks overheat timer ref
-	var/overheat_timer
+	VAR_FINAL/overheat_timer
 	///multiplier on cool amount to determine overheat time
 	var/overheat_multiplier = 1.1
 	///image we create to keep track of heat
@@ -325,9 +324,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 
 	/// Whether or not the gun has a safety.
 	var/has_safety = TRUE
-	/// Whether the gun's safety is currently engaged.
-	var/safety_state = TRUE
-	var/image/safety_overlay
+	var/mutable_appearance/safety_overlay
 
 	/// If TRUE, applies the user's ID iff_faction to the projectile. As of 2025/11, code making use of this is not currently implemented.
 	var/iff_capable = FALSE
@@ -424,7 +421,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 		CutOverlays(safety_overlay, ATOM_ICON_CACHE_PROTECTED)
 		safety_overlay = null
 		if(!isturf(loc)) // In a mob, holster or bag or something
-			safety_overlay = image(gun_gui_icons,"[safety()]")
+			safety_overlay = mutable_appearance(gun_gui_icons,"[safety()]")
 			AddOverlays(safety_overlay, ATOM_ICON_CACHE_PROTECTED)
 
 	if(is_wieldable)
@@ -445,8 +442,17 @@ ABSTRACT_TYPE(/obj/item/gun)
 			O.unwield()
 	return ..()
 
-/obj/item/gun/proc/unique_action(var/mob/user)
-	return
+/**
+ *  Performs the unique action. Can be overwritten.
+ *  By default, just checks if the gun is burst firing or was recently racked. If so, then it early returns.
+ */
+/obj/item/gun/proc/unique_action(mob/user)
+	SHOULD_CALL_PARENT(TRUE)
+	if(HAS_TRAIT(src, TRAIT_GUN_BURST_FIRING))
+		return
+	if (recent_rack > world.time)
+		return
+	recent_rack = world.time + rack_delay
 
 /obj/item/gun/proc/toggle_firing_mode(var/mob/user, var/list/message_mobs)
 	var/cancelled = FALSE
@@ -970,15 +976,16 @@ ABSTRACT_TYPE(/obj/item/gun)
 
 // Safety Procs
 
-/obj/item/gun/proc/toggle_safety(var/mob/user)
-	safety_state = !safety_state
-	update_icon()
+/obj/item/gun/proc/toggle_safety(mob/user)
 	if(user)
-		balloon_alert(user, "safety [safety_state ? "on" : "off"].")
-		if(!safety_state)
-			playsound(src, safetyon_sound, 30, 1)
-		else
-			playsound(src, safetyoff_sound, 30, 1)
+		balloon_alert(user, "safety [HAS_TRAIT(src, TRAIT_GUN_SAFETY) ? "on" : "off"]")
+	if(!HAS_TRAIT(src, TRAIT_GUN_SAFETY))
+		playsound(src, safetyon_sound, 30, 1)
+		ADD_TRAIT(src, TRAIT_GUN_SAFETY, GUN_TRAIT)
+	else
+		playsound(src, safetyoff_sound, 30, 1)
+		REMOVE_TRAIT(src, TRAIT_GUN_SAFETY, GUN_TRAIT)
+	update_icon()
 
 /obj/item/gun/verb/toggle_safety_verb()
 	set src in usr
@@ -996,7 +1003,7 @@ ABSTRACT_TYPE(/obj/item/gun)
 	. = ..()
 
 /obj/item/gun/proc/safety()
-	return has_safety && safety_state
+	return has_safety && HAS_TRAIT(src, TRAIT_GUN_SAFETY)
 
 //Handling of rifles and two-handed weapons.
 /obj/item/gun/proc/can_wield()

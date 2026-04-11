@@ -87,6 +87,7 @@
 		item_storage.handle_item_insertion(attacking_item)
 
 /obj/item/gun/launcher/pneumatic/unique_action(mob/user)
+	. = ..()
 	eject_tank(user)
 
 /obj/item/gun/launcher/pneumatic/consume_next_projectile(mob/user=null)

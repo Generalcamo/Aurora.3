@@ -57,6 +57,7 @@
 	w_class = WEIGHT_CLASS_SMALL
 
 /obj/item/gun/energy/blaster/revolver/unique_action(mob/living/user)
+	. = ..()
 	user.visible_message(SPAN_WARNING("\The [user] spins the cylinder of \the [src]!"), SPAN_WARNING("You spin the cylinder of \the [src]!"), SPAN_NOTICE("You hear something metallic spin and click."))
 	playsound(src.loc, 'sound/weapons/revolver_spin.ogg', 100, 1)
 

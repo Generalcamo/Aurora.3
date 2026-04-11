@@ -20,7 +20,6 @@
 		/obj/item/grenade/frag
 		)
 
-	var/obj/item/grenade/chambered
 	var/list/grenades = new/list()
 	var/max_grenades = 5 //holds this + one in the chamber
 	matter = list(DEFAULT_WALL_MATERIAL = 2000)
@@ -80,6 +79,7 @@
 	return TRUE
 
 /obj/item/gun/launcher/grenade/unique_action(mob/user)
+	. = ..()
 	pump(user)
 
 /obj/item/gun/launcher/grenade/attackby(obj/item/attacking_item, mob/user)
@@ -96,8 +96,9 @@
 
 /obj/item/gun/launcher/grenade/consume_next_projectile()
 	if(chambered)
-		chambered.det_time = 10
-		chambered.activate(null)
+		var/obj/item/grenade/chambered_grenade = chambered
+		chambered_grenade.det_time = 10
+		chambered_grenade.activate(null)
 	return chambered
 
 /obj/item/gun/launcher/grenade/handle_post_fire(mob/user)

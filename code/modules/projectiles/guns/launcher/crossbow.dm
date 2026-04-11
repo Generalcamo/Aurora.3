@@ -73,6 +73,7 @@
 	..()
 
 /obj/item/gun/launcher/crossbow/unique_action(mob/living/user)
+	. = ..()
 	if(tension)
 		if(bolt)
 			user.visible_message("<b>[user]</b> relaxes the tension on \the [src]'s string and removes \the [bolt].", SPAN_NOTICE("You relax the tension on \the [src]'s string and remove \the [bolt]."))

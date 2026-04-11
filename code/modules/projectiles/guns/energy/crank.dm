@@ -30,11 +30,11 @@
 	single shot or bolt action rifles that the majority of Tajaran soldiers use."
 
 /obj/item/gun/energy/rifle/icelance/unique_action(mob/living/user)
+	. - ..()
 	if(is_charging)
 		to_chat(user, SPAN_WARNING("You are already charging \the [src]."))
 		return
 	if(power_supply.charge < power_supply.maxcharge)
-		user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
 		user.visible_message(
 				SPAN_NOTICE("\The [user] begins to crank \the [src]!"),
 				SPAN_NOTICE("You begin to rotate \the [src]'s crank!")
