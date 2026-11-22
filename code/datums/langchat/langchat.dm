@@ -1,4 +1,4 @@
-#define LANGCHAT_LONGEST_TEXT 64
+#define LANGCHAT_LONGEST_TEXT FLOATING_MESSAGE_MAX_LENGTH
 #define LANGCHAT_WIDTH 96
 #define LANGCHAT_MAX_ALPHA 196
 
@@ -62,8 +62,22 @@
 	return (icon_size / 2) - (maptext_image.maptext_width / 2)
 
 /// Constructs a single floating langchat bubble showing maptext_string to the given listeners.
-/atom/proc/langchat_build_image(maptext_string, list/mob/listeners, override_color, animation_style = LANGCHAT_DEFAULT_POP, list/additional_styles = list("langchat"))
+/atom/proc/langchat_build_image(maptext_string, list/mob/listeners, override_color, animation_style = LANGCHAT_DEFAULT_POP, list/additional_styles = list("langchat"), max_length = null)
 	if(!length(listeners))
+		return
+	// Share bubbles only between viewers with the same truncation preference.
+	if(isnull(max_length))
+		var/list/length_groups = list()
+		for(var/mob/listener as anything in listeners)
+			if(!listener.client?.prefs)
+				continue
+			var/length_key = "[listener.client.prefs.max_chat_length]"
+			if(!length_groups[length_key])
+				length_groups[length_key] = list()
+			var/list/group = length_groups[length_key]
+			group += listener
+		for(var/length_key in length_groups)
+			langchat_build_image(maptext_string, length_groups[length_key], override_color, animation_style, additional_styles, text2num(length_key))
 		return
 
 	var/image/bubble = image(null, src)
@@ -78,7 +92,7 @@
 		bubble.appearance_flags |= PIXEL_SCALE
 	langchat_configure_bubble(bubble, override_color)
 
-	bubble.maptext = generate_text_image(maptext_string, additional_styles)
+	bubble.maptext = generate_text_image(maptext_string, additional_styles, max_length)
 	bubble.maptext_width = LANGCHAT_WIDTH
 	bubble.maptext_x = get_maptext_x_offset(bubble)
 	bubble.loc = isturf(loc) ? src : recursive_holder_check(src)
@@ -98,9 +112,9 @@
 		bubble.color = "#c51fb7"
 	bubble.appearance_flags |= RESET_ALPHA
 
-/// Checks the existing floating-message toggle for this listener.
-/atom/proc/runechat_prefs_check(mob/target)
-	return target?.client?.prefs && (target.client.prefs.toggles_secondary & FLOATING_MESSAGES)
+/// Checks presentation preferences for this source, including optional emote filtering.
+/atom/proc/runechat_prefs_check(mob/target, is_emote = FALSE)
+	return target?.client?.prefs?.should_show_floating_message(src, is_emote)
 
 /// Floats flat text to listeners whose presentation preferences allow it.
 /atom/proc/langchat_speech(message, list/mob/listeners, override_color, animation_style = LANGCHAT_DEFAULT_POP, list/additional_styles = list("langchat"), check_hearing = TRUE)
@@ -108,7 +122,7 @@
 
 	var/list/mob/shown = list()
 	for(var/mob/listener in listeners)
-		if(!runechat_prefs_check(listener) || (check_hearing && listener.ear_deaf))
+		if(!runechat_prefs_check(listener, "emote" in additional_styles) || (check_hearing && listener.ear_deaf))
 			continue
 		shown += listener
 	if(!length(shown))
@@ -127,7 +141,7 @@
 	// Group listeners by exact text perceived.
 	var/list/groups = list()
 	for(var/mob/listener in listeners)
-		if(!runechat_prefs_check(listener))
+		if(!runechat_prefs_check(listener, "emote" in additional_styles))
 			continue
 		var/clarity = listener.get_clarity(msg, feedback = FALSE)
 		if(clarity == CLARITY_NONE || clarity == CLARITY_DROWSY)
@@ -153,13 +167,13 @@
 	addtimer(CALLBACK(src, TYPE_PROC_REF(/atom, langchat_drop_images)), timer, TIMER_UNIQUE|TIMER_OVERRIDE|TIMER_NO_HASH_WAIT)
 
 /// Builds the maptext span for a floating message.
-/atom/proc/generate_text_image(message, list/additional_styles = list("langchat"))
+/atom/proc/generate_text_image(message, list/additional_styles = list("langchat"), max_length = LANGCHAT_LONGEST_TEXT)
 	var/list/styles = additional_styles ? additional_styles.Copy() : list()
 	var/text_to_display = message
 	var/use_mob_style = TRUE
 
-	if(length_char(text_to_display) > LANGCHAT_LONGEST_TEXT)
-		text_to_display = copytext_char(text_to_display, 1, LANGCHAT_LONGEST_TEXT + 1) + "..."
+	if(length_char(text_to_display) > max_length)
+		text_to_display = copytext_char(text_to_display, 1, max_length + 1) + "..."
 	if("emote" in styles)
 		styles.Remove("emote")
 		use_mob_style = FALSE
